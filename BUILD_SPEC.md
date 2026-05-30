@@ -38,12 +38,12 @@ state_machine.py      # Step enum, transition table, step() — pure mechanics, 
 signals.py            # Signals dataclass, extract(state, history) -> Signals
 agent.py              # Agent protocol (the act() contract)
   agent_stub.py       #   scripted agent — randomness (p_dropoff) lives HERE
-  agent_llm.py        #   LLM persona bots (Phase 4) — same Action contract
+  agent_llm.py        #   LLM persona bots (Phase 5) — same Action contract
 coach/
   __init__.py         # coach(signals, persona, policy) -> Intervention | None
   detection.py        # detect(signals, persona) -> bool/score — threshold (P2) and GBM (P3) behind one fn
   policy.py           # per-persona decision table: which intervention, given state+persona
-  realize.py          # realize(intervention, persona) -> str — templates (P2) and LLM (P5) behind one fn
+  realize.py          # realize(intervention, persona) -> str — templates (P2) and LLM (P4) behind one fn
 runner.py             # episode loop, seeding, trace logging, aggregation
 config.yaml           # p_dropoff, effectiveness, surcharge dist, seeds, thresholds,
                       #   INFERENCE_BASE_URL + MODEL_NAME (§8), wandb project (§9)
@@ -88,21 +88,21 @@ flowchart TB
         direction TB
         DET["detection.detect<br/>threshold (P2) or GBM (P3)"]
         POL["policy.lookup<br/>per-persona table (P2)"]
-        REL["realize.realize<br/>templates (P2/3) or LLM (P5)"]
+        REL["realize.realize<br/>templates (P2/3) or LLM (P4)"]
         DET --> POL --> REL
     end
     COA -.-> COACH_PKG
 
     subgraph AGENTS["Agent protocol (driver, swappable)"]
         direction LR
-        STUB["agent_stub.py<br/>scripted bot (P1–3)"]
-        LLM["agent_llm.py<br/>LLM persona bots (P4)"]
+        STUB["agent_stub.py<br/>scripted bot (P1–4)"]
+        LLM["agent_llm.py<br/>LLM persona bots (P5)"]
     end
     AGT -.-> AGENTS
 
     INF["services/inference/<br/>OpenAI-compatible HTTP<br/>INFERENCE_BASE_URL + MODEL_NAME"]
-    LLM -.->|"Phase 4"| INF
-    REL -.->|"Phase 5"| INF
+    REL -.->|"Phase 4"| INF
+    LLM -.->|"Phase 5"| INF
 
     subgraph TOOLS["Tooling (offline)"]
         TGBM["training/train_gbm.py<br/>+ W&B local"]
@@ -188,7 +188,7 @@ class Agent(Protocol):
            An intervention may lower this step's drop-off probability or swap a branch choice."""
 ```
 
-`Intervention` carries at least `{type, persona, step, text}`. `text` is empty until `realize()` fills it (templates in P2, LLM in P5).
+`Intervention` carries at least `{type, persona, step, text}`. `text` is empty until `realize()` fills it (templates in P2, LLM in P4).
 
 ---
 
@@ -207,7 +207,7 @@ These resolve the known ambiguities. They are parametrised so a mentor can overr
 
 ### ⚠️ What each phase actually validates (prevents a subtle dead-end)
 
-In Phases 1–3 the agent is **scripted**, so a coach intervention reduces drop-off by a **parameter** (an *assumed* effectiveness factor in config). Therefore the uplift number in Phases 1–3 validates the **plumbing and the measurement**, not the **efficacy** of the interventions. Efficacy only becomes real in Phase 4–5, when LLM persona bots *react to the actual intervention wording*. Do not claim "the coach works" from Phase 1–3 numbers — claim "the harness measures uplift correctly." State this distinction in REPORT.md.
+In Phases 1–4 the agent is **scripted**, so a coach intervention reduces drop-off by a **parameter** (an *assumed* effectiveness factor in config). Therefore the uplift number in Phases 1–4 validates the **plumbing and the measurement**, not the **efficacy** of the interventions — Phase 4 swaps in LLM wording but scripted bots don't read text, so the uplift number is still parameter-driven. Efficacy only becomes real in Phase 5, when LLM persona bots actually react to the wording Phase 4 produced. Do not claim "the coach works" from Phase 1–4 numbers — claim "the harness measures uplift correctly." State this distinction in REPORT.md.
 
 ---
 
@@ -260,7 +260,7 @@ Per-persona decision table (the central technical challenge — one unified stra
 | **Franz** (S2, Online Affine) | final price (S7) | justify price jump · cheaper-tariff alternative · save-progress/resume | online purchase **only** (handoff = failure) | suggest an advisor / add friction |
 | **Peter** (S3, Service Affine) | early, pre-price (S1–S3) | detect overwhelm early · proactive callback · simplify screen | qualified service contact (online **not** the target) | push self-service / add options to screen |
 
-Discriminative signal signatures (guide thresholds now, GBM next, bots in P4):
+Discriminative signal signatures (guide thresholds now, GBM next, bots in P5):
 - **Peter:** high `dwell_total_s` + low `steps_completed`; `back_nav_count ≥ 2`; elevated `field_change_count`.
 - **Judith:** long `dwell_current_s` on S4; high `tariff_hover_count`; `advisory_tariff_clicked` then `back`.
 - **Franz:** low dwell on S1–S3; `external_tab_opens ≥ 1`; at S7 `price_gap_eur` over threshold + `hover_cancel_count ≥ 1`.
@@ -275,7 +275,7 @@ Discriminative signal signatures (guide thresholds now, GBM next, bots in P4):
 
 ### Phase 3.5 — Visualization (a window pops up when the coach fires)
 
-This is a **checkpoint phase, not a substrate change.** No new decision logic, no new signals — it is a thin viewer over the existing `coach()`. Built **before** Phase 4 so the LLM persona bots are developed against a runnable demo, not a CLI table. The former "Optional / stretch" visualization is promoted into this phase, and the **framework choice is NiceGUI, not Streamlit**. Rationale: NiceGUI elements carry stable named IDs and ship with a Playwright-backed test harness (`nicegui.testing`), so the **same test code runs headless in CI and headed for the on-stage demo by flipping `--headed --slowmo=...`** — the presentation deliverable and the regression suite are one artefact, not two. (Streamlit's auto-generated DOM and AppTest-vs-Playwright split would force two parallel test surfaces.)
+This is a **checkpoint phase, not a substrate change.** No new decision logic, no new signals — it is a thin viewer over the existing `coach()`. Built **before** Phase 4 so the LLM integration (wording in P4, then bots in P5) is developed against a runnable demo, not a CLI table. The former "Optional / stretch" visualization is promoted into this phase, and the **framework choice is NiceGUI, not Streamlit**. Rationale: NiceGUI elements carry stable named IDs and ship with a Playwright-backed test harness (`nicegui.testing`), so the **same test code runs headless in CI and headed for the on-stage demo by flipping `--headed --slowmo=...`** — the presentation deliverable and the regression suite are one artefact, not two. (Streamlit's auto-generated DOM and AppTest-vs-Playwright split would force two parallel test surfaces.)
 
 - **Builds:** a NiceGUI app at `services/ui/app.py` (the container slot reserved in §7) registering **two routes that share the same `Session`, URL contract, and persona/method switchers**:
 
@@ -317,19 +317,21 @@ This is a **checkpoint phase, not a substrate change.** No new decision logic, n
 - Two new optional dependencies, both in `[project.optional-dependencies].ui` (replacing the previous `streamlit` entry): `nicegui[testing]` (the in-process `User` fixture for any pure-Python assertions we want later) and `playwright`. The on-stage demo and the headless gate are **both driven by Playwright directly** against the running NiceGUI app — NiceGUI 3.x's `Screen` fixture is Selenium-based and requires a system Chrome/Chromedriver, which we deliberately avoid. Playwright bundles its own chromium (`playwright install chromium`) so no sudo / system browser is needed.
 - No `time.sleep` or wall-clock waits anywhere in the test code path — pacing in the demo run comes from Playwright's `--slowmo` flag, nothing else.
 
-### Phase 4 — LLM persona bots
-- **Builds:** `agent_llm.py` — Judith/Franz/Peter as bots that emit the **same `Action` schema** (not chat). Start with a **local small model** reached via `INFERENCE_BASE_URL` + `MODEL_NAME` (§8) using the full persona briefings; the LoRA fine-tune (on Leonardo — this is the cluster training job) is the upgrade, swapped in by changing only those two values. `training/train_lora.py` logs to W&B in **offline** mode, synced from a login node (§9).
-- **Replaces:** `agent_stub.py` as the driver.
-- **Acceptance command:** run bot-driven episodes; validate every emitted action against the `Action` schema; re-run the GBM precision/recall on bot-driven runs.
-- **Must pass:** bots emit only valid `Action`s; GBM precision/recall on bot runs is reported (and drift vs simulated-data numbers flagged — this is the first real test of detection against non-scripted behaviour).
-- **Checkpoint:** commit, report schema-validity + bot-run GBM metrics, wait.
-
-### Phase 5 — LLM intervention wording
-- **Builds:** LLM `realize()` (same signature as the template one) producing register-appropriate intervention text. **This is the only component that calls the inference endpoint.**
+### Phase 4 — LLM intervention wording
+This phase **stands up the inference plumbing** with the lowest-risk integration: one LLM call per fired intervention, replacing template strings. Bots stay scripted, so parameter-driven uplift numbers are unchanged — what we're validating here is the swap boundary (`INFERENCE_BASE_URL` + `MODEL_NAME`), graceful degradation, and that wording reads naturally. Doing this **before** the bots means the bot phase (Phase 5) lands on a battle-tested inference path.
+- **Builds:** LLM `realize()` (same signature as the template one) producing register-appropriate intervention text. At this point in the build **this is the only component that calls the inference endpoint** — that property is what makes the degradation test below decisive. Start with a local small model reached via `INFERENCE_BASE_URL` + `MODEL_NAME` (§8); the merged fine-tuned model swaps in later (Phase 5) by changing only those two values.
 - **Replaces:** the template `realize()`.
-- **Acceptance command:** generate wording for each intervention type per persona; then run with the endpoint **mocked to fail**.
-- **Must pass:** wording is produced per intervention type; **with the endpoint down, decisions are unchanged and the system degrades to templates** (graceful degradation — proves decisions never depended on the endpoint).
+- **Acceptance command:** generate wording for each intervention type per persona; then re-run the harness with the endpoint **mocked to fail**.
+- **Must pass:** wording is produced per intervention type and reads naturally for each persona's register; **with the endpoint down, decisions are unchanged and the system degrades to templates** (graceful degradation — proves decisions never depended on the endpoint). Phase 3's parameter-driven uplift numbers are unchanged (the scripted bots don't read wording).
 - **Checkpoint:** commit, report wording samples + degradation behaviour, wait.
+
+### Phase 5 — LLM persona bots
+With inference plumbing already proven (Phase 4) and wording in place, the bots layer on top of the same path. **This is where intervention efficacy first becomes real** — Judith/Franz/Peter actually read the Phase 4 wording and respond to it, so uplift is no longer a parameter, it's an emergent measurement.
+- **Builds:** `agent_llm.py` — Judith/Franz/Peter as bots that emit the **same `Action` schema** (not chat). Start with the local small model reached via the same `INFERENCE_BASE_URL` + `MODEL_NAME` knobs used in Phase 4 — the bots and the wording share the inference container. The LoRA fine-tune (on Leonardo — this is the cluster training job) is the upgrade for *bot quality*, swapped in by changing only those two values. `training/train_lora.py` logs to W&B in **offline** mode, synced from a login node (§9).
+- **Replaces:** `agent_stub.py` as the driver.
+- **Acceptance command:** run bot-driven episodes; validate every emitted action against the `Action` schema; re-run the GBM precision/recall on bot-driven runs; report uplift WITH the LLM wording from Phase 4 vs uplift with templates only.
+- **Must pass:** bots emit only valid `Action`s; GBM precision/recall on bot runs is reported (and drift vs simulated-data numbers flagged — this is the first real test of detection against non-scripted behaviour); uplift with LLM wording is reported as the first **measured** efficacy number, vs the parameter-driven uplift from Phases 1-4.
+- **Checkpoint:** commit, report schema-validity + bot-run GBM metrics + measured uplift, wait.
 
 ### Phase 6 — Results consolidation (REPORT.md numbers)
 - **Builds:** `eval/` consolidation — with/without coach, identical seeds, **per-persona**, per-step survival, annoyance rate, GBM precision/recall. Assemble into REPORT.md.
@@ -372,17 +374,17 @@ Decompose along the frozen seams, not finer. **Three services, orchestrated by `
 Rules that keep this from becoming a time-sink:
 - **The coach reaches the model only over HTTP**, using `INFERENCE_BASE_URL` + `MODEL_NAME` from env. So model swaps touch env + the inference image — never coach code.
 - **Do not over-decompose.** The GBM is a loaded object *inside* the coach service, not its own service. The state machine is a library, not a service. Microservices here buy nothing and cost integration time.
-- **Define the compose topology early, fill services as phases land.** Phase 1 can run in a single container (or in-process); the `inference` service only becomes load-bearing at Phase 4. The topology existing early is what lets each phase slot in without re-architecting.
+- **Define the compose topology early, fill services as phases land.** Phase 1 can run in a single container (or in-process); the `inference` service only becomes load-bearing at Phase 4 (wording is its first caller; bots join in Phase 5). The topology existing early is what lets each phase slot in without re-architecting.
 - **GPU passthrough is the one setup gotcha on Arch.** The `inference` (and `train_lora`) containers need `nvidia-container-toolkit` installed on the host and a device reservation in compose (`deploy.resources.reservations.devices` with `capabilities: [gpu]`, or `--gpus all`). Verify the GPU is actually visible *inside* the container, not just on the host — see the §8 verification step.
 
 ---
 
 ## 8. Local-first inference & model-swap strategy
 
-**One mechanism does all the swapping:** `INFERENCE_BASE_URL` + `MODEL_NAME` (env/config), consumed by **both** `agent_llm.py` (Phase 4) and `realize.py` (Phase 5), both speaking OpenAI-compatible chat-completions. The same code path serves: a local small model now → the local merged fine-tuned model later → a remote endpoint (Featherless / Leonardo tunnel) if ever. Nothing downstream knows which.
+**One mechanism does all the swapping:** `INFERENCE_BASE_URL` + `MODEL_NAME` (env/config), consumed by **both** `realize.py` (Phase 4) and `agent_llm.py` (Phase 5), both speaking OpenAI-compatible chat-completions. The same code path serves: a local small model now → the local merged fine-tuned model later → a remote endpoint (Featherless / Leonardo tunnel) if ever. Nothing downstream knows which.
 
 **Local-first ladder on the dev box (Arch · RTX 5070 Ti 16 GB · 9950X3D · 64 GB):**
-- **Fast iteration:** a small instruct model (1.5–3B) — near-instant, for wiring up the Phase 4/5 plumbing before the bots need to be good.
+- **Fast iteration:** a small instruct model (1.5–3B) — near-instant, for wiring up the Phase 4 wording plumbing before the Phase 5 bots need to be good.
 - **Persona-bot realism:** the 7B fine-tune base (e.g. `Qwen2.5-7B-Instruct`) at **FP8** or Q4 — fits comfortably in 16 GB with context headroom.
 - **Later:** the merged fine-tuned 7B, served identically — only `MODEL_NAME` changes.
 
@@ -400,7 +402,7 @@ Two **training** jobs get tracked. Inference and simulation do not need W&B.
 
 **GBM — Phase 3, LOCAL (no cluster).** Gradient boosting on simulated tabular data is trivial for the 9950X3D / 64 GB; the cluster is not needed, as you noted. `train_gbm.py` runs in **online** mode (dev box has internet) and logs: hyperparameters, per-persona train/val precision/recall/AUC, confusion matrix, and **feature importances**. The feature-importance plot is not just hygiene — it *is* the GBM's inspectability exhibit, directly serving the rubric's "traceable decision rules." Also log the ablation-vs-threshold comparison as a run/table. xgboost/lightgbm both ship W&B callbacks; manual logging is fine too.
 
-**LoRA — Phase 4, on Leonardo.** Set `report_to="wandb"` in the TRL/transformers `Trainer` → loss curves, learning rate, eval metrics, satisfying REPORT.md's "training logs, loss curves" deliverable.
+**LoRA — Phase 5, on Leonardo.** The fine-tune is for the *persona bots* (Phase 5), not the wording (Phase 4 can run on a stock instruct model). Set `report_to="wandb"` in the TRL/transformers `Trainer` → loss curves, learning rate, eval metrics, satisfying REPORT.md's "training logs, loss curves" deliverable.
 - ⚠️ **Leonardo GPU compute nodes have no internet** (onboarding slides). Run W&B in **offline** mode (`WANDB_MODE=offline`) and `wandb sync` the run directory later **from a login node**. Do **not** route telemetry through the flaky proxy.
 
 **Secret handling:** the W&B API key goes via `wandb login` / env var — never in the repo (§6).

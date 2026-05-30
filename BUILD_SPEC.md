@@ -71,7 +71,6 @@ The root modules (`state_machine.py` … `runner.py`) plus `coach/` are the **co
 ### Action — the universal driver output
 
 Every agent (scripted stub now, LLM bots later) emits this. This is the seam that lets you swap drivers without touching anything downstream.
-
 ```python
 from dataclasses import dataclass
 from typing import Literal, Optional

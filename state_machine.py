@@ -1,11 +1,16 @@
 """Journey state machine — pure mechanics, NO randomness.
 
-In-scope private-doctor / "myself" / Start–Optimal path only. Step 5 (the hospital
+In-scope private-doctor / "myself" / Start-Optimal path only. Step 5 (the hospital
 add-on) is deliberately absent: states jump S4 -> S6.
 
 `Action` is defined here because it is the machine's transition input; the spec's
 frozen definition is reproduced verbatim. Do not change its field set without
-surfacing the change first (see BUILD_SPEC §1, §3).
+surfacing the change first (BUILD_SPEC §1, §3).
+
+Phase 2 additions (documented extensions, not changes to the frozen Action/Signals):
+  * SERVICE_CONTACT terminal — a coach-driven handoff/callback the persona accepted.
+  * HANDOFF_TARGETS — a `select` with target "advisor_callback" routes there. (Action.type
+    is unchanged; `target` is already free-form.)
 """
 from __future__ import annotations
 
@@ -37,10 +42,14 @@ class Step(IntEnum):
     CONVERTED = 90           # terminal — online purchase
     ABANDONED = 91           # terminal — closed tab
     ROUTED_ADVISOR = 92      # terminal — selected an out-of-scope option
+    SERVICE_CONTACT = 93     # terminal — accepted a coach handoff / callback (Phase 2)
 
 
-# Maps config drop-off keys ("S4"/"S6"/"S7") onto the enum.
+# Maps config step keys ("S1".."S7") onto the enum.
 NAME2STEP = {
+    "S1": Step.S1_COVERAGE_TYPE,
+    "S2": Step.S2_FOR_WHOM,
+    "S3": Step.S3_PERSONAL_DATA,
     "S4": Step.S4_INITIAL_PRICE,
     "S6": Step.S6_HEALTH_QS,
     "S7": Step.S7_FINAL_PRICE,
@@ -49,6 +58,7 @@ NAME2STEP = {
 # Branch targets.
 IN_SCOPE_TARGETS = {"doctor", "myself", "Start", "Optimal"}
 OUT_OF_SCOPE_TARGETS = {"hospital", "both", "others", "OptPlus", "Premium"}
+HANDOFF_TARGETS = {"advisor_callback"}   # coach-driven handoff -> SERVICE_CONTACT
 
 # Linear in-scope path.
 NEXT = {
@@ -70,7 +80,7 @@ PREV = {
     Step.S12_CLOSING: Step.S7_FINAL_PRICE,
 }
 
-_TERMINALS = {Step.CONVERTED, Step.ABANDONED, Step.ROUTED_ADVISOR}
+_TERMINALS = {Step.CONVERTED, Step.ABANDONED, Step.ROUTED_ADVISOR, Step.SERVICE_CONTACT}
 
 
 def is_terminal(state: Step) -> bool:
@@ -78,10 +88,10 @@ def is_terminal(state: Step) -> bool:
 
 
 def step(state: Step, action: Action) -> Step:
-    """(state, action) -> next state. The machine is permissive about ordering:
-    the agent is responsible for selecting before continuing. `select` of an
-    in-scope target is a no-op on state (the screen stays put); `select` of an
-    out-of-scope target routes to the advisor immediately.
+    """(state, action) -> next state. The machine is permissive about ordering: the
+    agent selects before continuing. `select` of an in-scope target is a no-op on
+    state; `select` of an out-of-scope target routes to the advisor; `select` of a
+    handoff target lands in SERVICE_CONTACT.
     """
     if is_terminal(state):
         return state
@@ -89,6 +99,8 @@ def step(state: Step, action: Action) -> Step:
     if t == "abandon":
         return Step.ABANDONED
     if t == "select":
+        if action.target in HANDOFF_TARGETS:
+            return Step.SERVICE_CONTACT
         if action.target in OUT_OF_SCOPE_TARGETS:
             return Step.ROUTED_ADVISOR
         return state  # in-scope selection: no state change

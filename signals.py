@@ -1,9 +1,12 @@
 """Signal extraction. `extract` is deterministic over the action history.
 
 `price_gap_eur` is the one field NOT computed here: it derives from a per-episode
-synthetic surcharge, so the runner sets it directly after calling extract (keeps
-this function pure and the frozen `extract(state, history)` signature intact).
-See BUILD_SPEC §3, §4.
+synthetic surcharge, so the runner sets it directly after calling extract (keeps this
+function pure and the frozen `extract(state, history)` signature intact). See §3, §4.
+
+Phase 2: `advisory_tariff_clicked` now also counts a *hover* on Opt.Plus/Premium —
+engaging the advisory-only tariffs (the "wall") is the signal, whether clicked or
+hovered. This keeps the state machine simple (a hover never routes).
 """
 from __future__ import annotations
 
@@ -13,7 +16,6 @@ from typing import List, Optional
 
 from state_machine import Step
 
-# One history entry: the step the action was taken on (int) + the Action.
 Record = namedtuple("Record", ["step", "action"])
 
 
@@ -53,11 +55,10 @@ def extract(state: Step, history: List[Record]) -> Signals:
     backs = [r for r in history if r.action.type == "back"]
     field_changes = sum(1 for r in history if r.action.type == "change_field")
 
-    tariff_hovers = sum(
-        1 for r in history if r.action.type == "hover" and r.step == s4
-    )
-    advisory_clicked = any(
-        r.action.type == "select" and r.action.target in ("OptPlus", "Premium")
+    tariff_hovers = sum(1 for r in history if r.action.type == "hover" and r.step == s4)
+    # advisory interest: a select OR hover of an advisory-only tariff.
+    advisory = any(
+        r.action.type in ("select", "hover") and r.action.target in ("OptPlus", "Premium")
         for r in history
     )
     tariff_sels = [
@@ -84,7 +85,7 @@ def extract(state: Step, history: List[Record]) -> Signals:
         back_from_step=backs[-1].step if backs else None,
         field_change_count=field_changes,
         tariff_hover_count=tariff_hovers,
-        advisory_tariff_clicked=advisory_clicked,
+        advisory_tariff_clicked=advisory,
         tariff_selected=tariff_sels[-1] if tariff_sels else None,
         external_tab_opens=tab_opens,
         price_gap_eur=0.0,  # injected by the runner at S7

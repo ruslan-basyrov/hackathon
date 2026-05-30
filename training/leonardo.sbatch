@@ -30,6 +30,7 @@
 #     --out  models/qwen7b-personas-merged --no-wandb
 
 #SBATCH --partition=boost_usr_prod
+#SBATCH --account=euhpc_d30_031       # hackathon allocation (your default tra23_* is expired)
 #SBATCH --reservation=s_tra_ncc       # hackathon reservation (priority slot)
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1

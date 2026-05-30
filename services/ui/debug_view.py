@@ -11,7 +11,7 @@ Stable element IDs (test contract; renaming any is a spec change):
 """
 from __future__ import annotations
 
-from nicegui import ui
+from nicegui import run, ui
 
 from services.ui.session import Session
 
@@ -136,11 +136,14 @@ def render(
             autoplay_timer["t"].deactivate()
             autoplay_timer["t"] = None
 
-    def do_step():
+    async def do_step():
         if sess.is_done():
             stop_autoplay()
             return
-        result = sess.step_once()
+        # step_once internally consults the coach which in LLM mode hits the
+        # inference endpoint. Wrap in run.io_bound so the WebSocket heartbeat
+        # stays alive even if the inference call takes a second or two.
+        result = await run.io_bound(sess.step_once)
         if result and result["intervention"] is not None:
             iv = result["intervention"]
             _show_funnel_step(iv.step)

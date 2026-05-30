@@ -117,12 +117,24 @@ def get_client(cfg: dict):
     """Build an OpenAI-compatible client from cfg. Indirected through a
     function so tests can monkeypatch it (return a mock instead of a real
     client). Imports are lazy so the openai dep is only loaded when LLM mode
-    is actually used."""
+    is actually used.
+
+    `max_retries=0` is deliberate: with retries enabled, an unreachable
+    endpoint would block for ~15s (3 attempts × ~5s timeout each) and a
+    UI click would feel frozen / drop the WebSocket. We'd rather fail fast
+    and hit the template fallback. The UI also wraps this call in
+    `run.io_bound` so the event loop stays responsive even if the network
+    attempt does take a couple of seconds.
+    """
     from openai import OpenAI
 
+    realize_cfg = cfg.get("realize", {}) or {}
+    timeout_s = float(realize_cfg.get("timeout_s", 3.0))
     return OpenAI(
         base_url=cfg.get("inference_base_url", "http://localhost:8000/v1"),
         api_key=cfg.get("inference_api_key", "local"),
+        max_retries=0,
+        timeout=timeout_s,
     )
 
 

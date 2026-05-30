@@ -29,7 +29,6 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from coach import coach as coach_fn  # noqa: E402
 from coach.realize import realize  # noqa: E402
 from runner import compare, load_config  # noqa: E402
 from signals import Signals  # noqa: E402
@@ -100,9 +99,11 @@ def test_llm_path_actually_calls_inference():
 
 
 def test_template_path_does_not_call_inference():
-    """With method=template (the default), no LLM client is built."""
+    """With method=template, no LLM client is built. Test explicitly sets
+    the method so we don't depend on the file's current default (which a
+    dev may have flipped to llm)."""
     cfg = load_config(CONFIG)
-    assert cfg["realize"]["method"] == "template"  # config default
+    cfg["realize"]["method"] = "template"
     with patch("coach.llm_realize.get_client") as mock_get:
         text = realize("price_reframe", _mk_signals(step=4),
                        persona="judith", cfg=cfg)

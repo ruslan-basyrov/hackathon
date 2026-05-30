@@ -12,17 +12,24 @@ services:
     build:
       context: ./services/inference
     command:
-      - "${MODEL_ID:-Qwen/Qwen2.5-7B-Instruct}"
+      - "${MODEL_ID:-Qwen/Qwen2.5-1.5B-Instruct}"
       - "--dtype=fp8"                                   # Blackwell-native; halves VRAM
       - "--max-model-len=8192"
-      - "--gpu-memory-utilization=0.90"
-      - "--served-model-name=${MODEL_NAME:-qwen2.5-7b-instruct}"
+      - "--gpu-memory-utilization=${VLLM_GPU_UTIL:-0.55}"  # leave headroom for other workloads
+      - "--served-model-name=${MODEL_NAME:-qwen2.5-1.5b-instruct}"
       - "--host=0.0.0.0"
       - "--port=8000"
     ports:
-      - "8000:8000"
+      # 8000 conflicts with Coolify on this host - using 8003 to avoid that AND
+      # uniqa-advisor-vllm-1 on 8002. Change MODEL_BASE_URL accordingly.
+      - "${VLLM_HOST_PORT:-8003}:8000"
     environment:
       - HF_TOKEN=${HF_TOKEN:-}
+      # BLACKWELL sm_120 TRAP (BUILD_SPEC §8). FlashInfer's bundled CUDA-arch
+      # check fails on sm_120 (RTX 5070 Ti) with "FlashInfer requires GPUs
+      # with sm75 or higher". Force the Triton attention backend instead -
+      # it works on Blackwell. Remove this env when FlashInfer ships a fix.
+      - VLLM_ATTENTION_BACKEND=TRITON_ATTN
     volumes:
       - ${HF_HOME:-./.hf_cache}:/root/.cache/huggingface
     # GPU passthrough. Requires nvidia-container-toolkit on the host (Arch: install

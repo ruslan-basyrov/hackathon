@@ -22,7 +22,7 @@ Stable element IDs (test contract):
 """
 from __future__ import annotations
 
-from nicegui import ui
+from nicegui import run, ui
 
 from services.ui.session import Session
 from state_machine import Action
@@ -167,7 +167,13 @@ def render(
     #   emit_action("hover", "cancel")   -> single action with target
     #   emit_actions(("select", "Optimal"), ("continue",))
     #                                    -> atomic batch: one popup check
-    def _apply_and_consult(action_specs):
+    #
+    # The coach consult is wrapped in `run.io_bound` because in LLM mode
+    # (cfg.realize.method=llm) it makes a blocking HTTP call to the inference
+    # endpoint. Running it on the event loop would block the WebSocket
+    # heartbeat and drop the connection. io_bound runs it in a thread pool
+    # so the UI stays responsive.
+    async def _apply_and_consult(action_specs):
         if sess.is_done():
             return
         for spec in action_specs:
@@ -178,7 +184,7 @@ def render(
             dwell = sess.wall_clock_dwell()
             sess.apply_action(Action(type=type_, target=target, dwell_s=dwell))
         if not sess.is_done():
-            sig, intervention = sess.consult_coach()
+            sig, intervention = await run.io_bound(sess.consult_coach)
             if intervention is not None and sess.shown_intervention_step != int(sess.state):
                 sess.shown_intervention_step = int(sess.state)
                 popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
@@ -186,12 +192,12 @@ def render(
                 popup.open()
         render_for_step(int(sess.state))
 
-    def emit_action(type_: str, target: str = None):
-        _apply_and_consult([(type_, target)])
+    async def emit_action(type_: str, target: str = None):
+        await _apply_and_consult([(type_, target)])
 
-    def emit_actions(*specs):
+    async def emit_actions(*specs):
         """Apply multiple (type, target) tuples atomically; one coach check."""
-        _apply_and_consult(list(specs))
+        await _apply_and_consult(list(specs))
 
     # ============================================================================
     # AUTO-mode renderers (current behaviour - disabled UI, agent drives)
@@ -667,12 +673,14 @@ def render(
             watchdog_timer["t"].deactivate()
             watchdog_timer["t"] = None
 
-    def auto_tick():
+    async def auto_tick():
         if sess.is_done():
             stop_autoplay()
             return
         prev_state = int(sess.state)
-        result = sess.step_once()
+        # step_once internally calls coach() which in LLM mode hits inference -
+        # run it off the event loop so the WebSocket heartbeat stays alive.
+        result = await run.io_bound(sess.step_once)
         if result and result["intervention"] is not None:
             iv = result["intervention"]
             render_for_step(iv.step)
@@ -687,17 +695,19 @@ def render(
             stop_autoplay()
             render_for_step(int(sess.state))
 
-    def watchdog_tick():
+    async def watchdog_tick():
         """Interactive-mode passive coach: if the human just sits on a page,
         synthesize dwell from wall-clock time and ask the coach. If a popup
         fires, show it once per state (gated by `shown_intervention_step`).
-        Also re-paints the rules panel so dwell counters tick up live."""
+        Also re-paints the rules panel so dwell counters tick up live.
+
+        Wrapped in `run.io_bound` so a slow LLM call doesn't block the event
+        loop and tank the WebSocket connection."""
         if sess.is_done():
             stop_watchdog()
             return
-        sig, intervention = sess.consult_coach(
-            virtual_dwell_s=sess.wall_clock_dwell()
-        )
+        dwell = sess.wall_clock_dwell()
+        sig, intervention = await run.io_bound(sess.consult_coach, virtual_dwell_s=dwell)
         refresh_rules_panel()
         if intervention is not None and sess.shown_intervention_step != int(sess.state):
             sess.shown_intervention_step = int(sess.state)
@@ -719,14 +729,14 @@ def render(
         else:
             stop_autoplay()
 
-    def manual_step():
+    async def manual_step():
         """In auto mode: advance one tick (pauses auto-play). In interactive
         mode this button isn't shown (it'd be redundant - you click the actual
         page elements)."""
         if autoplay_switch.value:
             autoplay_switch.value = False
         stop_autoplay()
-        auto_tick()
+        await auto_tick()
 
     # ---- footer controls ---------------------------------------------------
     def _scenario_url(p: str, ep: int) -> str:

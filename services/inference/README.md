@@ -28,30 +28,54 @@ servers below.
 The spec's recommendation for the RTX 5070 Ti (Blackwell). FP8 is Blackwell-
 native and halves VRAM vs FP16 at ~99% quality.
 
+### Quickstart via this project's docker-compose
+
 ```bash
-# install (CPU-only client/server image is fine for a small model; for FP8
-# you want the CUDA image)
-pip install vllm
-
-# serve a 7B in FP8 (~10GB VRAM)
-vllm serve Qwen/Qwen2.5-7B-Instruct --dtype fp8 --port 8000
-
-# or a small 1.5B for fast iteration
-vllm serve Qwen/Qwen2.5-1.5B-Instruct --dtype auto --port 8000
+docker compose --profile inference up -d inference
+# defaults: Qwen2.5-1.5B-Instruct on host port 8003, FP8, 55% GPU util
 ```
 
 Then in `config.yaml`:
 
 ```yaml
-inference_base_url: "http://localhost:8000/v1"
-model_name: "Qwen/Qwen2.5-7B-Instruct"     # match what vllm serves
+inference_base_url: "http://localhost:8003/v1"
+model_name: "qwen2.5-1.5b-instruct"        # matches --served-model-name
 realize:
   method: llm
 ```
 
-**Blackwell sm_120 landmine** (BUILD_SPEC §8): some runtimes silently fall
-back to CPU on the 5070 Ti. Always verify with `nvidia-smi` that the vLLM
-process is actually on GPU.
+(or set `MODEL_ID`, `MODEL_NAME`, `VLLM_HOST_PORT`, `VLLM_GPU_UTIL` in `.env`
+to override — see `docker-compose.yml`.)
+
+### Bare-metal vLLM
+
+```bash
+pip install vllm
+vllm serve Qwen/Qwen2.5-1.5B-Instruct --dtype fp8 --port 8003 \
+  --attention-backend TRITON_ATTN          # see Blackwell trap below
+```
+
+### ⚠️ Blackwell sm_120 trap (BUILD_SPEC §8)
+
+The RTX 5070 Ti is compute capability **12.0**. FlashInfer (vLLM's default
+attention backend) has a bundled CUDA-arch check that was compiled before
+sm_120 existed:
+
+```
+RuntimeError: FlashInfer requires GPUs with sm75 or higher
+```
+
+…even though sm_120 IS higher than sm75. vLLM crashes on the first chat
+completion. **Fix: force the Triton backend.** Either:
+
+* env var: `VLLM_ATTENTION_BACKEND=TRITON_ATTN` (already set in our
+  `docker-compose.yml`'s `inference` service)
+* CLI flag: `--attention-backend TRITON_ATTN`
+
+The other Blackwell trap is silent CPU fallback — some bundled CUDA kernels
+don't cover sm_120 and the runtime keeps going on CPU. Always verify GPU
+is actually in use: `nvidia-smi` should show the vLLM process with non-zero
+VRAM during a request.
 
 ## Option 2 — Ollama (easier, watch the Blackwell trap)
 

@@ -73,8 +73,11 @@ handoff_accept_prob:
   peter: 0.85
 
 # --- used from Phase 4 (inference) — the only model-swap knobs ---
-inference_base_url: "http://inference:8000/v1"
-model_name: "qwen2.5-7b-instruct"
+# Default points at the local docker-compose inference service on port 8003
+# (8000 is Coolify on this host; 8002 is uniqa-advisor-vllm-1). Override via
+# env or by editing here when pointing at a remote endpoint / different model.
+inference_base_url: "http://localhost:8003/v1"
+model_name: "qwen2.5-1.5b-instruct"
 
 # --- Phase 4: realize() backend ---------------------------------------------
 # `method` picks template (Phase 2-3) or LLM (Phase 4) for intervention wording.
@@ -84,9 +87,11 @@ model_name: "qwen2.5-7b-instruct"
 # the §Phase 4 degradation test decisive: even with method=llm, an unreachable
 # endpoint falls back to templates and the simulator's decisions are unchanged.
 realize:
-  method: template                 # template | llm
+  method: llm                 # template | llm
   graceful_fallback: true          # on LLM failure -> use template wording
-  timeout_s: 8.0
+  timeout_s: 3.0                   # short so UI clicks never feel frozen; the
+                                   # UI also wraps the call in run.io_bound so
+                                   # the event loop stays responsive
   max_tokens: 120
   temperature: 0.7
 

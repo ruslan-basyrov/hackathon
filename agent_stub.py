@@ -1,21 +1,26 @@
 """Scripted stub agent — Phases 1-2 driver.
 
 Per critical step the agent runs three phases across successive act() calls:
-  1. SIGNATURE  — emit non-state-changing actions (hovers / field-edits / tab opens)
-                  that surface this persona's signals, so detection can fire BEFORE
-                  the abandonment decision. (No real back-navigation — it would change
-                  state mid-step; that arrives with the LLM bots in Phase 4.)
+  1. SIGNATURE  — emit non-state-changing actions (hovers / form re-edits / tab opens)
+                  that surface this persona's signals, so detection can fire BEFORE the
+                  abandonment decision. (No real back-navigation — that changes state
+                  mid-step; it arrives with the LLM bots in Phase 4.)
   2. DECISION   — draw abandonment ONCE. A stay-intervention multiplies p by
                   (1 - effectiveness); a handoff-intervention (handled at the top of
                   act(), any step) diverts to a service contact instead.
   3. PROGRESS   — select (S1/S2/S4) then continue.
 
+Per-episode sub-profiles: a persona with `confident_prob` is heterogeneous. Each episode
+reset() draws confident vs struggling and swaps the drop-off / dwell / signature maps:
+  * struggling -> high dwell + form re-edits -> detection fires -> routed
+  * confident  -> base dwell, no re-edits    -> detection stays quiet -> self-serves
+This is what makes routing SELECTIVE rather than "route everyone" (the Phase 2 fix).
+
 Invariants:
   * Exactly one abandonment draw per critical step -> the no-coach `global` baseline
-    sits at prod(survivals) ~= 5.68% regardless of how much signature noise precedes it
-    (signature draws don't change the abandonment probabilities).
-  * `self.fires` records each intervention the persona acted on, as (mode, would_abandon_base),
-    so the runner can compute annoyance (a stay-fire where the user would NOT have abandoned).
+    sits at prod(survivals) ~= 5.68% regardless of signature noise preceding it.
+  * `self.fires` records each acted-on intervention as (mode, would_abandon_base) for
+    any downstream metric that wants the step-level counterfactual.
 """
 from __future__ import annotations
 
@@ -28,24 +33,39 @@ class StubAgent:
     def __init__(self, cfg: dict, persona: str = "global"):
         self.cfg = cfg
         self.persona = persona
-        prof = cfg["personas"][persona]
-        self.p = {NAME2STEP[k]: v for k, v in prof.get("p_dropoff", {}).items()}
-        self.dwell_mult = {NAME2STEP[k]: v for k, v in prof.get("dwell_mult", {}).items()}
-        self.sig_hovers = {NAME2STEP[k]: v for k, v in prof.get("sig_hovers", {}).items()}
-        self.sig_changes = {NAME2STEP[k]: v for k, v in prof.get("sig_changes", {}).items()}
-        self.advisory = bool(prof.get("advisory_interest", False))
-        self.external_tab = bool(prof.get("external_tab", False))
-        self.s7_cancel = bool(prof.get("s7_cancel", False))
+        self.profile = cfg["personas"][persona]
+        # These flags are profile-level (the personas that use confident_prob have none
+        # of them, so confident-mode never emits advisory/external/cancel actions).
+        self.advisory = bool(self.profile.get("advisory_interest", False))
+        self.external_tab = bool(self.profile.get("external_tab", False))
+        self.s7_cancel = bool(self.profile.get("s7_cancel", False))
         self.dwell_mean = float(cfg.get("dwell_mean_s", 12.0))
         self.accept_prob = float(cfg.get("handoff_accept_prob", {}).get(persona, 0.0))
         self.reset()
 
-    def reset(self) -> None:
-        self._decided = set()      # critical steps where abandonment is drawn
-        self._selected = set()     # steps where the branch/tariff select is emitted
-        self._sig = {}             # step -> remaining signature actions
+    def _maps(self, confident: bool):
+        prof = self.profile
+        if confident:
+            pd = prof.get("confident_p_dropoff", prof.get("p_dropoff", {}))
+            return ({NAME2STEP[k]: v for k, v in pd.items()}, {}, {}, {})
+        return (
+            {NAME2STEP[k]: v for k, v in prof.get("p_dropoff", {}).items()},
+            {NAME2STEP[k]: v for k, v in prof.get("dwell_mult", {}).items()},
+            {NAME2STEP[k]: v for k, v in prof.get("sig_hovers", {}).items()},
+            {NAME2STEP[k]: v for k, v in prof.get("sig_changes", {}).items()},
+        )
+
+    def reset(self, rng=None) -> None:
+        self._decided = set()
+        self._selected = set()
+        self._sig = {}
         self._diverted = False
-        self.fires = []            # list of (mode, would_abandon_base)
+        self.fires = []
+        confident = False
+        if rng is not None and "confident_prob" in self.profile:
+            confident = rng.random() < float(self.profile["confident_prob"])
+        self._confident = confident
+        self.p, self.dwell_mult, self.sig_hovers, self.sig_changes = self._maps(confident)
 
     def _dwell(self, state: Step, rng: random.Random) -> float:
         base = max(0.0, rng.gauss(self.dwell_mean, self.dwell_mean * 0.4))
@@ -80,7 +100,6 @@ class StubAgent:
         b = self._sig[state]
         if b["hover"] > 0:
             b["hover"] -= 1
-            # last hover lands on an advisory-only tariff (the "wall") for advisory personas
             if self.advisory and b["hover"] == 0:
                 return Action("hover", rng.choice(["OptPlus", "Premium"]), dwell)
             return Action("hover", rng.choice(["Start", "Optimal"]), dwell)

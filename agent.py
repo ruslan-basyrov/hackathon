@@ -14,8 +14,9 @@ from state_machine import Action, Step
 
 
 class Agent(Protocol):
-    def reset(self) -> None:
-        """Clear per-episode state. Called by the runner at the start of each episode."""
+    def reset(self, rng=None) -> None:
+        """Clear per-episode state. `rng` (optional) lets the agent draw a per-episode
+        sub-profile, e.g. a persona's sub-segments. Called by the runner each episode."""
         ...
 
     def act(self, state: Step, signals: Signals, intervention, rng) -> Action:

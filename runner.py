@@ -2,10 +2,12 @@
 
 Per-episode RNG is seeded by (master_seed, episode_index) only — never by whether a
 coach is present — so with-coach and without-coach runs simulate the SAME users (the
-coach is the only variable). See BUILD_SPEC §4.
+coach is the only variable). This is what makes the paired counterfactual in compare()
+valid: episode i is the same person in both runs. See BUILD_SPEC §4.
 
-run() handles one persona. Phase 1 acceptance: persona="global", coach_fn=None -> ~5.6%.
-Phase 2 acceptance: per persona, success(with) > success(without); annoyance reported.
+run()      -> aggregate metrics for one persona, plus a per-episode log for pairing.
+compare()  -> control vs treatment on the same population, giving uplift AND the cost
+              of intervening (wasted_rate: fired on someone who'd have succeeded anyway).
 """
 from __future__ import annotations
 
@@ -49,29 +51,23 @@ def run(
     seed = int(seed if seed is not None else cfg["seed"])
     prices = cfg["tariff_prices"]
     sc = cfg["surcharge"]
+    success_set = SUCCESS.get(persona, {"CONVERTED"})
     agent = StubAgent(cfg, persona)
 
     outcomes: Counter = Counter()
-    reach, survive = Counter(), Counter()
-    stay_fires = stay_annoying = handoff_fires = 0
+    episodes = []          # per-episode (success, fired_stay, fired_handoff) for pairing
     trace_sample = int(cfg.get("trace_sample", 0)) if write_traces else 0
     trace_lines = []
-    critical = [Step.S4_INITIAL_PRICE, Step.S6_HEALTH_QS, Step.S7_FINAL_PRICE]
-    nxt = {Step.S4_INITIAL_PRICE: Step.S6_HEALTH_QS,
-           Step.S6_HEALTH_QS: Step.S7_FINAL_PRICE,
-           Step.S7_FINAL_PRICE: Step.S12_CLOSING}
 
     for ep in range(n):
         rng = random.Random(f"{seed}:{ep}")   # coach-independent per-episode seed
-        agent.reset()
+        agent.reset(rng)
         state = Step.START
         history: list[Record] = []
-        surcharge = rng.uniform(sc["low"], sc["high"])  # drawn first: coach-independent
+        surcharge = rng.uniform(sc["low"], sc["high"])
         provisional = None
-        reached = set()
 
         while not is_terminal(state):
-            reached.add(state)
             signals = extract(state, history)
             if state == Step.S7_FINAL_PRICE and provisional is not None:
                 signals.price_gap_eur = round(provisional * surcharge, 2)
@@ -94,34 +90,60 @@ def run(
             state = step(state, action)
 
         outcomes[state.name] += 1
-        for mode, would in agent.fires:
-            if mode == "stay":
-                stay_fires += 1
-                if not would:
-                    stay_annoying += 1
-            elif mode == "handoff":
-                handoff_fires += 1
-        for c in critical:
-            if c in reached:
-                reach[c] += 1
-                if nxt[c] in reached:
-                    survive[c] += 1
+        episodes.append((
+            1 if state.name in success_set else 0,
+            1 if any(m == "stay" for m, _ in agent.fires) else 0,
+            1 if any(m == "handoff" for m, _ in agent.fires) else 0,
+        ))
 
-    success = sum(outcomes[o] for o in SUCCESS.get(persona, {"CONVERTED"})) / n
+    success = sum(e[0] for e in episodes) / n
     result = {
         "persona": persona,
         "n": n,
         "success": success,
         "conversion": outcomes["CONVERTED"] / n,
-        "annoyance_rate": (stay_annoying / stay_fires) if stay_fires else None,
-        "stay_fires": stay_fires,
-        "handoff_fires": handoff_fires,
         "outcomes": dict(outcomes),
-        "survival": {c.name: (survive[c] / reach[c] if reach[c] else None) for c in critical},
+        "episodes": episodes,
     }
     if write_traces and trace_lines:
         Path("traces.jsonl").write_text("\n".join(trace_lines) + "\n")
     return result
+
+
+def compare(cfg: dict, persona: str, n: Optional[int] = None, seed: Optional[int] = None) -> dict:
+    """Paired control (no coach) vs treatment (coach) on the SAME seeded population.
+
+    For each episode where the coach fired, classify against the control outcome:
+      * wasted      — control already succeeded; the intervention was unnecessary
+      * saved       — control failed, treatment succeeded; the intervention worked
+      * still_failed— control failed and treatment still failed
+    Works identically for stay-nudges and handoffs (the Phase 2 metric fix).
+    """
+    ctrl = run(cfg, coach_fn=None, persona=persona, n=n, seed=seed)
+    trt = run(cfg, coach_fn=default_coach, persona=persona, n=n, seed=seed)
+
+    fired = wasted = saved = still_failed = 0
+    for (cs, _, _), (ts, t_stay, t_hand) in zip(ctrl["episodes"], trt["episodes"]):
+        if t_stay or t_hand:
+            fired += 1
+            if cs:
+                wasted += 1
+            elif ts:
+                saved += 1
+            else:
+                still_failed += 1
+
+    return {
+        "persona": persona,
+        "n": ctrl["n"],
+        "success_without": ctrl["success"],
+        "success_with": trt["success"],
+        "uplift": trt["success"] - ctrl["success"],
+        "fired_rate": fired / ctrl["n"],
+        "wasted_rate": (wasted / fired) if fired else None,
+        "saved_rate": (saved / fired) if fired else None,
+        "still_failed_rate": (still_failed / fired) if fired else None,
+    }
 
 
 def main() -> None:
@@ -131,22 +153,22 @@ def main() -> None:
     args = ap.parse_args()
     cfg = load_config(args.config)
 
-    # Phase 1 baseline (global, no coach).
     base_global = run(cfg, coach_fn=None, persona="global", n=args.n, write_traces=True)
     print(f"[Phase 1] global baseline, no coach: {base_global['conversion'] * 100:.2f}% "
-          f"online conversion (n={base_global['n']})")
+          f"online conversion (n={base_global['n']})\n")
 
-    # Phase 2 per-persona: with vs without coach, identical seeds.
-    print("\n[Phase 2] per-persona success (by conversion definition), without -> with coach:")
+    print("[Phase 2] per-persona, control vs coached on identical seeds:")
     print(f"  {'persona':8s} {'without':>8s} {'with':>8s} {'uplift':>8s}   "
-          f"{'annoyance':>9s}  fires(stay/handoff)")
+          f"{'fired':>6s} {'wasted':>7s} {'saved':>6s}")
     for persona in ("judith", "franz", "peter"):
-        b = run(cfg, coach_fn=None, persona=persona, n=args.n)
-        c = run(cfg, coach_fn=default_coach, persona=persona, n=args.n)
-        ann = f"{c['annoyance_rate'] * 100:.1f}%" if c["annoyance_rate"] is not None else "  n/a"
-        print(f"  {persona:8s} {b['success'] * 100:7.1f}% {c['success'] * 100:7.1f}% "
-              f"{(c['success'] - b['success']) * 100:+7.1f}pp   {ann:>9s}  "
-              f"{c['stay_fires']}/{c['handoff_fires']}")
+        r = compare(cfg, persona, n=args.n)
+        pct = lambda x: f"{x * 100:.1f}%" if x is not None else "n/a"
+        print(f"  {persona:8s} {pct(r['success_without']):>8s} {pct(r['success_with']):>8s} "
+              f"{r['uplift'] * 100:+7.1f}pp   {pct(r['fired_rate']):>6s} "
+              f"{pct(r['wasted_rate']):>7s} {pct(r['saved_rate']):>6s}")
+    print("\n  fired  = % of users shown an intervention")
+    print("  wasted = % of those who'd have succeeded anyway (the annoyance/over-route cost)")
+    print("  saved  = % of those the intervention actually rescued")
 
 
 if __name__ == "__main__":

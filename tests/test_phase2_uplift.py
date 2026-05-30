@@ -1,54 +1,46 @@
-"""Phase 2 acceptance test.
+"""Phase 2 acceptance test (paired counterfactual).
 
 Gate (BUILD_SPEC §5 Phase 2):
   * For each persona, success WITH coach > success WITHOUT, on identical seeds,
     scored by that persona's conversion definition.
-  * Stay-coached personas (Judith, Franz) report a numeric annoyance rate.
-    Peter is all-handoff, so his annoyance is legitimately None.
+  * Every persona reports a wasted_rate (the cost of intervening) in [0, 1].
+  * The Franz fix holds: most of his interventions are NOT wasted (his S4 over-firing
+    is gone), so his wasted_rate is well under half.
 
-NOTE: Phase 1-3 uplift is parameter-driven (it validates the plumbing + measurement,
-not real coaching efficacy). Efficacy only becomes real in Phase 4-5, when LLM persona
-bots actually react to the wording. See BUILD_SPEC §4.
+NOTE: Phase 1-3 uplift is parameter-driven (it validates plumbing + measurement, not
+real coaching efficacy). Efficacy becomes real in Phase 4-5, when LLM persona bots
+actually react to the wording. See BUILD_SPEC §4.
 """
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from coach import coach  # noqa: E402
-from runner import load_config, run  # noqa: E402
+from runner import compare, load_config  # noqa: E402
 
 CONFIG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config.yaml")
 N = 20_000
 
 
-def _pair(cfg, persona):
-    base = run(cfg, coach_fn=None, persona=persona, n=N)
-    coached = run(cfg, coach_fn=coach, persona=persona, n=N)
-    return base, coached
-
-
 def test_phase2_uplift():
     cfg = load_config(CONFIG)
     for persona in ("judith", "franz", "peter"):
-        base, coached = _pair(cfg, persona)
-        assert coached["success"] > base["success"], (
-            persona, base["success"], coached["success"]
-        )
+        r = compare(cfg, persona, n=N)
+        assert r["uplift"] > 0, (persona, r["success_without"], r["success_with"])
+        assert r["wasted_rate"] is not None and 0.0 <= r["wasted_rate"] <= 1.0, (persona, r["wasted_rate"])
 
-    # Stay-coached personas must report a numeric annoyance rate.
-    for persona in ("judith", "franz"):
-        _, coached = _pair(cfg, persona)
-        assert coached["annoyance_rate"] is not None, persona
-        assert 0.0 <= coached["annoyance_rate"] <= 1.0, (persona, coached["annoyance_rate"])
+    # The Franz fix: coaching is no longer dominated by unnecessary S4 nudges.
+    franz = compare(cfg, "franz", n=N)
+    assert franz["wasted_rate"] < 0.40, franz["wasted_rate"]
 
 
 if __name__ == "__main__":
     cfg = load_config(CONFIG)
     for p in ("judith", "franz", "peter"):
-        b, c = _pair(cfg, p)
-        ann = f"{c['annoyance_rate'] * 100:.1f}%" if c["annoyance_rate"] is not None else "n/a"
-        print(f"{p:8s} success {b['success'] * 100:5.1f}% -> {c['success'] * 100:5.1f}%  "
-              f"(uplift {(c['success'] - b['success']) * 100:+.1f}pp)  annoyance {ann}")
+        r = compare(cfg, p, n=N)
+        f = lambda x: f"{x * 100:.1f}%" if x is not None else "n/a"
+        print(f"{p:8s} success {f(r['success_without'])} -> {f(r['success_with'])}  "
+              f"(uplift {r['uplift'] * 100:+.1f}pp)  fired {f(r['fired_rate'])}  "
+              f"wasted {f(r['wasted_rate'])}  saved {f(r['saved_rate'])}")
     test_phase2_uplift()
     print("PASS")

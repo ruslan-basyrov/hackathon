@@ -1,24 +1,34 @@
 import os
 from openai import OpenAI
 
+def resolve_endpoint():
+    """Returns (api_key, base_url) using env vars. Featherless first, then OpenAI.
+    Exposed so other modules (e.g. simulation.engine building a coach.realize cfg)
+    can target the same endpoint without duplicating the lookup logic."""
+    api_key = os.environ.get("FEATHERLESS_API_KEY")
+    base_url = "https://api.featherless.ai/v1"
+    if not api_key:
+        api_key = os.environ.get("OPENAI_API_KEY")
+        base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    return api_key, base_url
+
+
 class LLMClient:
     """Wrapper for the LLM API calls."""
     def __init__(self, model="deepseek-ai/DeepSeek-V4-Pro"):
-        # We check for FEATHERLESS_API_KEY first as that was the default in your project
-        api_key = os.environ.get("FEATHERLESS_API_KEY")
-        base_url = "https://api.featherless.ai/v1"
-        
-        # Fallback to OPENAI_API_KEY if featherless is not set
-        if not api_key:
-            api_key = os.environ.get("OPENAI_API_KEY")
-            base_url = os.environ.get("OPENAI_BASE_URL", "https://api.openai.com/v1")
-        
+        api_key, base_url = resolve_endpoint()
+
+        # Promoted to instance attributes so callers (e.g. the engine assembling
+        # a coach.realize cfg) can read the same endpoint values back out.
+        self.api_key = api_key
+        self.base_url = base_url
+        self.model = model
+
         # If API key isn't set, we mock the response for testing purposes without an API key
         self.mock_mode = not api_key
-        
+
         if not self.mock_mode:
             self.client = OpenAI(api_key=api_key, base_url=base_url)
-        self.model = model
 
     def chat_completion(self, messages):
         """Sends a request to the LLM and returns the response content."""

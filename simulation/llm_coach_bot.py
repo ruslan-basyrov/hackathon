@@ -19,6 +19,8 @@ from __future__ import annotations
 import json
 from typing import Optional
 
+from coach.policy import lookup as policy_lookup
+from coach.realize import realize as realize_wording
 from utils.llm_client import LLMClient
 
 from simulation.json_utils import loads_lenient
@@ -89,7 +91,9 @@ class LLMCoachBot:
         turn_data: dict,
         trigger_reason: str,
         persona_hint: Optional[str] = None,
+        signals=None,                       # accepted for parity with RealizeCoachBot; ignored
     ) -> str:
+        del signals  # explicit no-op
         action = turn_data.get("action") or {}
         signals = turn_data.get("signals") or {}
         session_data = turn_data.get("session_data_so_far") or {}
@@ -148,3 +152,72 @@ class LLMCoachBot:
         self.history.append({"role": "user", "content": user_prompt})
         self.history.append({"role": "assistant", "content": raw_response})
         return message
+
+
+class RealizeCoachBot:
+    """Coach backed by coach.policy.lookup + coach.realize.realize().
+
+    The pipeline is deterministic on the choice of intervention (per-persona/step
+    table in coach.policy) and LLM-or-template on the wording (coach.realize
+    dispatches on cfg["realize"]["method"], falling back to templates if the LLM
+    call fails when graceful_fallback is on). Same get_intervention(...) interface
+    as LLMCoachBot so the engine can swap them.
+
+    Expected cfg shape (built by SimulationEngine when coach_mode="realize"):
+        {
+          "model_name": "...",
+          "inference_base_url": "https://...",
+          "inference_api_key": "...",
+          "realize": {"method": "llm" | "template", "graceful_fallback": True, ...},
+        }
+
+    Falls back to a generic nudge when:
+      * no policy entry exists for (persona, step) and the trigger isn't
+        repeated_back_nav (mirroring coach.__init__.coach() behaviour);
+      * realize() raises and the engine asked for an explicit non-fallback mode.
+    """
+
+    GENERIC_FALLBACK = "Need a hand? I can talk you through any part of this — just ask."
+
+    def __init__(self, cfg: dict):
+        self.cfg = cfg
+
+    def get_intervention(
+        self,
+        funnel_step: str,
+        turn_data: dict,
+        trigger_reason: str,
+        persona_hint: Optional[str] = None,
+        signals=None,
+    ) -> str:
+        del funnel_step  # step int is read off signals; the string name is unused here
+
+        if signals is None:
+            # Best-effort reconstruction from the turn_data dict. If the dict
+            # is missing fields we can't build a Signals — fall back generically.
+            from signals import Signals  # local import; avoids a hard dep at module load
+            try:
+                signals = Signals(**(turn_data.get("signals") or {}))
+            except TypeError:
+                return self.GENERIC_FALLBACK
+
+        persona = (persona_hint or "global").lower()
+        itype, _mode = policy_lookup(persona, int(signals.step))
+
+        if itype is None:
+            # Same narrow fallback coach.__init__.coach() uses: back-nav friction
+            # gets a generic helper even when the persona/step cell is empty.
+            if trigger_reason == "repeated_back_nav":
+                itype = "back_nav_help"
+            else:
+                return self.GENERIC_FALLBACK
+
+        try:
+            text = realize_wording(itype, signals, persona=persona, cfg=self.cfg)
+        except Exception as e:
+            # realize() itself handles graceful template fallback; if it still
+            # raises, the cfg explicitly asked for hard failure.
+            print(f"WARNING: realize({itype!r}) failed: {e}. Using generic fallback.")
+            return self.GENERIC_FALLBACK
+
+        return text or self.GENERIC_FALLBACK

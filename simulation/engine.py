@@ -6,9 +6,10 @@ from datetime import datetime
 from bots.persona_factory import PersonaFactory
 from signals import extract as extract_signals
 from state_machine import Step
+from utils.llm_client import resolve_endpoint
 from simulation.funnel import Funnel
 from simulation.llm_bot import LLMBot
-from simulation.llm_coach_bot import LLMCoachBot
+from simulation.llm_coach_bot import LLMCoachBot, RealizeCoachBot
 from simulation.intervention_model import (
     GBMInterventionModel,
     LLMInterventionModel,
@@ -24,31 +25,44 @@ S7_PRICE_GAP_EUR = 15.0
 
 
 VALID_MODES = ("off", "rule", "llm", "gbm")
+VALID_COACH_MODES = ("chat", "realize")
 
 
 class SimulationEngine:
     """
     Orchestrates the simulation against the state_machine + signals contracts.
-    The intervention decider is selected via `intervention_mode`:
+
+    Trigger decider — `intervention_mode`:
       * "off"  - no coach
       * "rule" - RuleBasedInterventionModel
       * "llm"  - LLMInterventionModel
       * "gbm"  - GBMInterventionModel (wraps coach.detection.detect)
+
+    Wording engine — `coach_mode` (only used when a coach is on):
+      * "chat"    - LLMCoachBot (free-form chat, JSON-output LLMClient)
+      * "realize" - RealizeCoachBot (coach.policy.lookup + coach.realize.realize,
+                    template-or-LLM with graceful fallback)
     """
     def __init__(
         self,
         personas_path,
         model_name,
         intervention_mode="rule",
+        coach_mode="chat",
         gbm_cfg=None,
+        realize_cfg=None,
         output_dir="outputs",
     ):
         if intervention_mode not in VALID_MODES:
             raise ValueError(f"intervention_mode must be one of {VALID_MODES}, got {intervention_mode!r}")
+        if coach_mode not in VALID_COACH_MODES:
+            raise ValueError(f"coach_mode must be one of {VALID_COACH_MODES}, got {coach_mode!r}")
 
         self.persona_factory = PersonaFactory(personas_path)
         self.model_name = model_name
         self.intervention_mode = intervention_mode
+        self.coach_mode = coach_mode
+        self.realize_cfg = realize_cfg
         self.output_dir = output_dir
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -62,18 +76,41 @@ class SimulationEngine:
         else:
             self.intervention_model = None
 
+    def _build_realize_cfg(self) -> dict:
+        """Build a cfg dict for coach.realize.realize() that targets the same
+        endpoint LLMClient picks up from env vars. Caller-supplied realize_cfg
+        keys take precedence."""
+        api_key, base_url = resolve_endpoint()
+        cfg = {
+            "model_name": self.model_name,
+            "inference_base_url": base_url,
+            "inference_api_key": api_key or "local",
+            "realize": {"method": "llm", "graceful_fallback": True},
+        }
+        if self.realize_cfg:
+            # Shallow merge top-level, deep merge "realize" subdict.
+            user_realize = self.realize_cfg.get("realize") or {}
+            cfg.update({k: v for k, v in self.realize_cfg.items() if k != "realize"})
+            cfg["realize"] = {**cfg["realize"], **user_realize}
+        return cfg
+
+    def _make_coach_bot(self):
+        if self.intervention_mode == "off":
+            return None
+        if self.coach_mode == "realize":
+            return RealizeCoachBot(cfg=self._build_realize_cfg())
+        return LLMCoachBot(model_name=self.model_name)
+
     def run_simulation(self, segment_id, max_turns=15):
         persona = self.persona_factory.create_persona(segment_id)
         persona_bot = LLMBot(persona.llm_prompt, model_name=self.model_name)
 
-        coach_bot = None
-        if self.intervention_mode != "off":
-            coach_bot = LLMCoachBot(model_name=self.model_name)
+        coach_bot = self._make_coach_bot()
 
         funnel = Funnel()
 
         print(f"--- Starting LLM Simulation for {persona.name} ({segment_id}) ---")
-        print(f"--- Intervention Mode: {self.intervention_mode.upper()} ---")
+        print(f"--- Intervention Mode: {self.intervention_mode.upper()} | Coach Mode: {self.coach_mode.upper()} ---")
 
         simulation_log = []
         turn = 0
@@ -139,6 +176,7 @@ class SimulationEngine:
                         turn_data=turn_data,
                         trigger_reason=trigger_context,
                         persona_hint=persona.name.lower(),
+                        signals=signals,
                     )
                     print(f"  [COACH SAYS] '{coach_message}'")
 
@@ -206,6 +244,7 @@ class SimulationEngine:
                 "total_turns": len(simulation_log),
                 "model_name": self.model_name,
                 "intervention_mode": self.intervention_mode,
+                "coach_mode": self.coach_mode,
                 "final_collected_data": session_data,
             },
             "journey_log": simulation_log,

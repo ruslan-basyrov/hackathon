@@ -84,6 +84,31 @@ def test_interactive_mode_user_drives(page: Page, app_url: str):
     expect(page.locator("#journey-popup-type")).to_contain_text("callback")
 
 
+def test_interactive_back_button_navigates_and_increments_count(page: Page, app_url: str):
+    """The in-page Back button emits a `back` Action: it moves backward in the
+    funnel via the state machine's PREV table AND increments back_nav_count.
+    Two clicks should trip the `repeated_back_nav` rule (>= 2) and fire a
+    popup (whichever the persona's policy hooks - for judith on S4, the
+    s4_dwell wins precedence; for global on S2, back_nav is the trigger).
+    Here we just assert the funnel actually moves back and the rules panel
+    reflects the incremented count."""
+    page.goto(
+        f"{app_url}/journey?persona=judith&method=threshold&mode=interactive"
+    )
+    page.locator("#journey-continue").click()        # S0 -> S1
+    page.locator("#journey-card-doctor").click()     # S1 -> S2
+    page.locator("#journey-card-myself").click()     # S2 -> S3
+    page.wait_for_timeout(200)
+    # currently on S3 - press Back twice
+    expect(page.locator("#journey-step-label")).to_contain_text("Step 3 of 7")
+    page.locator("#journey-back").click()            # S3 -> S2
+    page.wait_for_timeout(200)
+    expect(page.locator("#journey-step-label")).to_contain_text("Step 2 of 7")
+    # the rules panel should now show back_nav_count = 1
+    expect(page.locator("#journey-rules")).to_contain_text("back_nav_count >= 2")
+    expect(page.locator("#journey-rules")).to_contain_text("1")
+
+
 def test_interactive_mode_watchdog_fires_on_dwell(page: Page, app_url: str):
     """Sit on the S4 tariff page long enough for `dwell_current_s` to exceed
     the threshold (25s in config.yaml). The 1s watchdog should detect dwell

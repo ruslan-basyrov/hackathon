@@ -619,11 +619,19 @@ def render(
         with page_container:
             if cur in TERMINALS:
                 _render_terminal()
-            else:
-                renderers = INTERACTIVE_RENDERERS if interactive else AUTO_RENDERERS
-                renderer = renderers.get(cur)
-                if renderer:
-                    renderer()
+                return
+            renderers = INTERACTIVE_RENDERERS if interactive else AUTO_RENDERERS
+            renderer = renderers.get(cur)
+            # interactive Back button: emits a `back` Action so back_nav_count
+            # increments AND the state machine moves backward in the funnel.
+            # Shown on S1..S12 (no-op on S1 because it has no PREV, but the
+            # signal still records - useful for triggering repeated_back_nav).
+            if interactive and cur in (1, 2, 3, 4, 6, 7, 12):
+                ui.button("← Back", on_click=lambda: emit_action("back")).props(
+                    'id="journey-back" flat dense'
+                ).classes("text-sky-700 self-start mb-2")
+            if renderer:
+                renderer()
 
     def render_for_step(cur: int):
         paint_progress(cur)

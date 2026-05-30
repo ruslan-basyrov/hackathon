@@ -1,0 +1,43 @@
+[project]
+name = "conversion-coach"
+version = "0.1.0"
+description = "Conversion Coach — simulation substrate + staged coach (BUILD_SPEC)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+
+# Phase 1 baseline only needs pyyaml. Later phases are gated behind extras
+# so the coach container stays small and CPU-only (see requirements.txt note
+# that torch/transformers belong to the Leonardo LoRA env, not here).
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+# Phase 3: local GBM detection, metrics, experiment tracking.
+phase3 = [
+    "scikit-learn>=1.3",
+    "xgboost>=2.0",
+    "wandb>=0.16",
+]
+# Phase 4+: OpenAI-compatible client talking to the inference service.
+phase4 = [
+    "openai>=1.0",
+]
+# Stretch: Streamlit UI.
+ui = [
+    "streamlit>=1.30",
+]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.uv]
+default-groups = []
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["coach"]

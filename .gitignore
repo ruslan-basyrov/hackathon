@@ -1,0 +1,7 @@
+submission
+tracks
+.venv/
+__pycache__/
+*.pyc
+traces.jsonl
+.hf_cache/

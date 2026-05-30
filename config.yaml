@@ -1,0 +1,41 @@
+# Phase 1 — simulation skeleton
+seed: 0
+n_episodes: 10000          # quick demo run; the acceptance test uses a larger N
+
+# Conditional drop-off per critical step (relative to the cohort that reaches it).
+# Baseline = 0.34 * 0.76 * 0.22 ~= 5.68%. The 24% at S6 is the intermediate drop
+# attributed from the out-of-scope Step 5 (see BUILD_SPEC §4).
+p_dropoff:
+  S4: 0.66
+  S6: 0.24
+  S7: 0.78
+
+# Synthetic final-vs-provisional price gap: final = provisional * (1 + surcharge).
+# Real distribution is a documented unknown (BUILD_SPEC §4).
+surcharge:
+  low: 0.0
+  high: 0.15
+
+tariff_prices:             # the two in-scope (online-purchasable) tariffs
+  Start: 38.74
+  Optimal: 68.14
+
+# Signal-variance knobs — do NOT affect Phase 1 conversion (abandonment is a single
+# Bernoulli draw per critical step, decided before any noise).
+dwell_mean_s: 12.0
+tariff_hover_max: 3
+cancel_hover_prob: 0.3
+
+# Out-of-scope branch routing (hospital / others / OptPlus / Premium). Off in Phase 1
+# (one global in-scope profile); turned on with per-persona agents in Phase 2.
+p_out_of_scope_branch: 0.0
+
+# Trace sampling: full step traces written for the first N episodes (the demo output).
+trace_sample: 5
+
+# --- used from Phase 4 (inference) — the only model-swap knobs ---
+inference_base_url: "http://inference:8000/v1"
+model_name: "qwen2.5-7b-instruct"
+
+# --- used from Phase 3 (tracking) ---
+wandb_project: "conversion-coach"

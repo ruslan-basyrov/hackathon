@@ -1,0 +1,66 @@
+# Service topology (BUILD_SPEC §7). Three services, no finer.
+#
+# Phase 1 needs NEITHER a GPU NOR the inference service — the coach runs pure
+# simulation. Just: `docker compose run --rm coach`  (or `python runner.py` locally).
+#
+# The `inference` service becomes load-bearing at Phase 4. It is the ONLY place a
+# model swap happens: change MODEL_ID / MODEL_NAME in .env, nothing in coach code.
+
+services:
+  # --- model server: the swap boundary (Phase 4+) ---------------------------
+  inference:
+    build:
+      context: ./services/inference
+    command:
+      - "${MODEL_ID:-Qwen/Qwen2.5-7B-Instruct}"
+      - "--dtype=fp8"                                   # Blackwell-native; halves VRAM
+      - "--max-model-len=8192"
+      - "--gpu-memory-utilization=0.90"
+      - "--served-model-name=${MODEL_NAME:-qwen2.5-7b-instruct}"
+      - "--host=0.0.0.0"
+      - "--port=8000"
+    ports:
+      - "8000:8000"
+    environment:
+      - HF_TOKEN=${HF_TOKEN:-}
+    volumes:
+      - ${HF_HOME:-./.hf_cache}:/root/.cache/huggingface
+    # GPU passthrough. Requires nvidia-container-toolkit on the host (Arch: install
+    # `nvidia-container-toolkit`, then `nvidia-ctk runtime configure`). Verify the GPU
+    # is visible INSIDE the container, not just on the host:
+    #   docker compose run --rm inference --help   # then check nvidia-smi during a run
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    profiles: ["inference"]   # not started in Phase 1; `--profile inference` to enable
+
+  # --- simulation engine: the coach (Phase 1+) ------------------------------
+  coach:
+    build:
+      context: .
+      dockerfile: services/coach.Dockerfile
+    environment:
+      # The two model-swap knobs (Phase 4+). Default points at the inference service.
+      - INFERENCE_BASE_URL=${INFERENCE_BASE_URL:-http://inference:8000/v1}
+      - MODEL_NAME=${MODEL_NAME:-qwen2.5-7b-instruct}
+      # Tracking (Phase 3+). Online locally; key via env, never committed.
+      - WANDB_API_KEY=${WANDB_API_KEY:-}
+    volumes:
+      - .:/app                # live code; drop for an immutable image
+    # depends_on only matters once the coach calls the model (Phase 4+).
+    # depends_on: [inference]
+
+  # --- Streamlit UI: STRETCH (Phase 6) --------------------------------------
+  ui:
+    build:
+      context: .
+      dockerfile: services/ui.Dockerfile
+    ports:
+      - "8501:8501"
+    environment:
+      - INFERENCE_BASE_URL=${INFERENCE_BASE_URL:-http://inference:8000/v1}
+    profiles: ["ui"]          # `--profile ui` to enable, once ui/app.py exists

@@ -10,3 +10,4 @@ wandb/
 demo_videos/
 test-results/
 screenshots/
+*.pdf

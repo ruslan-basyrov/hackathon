@@ -60,3 +60,41 @@ def test_journey_persona_switcher(page: Page, app_url: str):
     page.locator("#journey-persona-select").click()
     page.locator('div[role="option"]:has-text("franz")').first.click()
     page.wait_for_url("**/journey**persona=franz**")
+
+
+def test_interactive_mode_user_drives(page: Page, app_url: str):
+    """In interactive mode the human is the driver. We simulate a Peter-style
+    user: click Get-a-quote, click Doctor, click Just-me, then re-edit the
+    DOB twice on S3 - the second click should push field_change_count to 2
+    while steps_completed is still < 4, firing the `early_overwhelm` rule
+    and opening the popup."""
+    page.goto(
+        f"{app_url}/journey?persona=peter&method=threshold&mode=interactive"
+    )
+    # walk forward into the funnel
+    page.locator("#journey-continue").click()                # S0 -> S1
+    page.locator("#journey-card-doctor").click()             # S1 -> S2 (select + continue)
+    page.locator("#journey-card-myself").click()             # S2 -> S3 (select + continue)
+    page.wait_for_timeout(150)
+    # now on S3 - two field re-edits should trip early_overwhelm
+    page.locator("#journey-edit-dob").click()
+    page.wait_for_timeout(150)
+    page.locator("#journey-edit-dob").click()
+    expect(page.locator("#journey-popup")).to_be_visible(timeout=5000)
+    expect(page.locator("#journey-popup-type")).to_contain_text("callback")
+
+
+def test_interactive_mode_watchdog_fires_on_dwell(page: Page, app_url: str):
+    """Sit on the S4 tariff page long enough for `dwell_current_s` to exceed
+    the threshold (25s in config.yaml). The 1s watchdog should detect dwell
+    and open the popup with `price_reframe` (Judith's S4 intervention)."""
+    page.goto(
+        f"{app_url}/journey?persona=judith&method=threshold&mode=interactive"
+    )
+    page.locator("#journey-continue").click()                # S0 -> S1
+    page.locator("#journey-card-doctor").click()             # S1 -> S2
+    page.locator("#journey-card-myself").click()             # S2 -> S3
+    page.locator("#journey-continue").click()                # S3 -> S4
+    # we're now on S4 - the watchdog should fire within ~26s
+    expect(page.locator("#journey-popup")).to_be_visible(timeout=35_000)
+    expect(page.locator("#journey-popup-type")).to_contain_text("price_reframe")

@@ -42,11 +42,12 @@ def journey(
     seed: int = 0, episode: int = 0,
     persona: str = "judith", method: str = "threshold",
     gbm_threshold: float = 0.85, narration: str = "",
-    autoplay_ms: int = 900,
+    autoplay_ms: int = 900, mode: str = "auto",
 ):
     journey_view.render(seed=seed, episode=episode, persona=persona,
                         method=method, gbm_threshold=gbm_threshold,
-                        narration=narration, autoplay_ms=autoplay_ms)
+                        narration=narration, autoplay_ms=autoplay_ms,
+                        mode=mode)
 
 
 def main():

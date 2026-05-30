@@ -1,51 +1,47 @@
 """Customer-facing journey at `/journey` (BUILD_SPEC §Phase 3.5).
 
-A stylized "HealthCover" insurance signup. Renders one page per simulator step.
-The agent's actions drive page transitions; intervention popups overlay the
-page when the coach fires. Auto-play is ON by default - this is the on-stage
-demo route. The original debug viewer lives at `/`.
+A stylized "HealthCover" insurance signup. Two driver modes share the same
+visual layout and the same `Session`:
+
+  * **auto mode** (default, `?mode=auto`) - `StubAgent` drives via auto-play;
+    the audience watches a persona traverse the funnel; popups overlay on
+    coach fire. This is the on-stage demo path.
+
+  * **interactive mode** (`?mode=interactive`) - the human is the user. Every
+    interactive element is clickable and builds a real `Action`; wall-clock
+    dwell feeds the signals; a watchdog timer consults the coach every second
+    so dwell-based interventions fire while you sit on a page.
 
 Stable element IDs (test contract):
-  journey-page             - the page content container (changes per step)
-  journey-step-label       - "Step N of 7" indicator
-  journey-progress         - the dotted progress bar
-  journey-popup            - the intervention overlay
-  journey-popup-type       - intervention type inside the popup
-  journey-popup-text       - realize() output inside the popup
-  journey-popup-close      - dismiss the popup
-  journey-narration        - on-screen narration for the demo path
-  journey-autoplay-toggle, journey-persona-select, journey-method-select
+  journey-page, journey-step-label, journey-progress,
+  journey-popup, journey-popup-type, journey-popup-text, journey-popup-close,
+  journey-narration, journey-autoplay-toggle, journey-step-button,
+  journey-persona-select, journey-method-select,
+  journey-mode-toggle, journey-quick-judith, journey-quick-franz, journey-quick-peter,
+  journey-cancel-link, journey-edit-dob, journey-continue
 """
 from __future__ import annotations
 
 from nicegui import ui
 
 from services.ui.session import Session
+from state_machine import Action
 
 
-# Step int -> (page title, position-in-funnel) — only in-scope steps render here.
+# Step int -> page title.
 PAGE_TITLES = {
-    0: "Welcome",
-    1: "What kind of coverage?",
-    2: "Who is this for?",
-    3: "Your details",
-    4: "Choose your tariff",
-    6: "A few health questions",
-    7: "Your personalised price",
-    12: "Confirm and finish",
-    90: "You're covered",
-    91: "Session ended",
-    92: "An advisor will be in touch",
-    93: "We'll call you back",
+    0: "Welcome", 1: "What kind of coverage?", 2: "Who is this for?",
+    3: "Your details", 4: "Choose your tariff", 6: "A few health questions",
+    7: "Your personalised price", 12: "Confirm and finish",
+    90: "You're covered", 91: "Session ended",
+    92: "An advisor will be in touch", 93: "We'll call you back",
 }
-FUNNEL_STEPS = [1, 2, 3, 4, 6, 7, 12]   # the user-visible progress positions
+FUNNEL_STEPS = [1, 2, 3, 4, 6, 7, 12]
 TERMINALS = {90, 91, 92, 93}
 
-# Brand colours (Tailwind class fragments)
+# Brand colours
 BRAND_PRIMARY = "bg-sky-600"
 BRAND_PRIMARY_HOVER = "hover:bg-sky-700"
-BRAND_PRIMARY_TEXT = "text-sky-600"
-BRAND_ACCENT = "bg-amber-100"
 
 
 def render(
@@ -56,10 +52,12 @@ def render(
     gbm_threshold: float = 0.85,
     narration: str = "",
     autoplay_ms: int = 900,
+    mode: str = "auto",
 ):
+    interactive = (mode == "interactive")
     sess = Session(
         seed=seed, episode=episode, persona=persona,
-        method=method, gbm_threshold=gbm_threshold,
+        method=method, gbm_threshold=gbm_threshold, interactive=interactive,
     )
 
     # ---- top branding bar --------------------------------------------------
@@ -68,15 +66,18 @@ def render(
             ui.label("HealthCover").classes("text-2xl font-bold tracking-tight")
             ui.label("private medical insurance").classes("text-sky-100 text-sm ml-2")
             ui.element("div").classes("flex-grow")
-            ui.label("Need help? 0800 123 456").classes("text-sm")
+            if interactive:
+                ui.label("manual mode — your clicks are the user").classes(
+                    "text-xs bg-sky-700 px-2 py-1 rounded font-mono"
+                )
+            ui.label("Need help? 0800 123 456").classes("text-sm ml-3")
 
-    # ---- demo / narration strip (above the page area) ----------------------
+    # ---- narration strip ---------------------------------------------------
     if narration:
         ui.label(narration).props('id="journey-narration"').classes(
             "max-w-5xl mx-auto mt-2 px-6 italic text-sky-900 text-sm"
         )
     else:
-        # always render the element so tests can target it even when empty
         ui.label("").props('id="journey-narration"').classes("hidden")
 
     # ---- progress bar ------------------------------------------------------
@@ -90,15 +91,11 @@ def render(
                 dot = ui.element("div").classes("h-2 flex-1 rounded-full bg-gray-200")
                 progress_dots.append(dot)
 
-    # ---- page content area -------------------------------------------------
     page_container = ui.column().props('id="journey-page"').classes(
         "max-w-3xl mx-auto mt-6 px-6 pb-12 w-full"
     )
 
     # ---- popup overlay -----------------------------------------------------
-    def close_popup():
-        popup.close()
-
     with ui.dialog().props('id="journey-popup"') as popup, ui.card().classes(
         "min-w-[28rem] max-w-md p-6 border-l-4 border-sky-600"
     ):
@@ -113,18 +110,30 @@ def render(
             "text-base text-gray-800 mt-2 leading-relaxed"
         )
         with ui.row().classes("mt-4 justify-end w-full"):
-            ui.button("Got it", on_click=close_popup).props(
+            ui.button("Got it", on_click=lambda: popup.close()).props(
                 'id="journey-popup-close" flat'
             ).classes("bg-sky-600 text-white px-4")
 
-    # ---- per-step page renderers -------------------------------------------
+    # ---- styling helpers ---------------------------------------------------
     def _h1(text: str):
         ui.label(text).classes("text-3xl font-bold text-gray-900 mb-2")
 
     def _subtitle(text: str):
         ui.label(text).classes("text-base text-gray-600 mb-6")
 
-    def _option_card(title: str, sub: str, selected: bool = False, advisory: bool = False):
+    def _selected_tariff_name() -> str:
+        p = sess.provisional
+        if p is None:
+            return "Optimal"
+        if abs(p - 38.74) < 0.01:
+            return "Start"
+        if abs(p - 68.14) < 0.01:
+            return "Optimal"
+        return "Optimal"
+
+    # ---- generic option card ------------------------------------------------
+    def _option_card(title: str, sub: str, selected: bool = False,
+                     advisory: bool = False, on_click=None, elem_id: str = ""):
         cls = "p-5 rounded-lg border-2 transition-all flex-1 min-w-48 max-w-72 "
         if selected:
             cls += "border-sky-600 bg-sky-50 shadow-md "
@@ -132,11 +141,38 @@ def render(
             cls += "border-amber-300 bg-amber-50 "
         else:
             cls += "border-gray-200 bg-white "
-        with ui.element("div").classes(cls):
+        if on_click is not None:
+            cls += "cursor-pointer hover:shadow-lg hover:border-sky-400 "
+        card = ui.element("div").classes(cls)
+        if elem_id:
+            card.props(f'id="{elem_id}"')
+        if on_click is not None:
+            card.on("click", lambda _=None, h=on_click: h())
+        with card:
             ui.label(title).classes("text-lg font-semibold mb-1")
             ui.label(sub).classes("text-sm text-gray-600")
+        return card
 
-    def _render_start():
+    # ---- action emit (interactive mode) ------------------------------------
+    def emit_action(type_: str, target: str = None):
+        """Build a wall-clock-dwell Action from a user click and apply it."""
+        if sess.is_done():
+            return
+        dwell = sess.wall_clock_dwell()
+        sig, intervention = sess.consult_coach()   # coach sees pre-action signals
+        sess.apply_action(Action(type=type_, target=target, dwell_s=dwell))
+        # show popup if intervention fired AND we haven't already shown it for this step
+        if intervention is not None and sess.shown_intervention_step != sig.step:
+            sess.shown_intervention_step = sig.step
+            popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
+            popup_text.set_text(intervention.text)
+            popup.open()
+        render_for_step(int(sess.state))
+
+    # ============================================================================
+    # AUTO-mode renderers (current behaviour - disabled UI, agent drives)
+    # ============================================================================
+    def _render_start_auto():
         _h1("Health insurance, online in minutes")
         _subtitle("A personalised quote in under five minutes. No paperwork. "
                   "No phone calls unless you want them.")
@@ -145,30 +181,26 @@ def render(
                 f"{BRAND_PRIMARY} text-white px-8 py-3 text-base font-semibold"
             )
 
-    def _render_s1_coverage():
+    def _render_s1_auto():
         _h1("What kind of coverage are you looking for?")
         _subtitle("You can change this later. We'll tailor the rest of the journey.")
         with ui.row().classes("gap-4 mt-6 flex-wrap"):
             _option_card("Private doctor visits",
                          "Outpatient care, specialists, diagnostics, therapies.",
                          selected=True)
-            _option_card("Hospital stay",
-                         "Inpatient care, surgery, private room. Advisory.",
+            _option_card("Hospital stay", "Inpatient care, surgery, private room. Advisory.",
                          advisory=True)
-            _option_card("Both",
-                         "Comprehensive coverage. Advisory.",
-                         advisory=True)
+            _option_card("Both", "Comprehensive coverage. Advisory.", advisory=True)
 
-    def _render_s2_for_whom():
+    def _render_s2_auto():
         _h1("Who would you like to insure?")
         _subtitle("")
         with ui.row().classes("gap-4 mt-6"):
             _option_card("Just me", "Personal coverage.", selected=True)
             _option_card("Family or other persons",
-                         "Coverage for multiple people. Advisory.",
-                         advisory=True)
+                         "Coverage for multiple people. Advisory.", advisory=True)
 
-    def _render_s3_personal():
+    def _render_s3_auto():
         _h1("Tell us a bit about yourself")
         _subtitle("We need a couple of basics before we can show you a price.")
         with ui.column().classes("gap-4 mt-4 max-w-md"):
@@ -176,35 +208,37 @@ def render(
             ui.input(label="Social insurance number",
                      value="1234 150785").props("disable outlined").classes("w-full")
 
-    def _render_s4_tariff():
+    def _render_s4_auto():
         _h1("Choose your tariff")
         _subtitle("Two tariffs you can buy online; two require a short advisory call.")
         with ui.row().classes("gap-3 mt-6 flex-wrap"):
             _tariff_card("Start", "€38.74 / mo",
-                         "Outpatient essentials. Fully online.",
-                         online=True, selected=(sess.last_action and
-                                                sess.last_action.target == "Start"))
+                         "Outpatient essentials. Fully online.", online=True,
+                         selected=(sess.last_action and sess.last_action.target == "Start"))
             _tariff_card("Optimal", "€68.14 / mo",
                          "Outpatient + therapies + medications. Fully online.",
                          online=True, badge="Popular",
-                         selected=(sess.last_action and
-                                   sess.last_action.target == "Optimal"))
+                         selected=(sess.last_action and sess.last_action.target == "Optimal"))
             _tariff_card("Opt. Plus", "Advisory",
-                         "Adds private hospital. Requires a short call.",
-                         online=False)
+                         "Adds private hospital. Requires a short call.", online=False)
             _tariff_card("Premium", "Advisory",
-                         "Top-tier coverage. Requires a short call.",
-                         online=False)
+                         "Top-tier coverage. Requires a short call.", online=False)
 
     def _tariff_card(name, price, body, online: bool, badge: str = "",
-                     selected: bool = False):
+                     selected: bool = False, on_click=None, elem_id: str = ""):
         ring = "border-sky-600 bg-sky-50 shadow-md" if selected else (
             "border-amber-300 bg-amber-50" if not online else
             "border-gray-200 bg-white"
         )
-        with ui.element("div").classes(
-            f"p-4 rounded-lg border-2 flex-1 min-w-44 max-w-60 {ring}"
-        ):
+        extra = " cursor-pointer hover:shadow-lg hover:border-sky-400" if on_click else ""
+        card = ui.element("div").classes(
+            f"p-4 rounded-lg border-2 flex-1 min-w-44 max-w-60 {ring}{extra}"
+        )
+        if elem_id:
+            card.props(f'id="{elem_id}"')
+        if on_click is not None:
+            card.on("click", lambda _=None, h=on_click: h())
+        with card:
             with ui.row().classes("items-center gap-2"):
                 ui.label(name).classes("text-lg font-semibold")
                 if badge:
@@ -217,7 +251,7 @@ def render(
                 f"text-xs mt-3 {'text-emerald-700' if online else 'text-amber-800'} font-semibold"
             )
 
-    def _render_s6_health():
+    def _render_s6_auto():
         _h1("A few health questions")
         _subtitle("Honest answers keep your cover valid. This stays private.")
         for q in [
@@ -228,24 +262,9 @@ def render(
         ]:
             with ui.row().classes("items-center gap-4 my-2"):
                 ui.label(q).classes("flex-1 text-sm")
-                ui.radio(["Yes", "No"], value="No").props(
-                    "disable inline"
-                ).classes("text-sm")
+                ui.radio(["Yes", "No"], value="No").props("disable inline").classes("text-sm")
 
-    def _selected_tariff_name() -> str:
-        # the selected tariff name is determined by which price the simulator
-        # bound to `provisional` at S4 (sess.provisional). 38.74 -> Start,
-        # 68.14 -> Optimal. Fallback to Optimal if no selection happened yet.
-        p = sess.provisional
-        if p is None:
-            return "Optimal"
-        if abs(p - 38.74) < 0.01:
-            return "Start"
-        if abs(p - 68.14) < 0.01:
-            return "Optimal"
-        return "Optimal"
-
-    def _render_s7_final():
+    def _render_s7_auto():
         provisional = sess.provisional or 68.14
         final = round(provisional * (1 + sess.surcharge), 2)
         gap = round(final - provisional, 2)
@@ -271,19 +290,13 @@ def render(
             )
             ui.button("Cancel").props("disable flat").classes("text-gray-500 px-3")
 
-    def _render_s12_closing():
+    def _render_s12_auto():
         provisional = sess.provisional or 68.14
         final = round(provisional * (1 + sess.surcharge), 2)
         _h1("Review and confirm")
         _subtitle("Almost done.")
-        tariff = _selected_tariff_name()
-        rows = [
-            ("Plan", tariff),
-            ("Monthly", f"€{final:.2f}"),
-            ("Billing", "Monthly, paperless"),
-            ("Coverage starts", "Next month"),
-        ]
-        for k, v in rows:
+        for k, v in [("Plan", _selected_tariff_name()), ("Monthly", f"€{final:.2f}"),
+                     ("Billing", "Monthly, paperless"), ("Coverage starts", "Next month")]:
             with ui.row().classes("py-2 border-b border-gray-100"):
                 ui.label(k).classes("w-40 text-gray-600")
                 ui.label(v).classes("font-semibold text-gray-900")
@@ -291,6 +304,161 @@ def render(
         ui.button("Confirm and purchase").props("disable").classes(
             f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-4"
         )
+
+    # ============================================================================
+    # INTERACTIVE-mode renderers (clickable; build Actions from user clicks)
+    # ============================================================================
+    def _render_start_interactive():
+        _h1("Health insurance, online in minutes")
+        _subtitle("A personalised quote in under five minutes. No paperwork. "
+                  "No phone calls unless you want them.")
+        with ui.row().classes("mt-8"):
+            ui.button("Get a quote",
+                      on_click=lambda: emit_action("continue")).props(
+                'id="journey-continue"'
+            ).classes(f"{BRAND_PRIMARY} text-white px-8 py-3 text-base font-semibold")
+
+    def _render_s1_interactive():
+        _h1("What kind of coverage are you looking for?")
+        _subtitle("Pick one to continue.")
+        with ui.row().classes("gap-4 mt-6 flex-wrap"):
+            _option_card("Private doctor visits",
+                         "Outpatient care, specialists, diagnostics, therapies.",
+                         on_click=lambda: (emit_action("select", "doctor"),
+                                           emit_action("continue")),
+                         elem_id="journey-card-doctor")
+            _option_card("Hospital stay", "Inpatient care, surgery. Advisory.",
+                         advisory=True,
+                         on_click=lambda: emit_action("select", "hospital"),
+                         elem_id="journey-card-hospital")
+            _option_card("Both", "Comprehensive. Advisory.", advisory=True,
+                         on_click=lambda: emit_action("select", "both"),
+                         elem_id="journey-card-both")
+
+    def _render_s2_interactive():
+        _h1("Who would you like to insure?")
+        _subtitle("Pick one to continue.")
+        with ui.row().classes("gap-4 mt-6"):
+            _option_card("Just me", "Personal coverage.",
+                         on_click=lambda: (emit_action("select", "myself"),
+                                           emit_action("continue")),
+                         elem_id="journey-card-myself")
+            _option_card("Family or other persons",
+                         "Coverage for multiple people. Advisory.", advisory=True,
+                         on_click=lambda: emit_action("select", "others"),
+                         elem_id="journey-card-others")
+
+    def _render_s3_interactive():
+        _h1("Tell us a bit about yourself")
+        _subtitle("Click an Edit button to re-check a field (each click counts as a re-edit).")
+        with ui.column().classes("gap-3 mt-4 max-w-md"):
+            with ui.row().classes("gap-2 items-end"):
+                ui.input(label="Date of birth", value="15.07.1985").props("disable outlined").classes("flex-grow")
+                ui.button("Edit",
+                          on_click=lambda: emit_action("change_field", "dob")).props(
+                    'id="journey-edit-dob" flat'
+                ).classes("text-sky-700")
+            with ui.row().classes("gap-2 items-end"):
+                ui.input(label="Social insurance number",
+                         value="1234 150785").props("disable outlined").classes("flex-grow")
+                ui.button("Edit",
+                          on_click=lambda: emit_action("change_field", "ssn")).props(
+                    "flat"
+                ).classes("text-sky-700")
+        ui.button("Continue", on_click=lambda: emit_action("continue")).props(
+            'id="journey-continue"'
+        ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-6")
+
+    def _render_s4_interactive():
+        _h1("Choose your tariff")
+        _subtitle("Click a card to pick it. Hover the advisory ones if you want to "
+                  "compare — that hover counts as a signal.")
+        with ui.row().classes("gap-3 mt-6 flex-wrap"):
+            _tariff_card("Start", "€38.74 / mo",
+                         "Outpatient essentials. Fully online.", online=True,
+                         on_click=lambda: (emit_action("select", "Start"),
+                                           emit_action("continue")),
+                         elem_id="journey-tariff-Start")
+            _tariff_card("Optimal", "€68.14 / mo",
+                         "Outpatient + therapies + medications. Fully online.",
+                         online=True, badge="Popular",
+                         on_click=lambda: (emit_action("select", "Optimal"),
+                                           emit_action("continue")),
+                         elem_id="journey-tariff-Optimal")
+            _tariff_card("Opt. Plus", "Advisory",
+                         "Adds private hospital. Requires a short call.", online=False,
+                         on_click=lambda: emit_action("hover", "OptPlus"),
+                         elem_id="journey-tariff-OptPlus")
+            _tariff_card("Premium", "Advisory",
+                         "Top-tier coverage. Requires a short call.", online=False,
+                         on_click=lambda: emit_action("hover", "Premium"),
+                         elem_id="journey-tariff-Premium")
+
+    def _render_s6_interactive():
+        _h1("A few health questions")
+        _subtitle("Click any 'No' answer and then Continue.")
+        for q in [
+            "Have you had any major surgery in the last 5 years?",
+            "Are you currently on prescription medication?",
+            "Do you have any chronic conditions?",
+            "Have you smoked in the last 12 months?",
+        ]:
+            with ui.row().classes("items-center gap-4 my-2"):
+                ui.label(q).classes("flex-1 text-sm")
+                ui.radio(["Yes", "No"], value="No").props("inline").classes("text-sm")
+        ui.button("Continue", on_click=lambda: emit_action("continue")).props(
+            'id="journey-continue"'
+        ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-6")
+
+    def _render_s7_interactive():
+        provisional = sess.provisional or 68.14
+        final = round(provisional * (1 + sess.surcharge), 2)
+        gap = round(final - provisional, 2)
+        _h1("Your personalised price")
+        _subtitle("Based on your health profile.")
+        with ui.element("div").classes(
+            "p-6 rounded-lg bg-gradient-to-br from-sky-50 to-white border border-sky-200"
+        ):
+            ui.label(_selected_tariff_name()).classes(
+                "text-sm uppercase tracking-wide text-sky-700 font-semibold"
+            )
+            ui.label(f"€{final:.2f} / month").classes(
+                "text-4xl font-bold text-gray-900 mt-1"
+            )
+            if gap > 0.01:
+                ui.label(
+                    f"€{gap:.2f} above the estimated €{provisional:.2f}, "
+                    "based on the health questions you answered."
+                ).classes("text-sm text-gray-600 mt-2 max-w-md")
+        with ui.row().classes("mt-6 gap-3 items-center"):
+            ui.button("Continue to checkout",
+                      on_click=lambda: emit_action("continue")).props(
+                'id="journey-continue"'
+            ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold")
+            ui.button("Cancel",
+                      on_click=lambda: emit_action("hover", "cancel")).props(
+                'id="journey-cancel-link" flat'
+            ).classes("text-gray-500 px-3 underline")
+            ui.label("(clicking Cancel registers a 'hovered cancel' signal "
+                     "— it doesn't actually cancel)").classes(
+                "text-xs text-gray-400 ml-2"
+            )
+
+    def _render_s12_interactive():
+        provisional = sess.provisional or 68.14
+        final = round(provisional * (1 + sess.surcharge), 2)
+        _h1("Review and confirm")
+        _subtitle("Almost done.")
+        for k, v in [("Plan", _selected_tariff_name()), ("Monthly", f"€{final:.2f}"),
+                     ("Billing", "Monthly, paperless"), ("Coverage starts", "Next month")]:
+            with ui.row().classes("py-2 border-b border-gray-100"):
+                ui.label(k).classes("w-40 text-gray-600")
+                ui.label(v).classes("font-semibold text-gray-900")
+        ui.checkbox("I agree to the terms and the privacy notice").classes("mt-4")
+        ui.button("Confirm and purchase",
+                  on_click=lambda: emit_action("continue")).props(
+            'id="journey-continue"'
+        ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-4")
 
     def _render_terminal():
         cur = int(sess.state)
@@ -313,14 +481,21 @@ def render(
             _subtitle("Expect a call within the next business day — "
                       "no fuss, no obligations.")
 
-    STEP_RENDERERS = {
-        0: _render_start, 1: _render_s1_coverage, 2: _render_s2_for_whom,
-        3: _render_s3_personal, 4: _render_s4_tariff, 6: _render_s6_health,
-        7: _render_s7_final, 12: _render_s12_closing,
+    AUTO_RENDERERS = {
+        0: _render_start_auto, 1: _render_s1_auto, 2: _render_s2_auto,
+        3: _render_s3_auto, 4: _render_s4_auto, 6: _render_s6_auto,
+        7: _render_s7_auto, 12: _render_s12_auto,
+    }
+    INTERACTIVE_RENDERERS = {
+        0: _render_start_interactive, 1: _render_s1_interactive,
+        2: _render_s2_interactive, 3: _render_s3_interactive,
+        4: _render_s4_interactive, 6: _render_s6_interactive,
+        7: _render_s7_interactive, 12: _render_s12_interactive,
     }
 
-    # ---- driver loop -------------------------------------------------------
+    # ---- driver: auto-play timer or watchdog -------------------------------
     autoplay_timer = {"t": None}
+    watchdog_timer = {"t": None}
 
     def _step_position(cur: int) -> int:
         try:
@@ -348,7 +523,8 @@ def render(
             if cur in TERMINALS:
                 _render_terminal()
             else:
-                renderer = STEP_RENDERERS.get(cur)
+                renderers = INTERACTIVE_RENDERERS if interactive else AUTO_RENDERERS
+                renderer = renderers.get(cur)
                 if renderer:
                     renderer()
 
@@ -361,7 +537,12 @@ def render(
             autoplay_timer["t"].deactivate()
             autoplay_timer["t"] = None
 
-    def tick():
+    def stop_watchdog():
+        if watchdog_timer["t"] is not None:
+            watchdog_timer["t"].deactivate()
+            watchdog_timer["t"] = None
+
+    def auto_tick():
         if sess.is_done():
             stop_autoplay()
             return
@@ -369,11 +550,10 @@ def render(
         result = sess.step_once()
         if result and result["intervention"] is not None:
             iv = result["intervention"]
-            # show the page for the FIRE step (state already advanced underneath)
             render_for_step(iv.step)
             popup_type.set_text(f"{iv.type}  ·  {iv.mode}")
             popup_text.set_text(iv.text)
-            stop_autoplay()   # pause for audience read; resume on close
+            stop_autoplay()
             popup.open()
             return
         if int(sess.state) != prev_state:
@@ -382,41 +562,80 @@ def render(
             stop_autoplay()
             render_for_step(int(sess.state))
 
+    def watchdog_tick():
+        """Interactive-mode passive coach: if the human just sits on a page,
+        synthesize dwell from wall-clock time and ask the coach. If a popup
+        fires, show it once per state (gated by `shown_intervention_step`)."""
+        if sess.is_done():
+            stop_watchdog()
+            return
+        sig, intervention = sess.consult_coach(
+            virtual_dwell_s=sess.wall_clock_dwell()
+        )
+        if intervention is not None and sess.shown_intervention_step != int(sess.state):
+            sess.shown_intervention_step = int(sess.state)
+            popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
+            popup_text.set_text(intervention.text)
+            popup.open()
+
     def resume_after_popup():
         popup.close()
-        # paint the actual post-action state (may be terminal)
         render_for_step(int(sess.state))
-        if not sess.is_done() and autoplay_switch.value:
-            autoplay_timer["t"] = ui.timer(autoplay_ms / 1000.0, tick)
+        if not interactive and not sess.is_done() and autoplay_switch.value:
+            autoplay_timer["t"] = ui.timer(autoplay_ms / 1000.0, auto_tick)
 
-    # rewire popup close to resume auto-play
     popup.on("hide", resume_after_popup)
 
     def toggle_autoplay(e):
         if e.value and not sess.is_done():
-            autoplay_timer["t"] = ui.timer(autoplay_ms / 1000.0, tick)
+            autoplay_timer["t"] = ui.timer(autoplay_ms / 1000.0, auto_tick)
         else:
             stop_autoplay()
 
+    def manual_step():
+        """In auto mode: advance one tick (pauses auto-play). In interactive
+        mode this button isn't shown (it'd be redundant - you click the actual
+        page elements)."""
+        if autoplay_switch.value:
+            autoplay_switch.value = False
+        stop_autoplay()
+        auto_tick()
+
     # ---- footer controls ---------------------------------------------------
+    def _scenario_url(p: str, ep: int) -> str:
+        return (f"/journey?seed={seed}&episode={ep}"
+                f"&persona={p}&method={method}&gbm_threshold={gbm_threshold}"
+                f"&mode={mode}")
+
     with ui.row().classes("max-w-5xl mx-auto mt-6 px-6 gap-3 items-center "
                           "border-t border-gray-200 pt-4 w-full"):
-        autoplay_switch = ui.switch("Auto-play", value=True,
-                                    on_change=toggle_autoplay).props(
-            'id="journey-autoplay-toggle"'
-        )
+        if not interactive:
+            ui.button("Step", on_click=manual_step).props(
+                'id="journey-step-button"'
+            ).classes(f"{BRAND_PRIMARY} text-white px-4")
+            autoplay_switch = ui.switch("Auto-play", value=True,
+                                        on_change=toggle_autoplay).props(
+                'id="journey-autoplay-toggle"'
+            )
+        else:
+            # placeholder so subsequent code referring to autoplay_switch.value
+            # doesn't blow up in interactive mode (it never starts auto-play)
+            autoplay_switch = ui.switch("Auto-play", value=False).props(
+                'id="journey-autoplay-toggle" disable'
+            ).classes("hidden")
+            ui.label("Click the actual page elements above. Coach watches "
+                     "your dwell — sit on a page to test that.").classes(
+                "text-sm text-gray-600"
+            )
         ui.select(
             options=["judith", "franz", "peter", "global"], value=persona,
-            on_change=lambda e: ui.navigate.to(
-                f"/journey?seed={seed}&episode={episode}"
-                f"&persona={e.value}&method={method}&gbm_threshold={gbm_threshold}"
-            ),
+            on_change=lambda e: ui.navigate.to(_scenario_url(e.value, episode)),
         ).props('id="journey-persona-select"').classes("w-40")
         ui.select(
             options=["threshold", "gbm"], value=method,
             on_change=lambda e: ui.navigate.to(
                 f"/journey?seed={seed}&episode={episode}"
-                f"&persona={persona}&method={e.value}&gbm_threshold={gbm_threshold}"
+                f"&persona={persona}&method={e.value}&gbm_threshold={gbm_threshold}&mode={mode}"
             ),
         ).props('id="journey-method-select"').classes("w-40")
         ui.element("div").classes("flex-grow")
@@ -424,13 +643,42 @@ def render(
                 f"&persona={persona}&method={method}").classes(
             "text-sm text-sky-700 underline"
         )
+
+    # quick-load scenario pills + mode toggle (always visible, low key)
+    with ui.row().classes("max-w-5xl mx-auto px-6 gap-2 items-center "
+                          "text-xs text-gray-500 mt-2 mb-6 flex-wrap"):
+        ui.label("Quick scenarios:").classes("font-semibold")
+        ui.link("Judith S4", "/journey?seed=0&episode=0&persona=judith&method=threshold"
+                + (f"&mode={mode}" if interactive else "")).props(
+            'id="journey-quick-judith"'
+        ).classes("text-sky-700 underline")
+        ui.link("Franz S7", "/journey?seed=0&episode=16&persona=franz&method=threshold"
+                + (f"&mode={mode}" if interactive else "")).props(
+            'id="journey-quick-franz"'
+        ).classes("text-sky-700 underline")
+        ui.link("Peter early", "/journey?seed=0&episode=0&persona=peter&method=threshold"
+                + (f"&mode={mode}" if interactive else "")).props(
+            'id="journey-quick-peter"'
+        ).classes("text-sky-700 underline")
+        ui.element("div").classes("flex-grow")
+        target_mode = "auto" if interactive else "interactive"
+        toggle_label = "↷ Switch to auto" if interactive else "✋ Drive it yourself"
+        ui.link(toggle_label,
+                f"/journey?seed={seed}&episode={episode}&persona={persona}"
+                f"&method={method}&gbm_threshold={gbm_threshold}&mode={target_mode}").props(
+            'id="journey-mode-toggle"'
+        ).classes("text-sky-700 underline font-semibold")
         ui.label(
-            f"seed={seed}  ep={episode}  detector={method}"
-        ).classes("text-xs text-gray-500 font-mono")
+            f"seed={seed}  ep={episode}  detector={method}  mode={mode}"
+        ).classes("font-mono")
 
     # initial paint
     render_for_step(int(sess.state))
 
-    # kick off auto-play
-    if autoplay_switch.value:
-        autoplay_timer["t"] = ui.timer(autoplay_ms / 1000.0, tick)
+    # kick off driver
+    if interactive:
+        # watchdog: 1s tick, only fires once per state (gated by shown_intervention_step)
+        watchdog_timer["t"] = ui.timer(1.0, watchdog_tick)
+    else:
+        if autoplay_switch.value:
+            autoplay_timer["t"] = ui.timer(autoplay_ms / 1000.0, auto_tick)

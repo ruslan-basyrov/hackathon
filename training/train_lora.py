@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from datasets import Dataset
-from peft import LoraConfig, PeftModel, get_peft_model
+from peft import LoraConfig, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from trl import SFTConfig, SFTTrainer
 
@@ -185,7 +185,7 @@ def main() -> None:
         lr_scheduler_type="cosine",
         warmup_ratio=0.03,
         weight_decay=0.0,
-        max_seq_length=args.max_seq_len,
+        max_length=args.max_seq_len,        # trl >= 0.18: was `max_seq_length`
         bf16=True,
         logging_steps=10,
         eval_strategy="epoch",

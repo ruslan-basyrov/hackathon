@@ -46,13 +46,21 @@ personas:
     dwell_mult: {S1: 2.5, S2: 2.5, S3: 3.5}    # struggling-mode dwell
     sig_changes: {S1: 1, S2: 1, S3: 2}         # struggling-mode form re-edits (the trigger)
 
-# --- Detection thresholds (Phase 2) -----------------------------------------
+# --- Detection (Phase 2 thresholds + Phase 3 GBM) ---------------------------
+# `method` swaps backends behind the frozen detect(signals, cfg) interface:
+#   * threshold  -> Phase 2 hand-written rules (default; runs with no model file)
+#   * gbm        -> Phase 3 xgboost classifier loaded from `gbm_model_path`
 detection:
+  method: threshold                # threshold | gbm
+  # threshold backend (Phase 2)
   dwell_threshold_s: 25.0          # S4 hesitation (Judith)
   overwhelm_changes: 2             # early form re-edits to count as overwhelmed (Peter)
   early_overwhelm_max_steps: 4     # ... while still early (steps_completed < 4)
   price_gap_threshold: 4.0         # S7 sticker shock (Franz)
   back_nav_threshold: 2
+  # GBM backend (Phase 3) - the artefact is written by training/train_gbm.py
+  gbm_model_path: models/gbm.json
+  gbm_threshold: 0.5               # fire when predict_proba(abandon) >= this
 
 # Assumed stay-intervention drop-off reduction (a PARAMETER in P1-P3, not measured;
 # real efficacy is tested only when LLM bots react to wording in P4-P5).

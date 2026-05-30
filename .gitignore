@@ -6,3 +6,4 @@ __pycache__/
 traces.jsonl
 .hf_cache/
 .env*
+wandb/

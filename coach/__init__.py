@@ -55,7 +55,7 @@ def coach(signals: Signals, persona: str, policy) -> Optional[Intervention]:
         type=itype,
         persona=persona,
         step=int(signals.step),
-        text=realize(itype, signals),
+        text=realize(itype, signals, persona=persona, cfg=policy),
         effectiveness=eff,
         mode=mode,
     )

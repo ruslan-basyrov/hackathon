@@ -76,5 +76,21 @@ handoff_accept_prob:
 inference_base_url: "http://inference:8000/v1"
 model_name: "qwen2.5-7b-instruct"
 
+# --- Phase 4: realize() backend ---------------------------------------------
+# `method` picks template (Phase 2-3) or LLM (Phase 4) for intervention wording.
+# Default is `template` so the Phase 2/3 contract holds with no inference
+# server running. Flip to `llm` (+ start a local model, see services/inference/)
+# to get persona-tailored wording. The graceful_fallback path is what makes
+# the §Phase 4 degradation test decisive: even with method=llm, an unreachable
+# endpoint falls back to templates and the simulator's decisions are unchanged.
+realize:
+  method: template                 # template | llm
+  graceful_fallback: true          # on LLM failure -> use template wording
+  timeout_s: 8.0
+  max_tokens: 120
+  temperature: 0.7
+
+inference_api_key: "local"         # most local servers ignore this
+
 # --- used from Phase 3 (tracking) ---
 wandb_project: "conversion-coach"

@@ -34,6 +34,19 @@ ui = [
     "playwright>=1.40",
     "pytest-playwright>=0.5",
 ]
+# Phase 5: LoRA fine-tune env (Leonardo only — do NOT install into the coach
+# container). torch/transformers/peft are GPU-heavy and intentionally kept out
+# of the runtime image; the inference container only needs vLLM + the merged
+# weights, and the coach container only needs the openai client (phase4 extra).
+lora = [
+    "torch>=2.3",
+    "transformers>=4.45",
+    "peft>=0.12",
+    "trl>=0.11",
+    "accelerate>=0.34",
+    "datasets>=2.20",
+    "wandb>=0.16",
+]
 dev = [
     "pytest>=8.0",
 ]

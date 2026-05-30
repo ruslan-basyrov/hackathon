@@ -117,7 +117,7 @@ def render(
                 return
             for k, v in [
                 ("step", sig.step),
-                ("steps_completed", sig.steps_completed),
+                ("max_steps_completed", sig.max_steps_completed),
                 ("dwell_current_s", f"{sig.dwell_current_s:.1f}"),
                 ("dwell_total_s", f"{sig.dwell_total_s:.1f}"),
                 ("back_nav_count", sig.back_nav_count),

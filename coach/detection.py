@@ -57,7 +57,7 @@ def _detect_threshold(signals, d: dict) -> Tuple[bool, str]:
         return True, "s4_dwell"
     if (
         s.field_change_count >= d["overwhelm_changes"]
-        and s.steps_completed < d["early_overwhelm_max_steps"]
+        and s.max_steps_completed < d["early_overwhelm_max_steps"]
     ):
         return True, "early_overwhelm"
     if s.back_nav_count >= d["back_nav_threshold"]:

@@ -24,7 +24,7 @@ Record = namedtuple("Record", ["step", "action"])
 class Signals:
     # progress / time
     step: int
-    steps_completed: int
+    max_steps_completed: int
     dwell_current_s: float
     dwell_total_s: float
     time_since_last_action_s: float
@@ -47,7 +47,7 @@ def extract(state: Step, history: List[Record]) -> Signals:
     s4 = int(Step.S4_INITIAL_PRICE)
     s7 = int(Step.S7_FINAL_PRICE)
 
-    continues = sum(1 for r in history if r.action.type == "continue")
+    continues = len({r.step for r in history if r.action.type == "continue"})
     dwell_total = sum(r.action.dwell_s for r in history)
     dwell_current = sum(r.action.dwell_s for r in history if r.step == step_int)
     last_dwell = history[-1].action.dwell_s if history else 0.0
@@ -77,7 +77,7 @@ def extract(state: Step, history: List[Record]) -> Signals:
 
     return Signals(
         step=step_int,
-        steps_completed=continues,
+        max_steps_completed=continues,
         dwell_current_s=round(dwell_current, 2),
         dwell_total_s=round(dwell_total, 2),
         time_since_last_action_s=round(last_dwell, 2),

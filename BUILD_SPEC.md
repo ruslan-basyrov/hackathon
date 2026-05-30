@@ -155,7 +155,7 @@ Recomputed from action history after each step. Consumed by `detect()` (threshol
 class Signals:
     # progress / time
     step: int
-    steps_completed: int
+    max_steps_completed: int
     dwell_current_s: float
     dwell_total_s: float
     time_since_last_action_s: float
@@ -261,7 +261,7 @@ Per-persona decision table (the central technical challenge — one unified stra
 | **Peter** (S3, Service Affine) | early, pre-price (S1–S3) | detect overwhelm early · proactive callback · simplify screen | qualified service contact (online **not** the target) | push self-service / add options to screen |
 
 Discriminative signal signatures (guide thresholds now, GBM next, bots in P5):
-- **Peter:** high `dwell_total_s` + low `steps_completed`; `back_nav_count ≥ 2`; elevated `field_change_count`.
+- **Peter:** high `dwell_total_s` + low `max_steps_completed`; `back_nav_count ≥ 2`; elevated `field_change_count`.
 - **Judith:** long `dwell_current_s` on S4; high `tariff_hover_count`; `advisory_tariff_clicked` then `back`.
 - **Franz:** low dwell on S1–S3; `external_tab_opens ≥ 1`; at S7 `price_gap_eur` over threshold + `hover_cancel_count ≥ 1`.
 

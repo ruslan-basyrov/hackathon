@@ -55,7 +55,7 @@ detection:
   # threshold backend (Phase 2)
   dwell_threshold_s: 25.0          # S4 hesitation (Judith)
   overwhelm_changes: 2             # early form re-edits to count as overwhelmed (Peter)
-  early_overwhelm_max_steps: 4     # ... while still early (steps_completed < 4)
+  early_overwhelm_max_steps: 4     # ... while still early (max_steps_completed < 4)
   price_gap_threshold: 4.0         # S7 sticker shock (Franz)
   back_nav_threshold: 2
   # GBM backend (Phase 3) - the artefact is written by training/train_gbm.py

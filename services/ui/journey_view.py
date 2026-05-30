@@ -546,9 +546,9 @@ def render(
                 (f"field_change_count >= {d['overwhelm_changes']}",
                  sig.field_change_count >= d['overwhelm_changes'],
                  str(sig.field_change_count), f">= {d['overwhelm_changes']}"),
-                (f"steps_completed < {d['early_overwhelm_max_steps']}",
-                 sig.steps_completed < d['early_overwhelm_max_steps'],
-                 str(sig.steps_completed), f"< {d['early_overwhelm_max_steps']}"),
+                (f"max_steps_completed < {d['early_overwhelm_max_steps']}",
+                 sig.max_steps_completed < d['early_overwhelm_max_steps'],
+                 str(sig.max_steps_completed), f"< {d['early_overwhelm_max_steps']}"),
             ]),
             ("repeated_back_nav", "generic friction", [
                 (f"back_nav_count >= {d['back_nav_threshold']}",

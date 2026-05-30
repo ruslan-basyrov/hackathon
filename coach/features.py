@@ -18,7 +18,7 @@ import numpy as np
 
 FEATURE_NAMES: List[str] = [
     "step",
-    "steps_completed",
+    "max_steps_completed",
     "dwell_current_s",
     "dwell_total_s",
     "time_since_last_action_s",
@@ -40,7 +40,7 @@ def signals_to_vec(s) -> np.ndarray:
     return np.array(
         [
             float(s.step),
-            float(s.steps_completed),
+            float(s.max_steps_completed),
             float(s.dwell_current_s),
             float(s.dwell_total_s),
             float(s.time_since_last_action_s),

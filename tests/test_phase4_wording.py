@@ -38,7 +38,7 @@ CONFIG = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))
 
 def _mk_signals(step: int, **kwargs) -> Signals:
     base = dict(
-        step=step, steps_completed=0, dwell_current_s=0.0, dwell_total_s=0.0,
+        step=step, max_steps_completed=0, dwell_current_s=0.0, dwell_total_s=0.0,
         time_since_last_action_s=0.0, back_nav_count=0, back_from_step=None,
         field_change_count=0, tariff_hover_count=0, advisory_tariff_clicked=False,
         tariff_selected="Optimal", external_tab_opens=0, price_gap_eur=0.0,

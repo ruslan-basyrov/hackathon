@@ -66,7 +66,7 @@ def test_interactive_mode_user_drives(page: Page, app_url: str):
     """In interactive mode the human is the driver. We simulate a Peter-style
     user: click Get-a-quote, click Doctor, click Just-me, then re-edit the
     DOB twice on S3 - the second click should push field_change_count to 2
-    while steps_completed is still < 4, firing the `early_overwhelm` rule
+    while max_steps_completed is still < 4, firing the `early_overwhelm` rule
     and opening the popup."""
     page.goto(
         f"{app_url}/journey?persona=peter&method=threshold&mode=interactive"

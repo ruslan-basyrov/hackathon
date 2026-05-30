@@ -2,6 +2,7 @@ import argparse
 import random
 from simulation.engine import SimulationEngine, VALID_COACH_MODES, VALID_MODES
 from bots.persona_factory import PersonaFactory
+from utils.llm_client import resolve_model
 
 
 def run_simulations(personas_path, num_simulations, model_name, intervention_mode, coach_mode, gbm_cfg=None, realize_cfg=None):
@@ -79,12 +80,13 @@ def main():
     parser.add_argument(
         '--model',
         type=str,
-        default="deepseek-ai/DeepSeek-V4-Flash",#"meta-llama/Meta-Llama-3.1-8B-Instruct",
-        help="The name of the LLM model to use.",
+        default=None,
+        help="LLM model name. Defaults to `model_name` in config.yaml (overrides only when set).",
     )
     args = parser.parse_args()
 
     personas_json_path = 'tracks/insurance-uniqa/personas.json'
+    model_name = resolve_model(args.model)
 
     intervention_mode = 'off' if args.generate_training_data else args.intervention_mode
     gbm_cfg = None
@@ -102,7 +104,7 @@ def main():
     run_simulations(
         personas_path=personas_json_path,
         num_simulations=args.num_simulations,
-        model_name=args.model,
+        model_name=model_name,
         intervention_mode=intervention_mode,
         coach_mode=args.coach_mode,
         gbm_cfg=gbm_cfg,

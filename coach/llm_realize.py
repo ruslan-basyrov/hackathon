@@ -157,3 +157,29 @@ def llm_realize(itype: str, signals, persona: Optional[str], cfg: dict) -> str:
     if not text:
         raise ValueError("empty LLM response")
     return text
+
+
+def chat_followup(messages: list[dict], cfg: dict) -> str:
+    """Continue an open conversation started by `llm_realize`. The popup in
+    the UI seeds the history with `build_messages(...) + first assistant
+    nudge`, then appends each user reply and calls this. Same client/model
+    as `llm_realize`; bigger token budget because follow-ups are
+    conversational rather than one-line nudges.
+
+    Raises on any failure — the popup decides how to surface it (no template
+    fallback exists for free-form chat).
+    """
+    client = get_client(cfg)
+    realize_cfg = cfg.get("realize", {}) or {}
+    resp = client.chat.completions.create(
+        model=cfg.get("model_name", "qwen2.5-7b-instruct"),
+        messages=messages,
+        max_tokens=int(realize_cfg.get("chat_max_tokens",
+                                       max(240, int(realize_cfg.get("max_tokens", 120)) * 2))),
+        temperature=float(realize_cfg.get("temperature", 0.7)),
+        timeout=float(realize_cfg.get("timeout_s", 8.0)),
+    )
+    text = (resp.choices[0].message.content or "").strip().strip('"').strip("'")
+    if not text:
+        raise ValueError("empty LLM response")
+    return text

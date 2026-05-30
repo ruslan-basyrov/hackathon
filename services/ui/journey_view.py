@@ -100,24 +100,155 @@ def render(
         "max-w-3xl mx-auto px-6 w-full mt-2 gap-2"
     )
 
-    # ---- popup overlay -----------------------------------------------------
+    # ---- popup overlay (chat) ----------------------------------------------
+    # Chat state lives in this closure. Each new intervention resets it.
+    # `messages` is the full OpenAI-style history we SEND to the model:
+    # build_messages(itype, sig, persona) gives [system, prompt-scaffold-user];
+    # we then append the first assistant nudge and each follow-up turn.
+    #
+    # `visible_start` is the index in `messages` where the chat UI begins
+    # rendering. Everything before it (the system message + the structured
+    # user message containing PERSONA / SIGNALS / GUIDANCE) is prompt
+    # scaffolding the user must NEVER see — it's only what we send. The first
+    # rendered bubble is the assistant's nudge.
+    chat_state = {"messages": [], "busy": False, "visible_start": 0}
+
     with ui.dialog().props('id="journey-popup"') as popup, ui.card().classes(
-        "min-w-[28rem] max-w-md p-6 border-l-4 border-sky-600"
+        "min-w-[32rem] max-w-lg p-6 border-l-4 border-sky-600"
     ):
-        with ui.row().classes("items-center gap-2"):
+        with ui.row().classes("items-center gap-2 w-full"):
             ui.icon("auto_awesome").classes("text-sky-600 text-2xl")
             ui.label("A nudge from HealthCover").classes("text-lg font-bold")
+            ui.element("div").classes("flex-grow")
+            ui.button(icon="close", on_click=lambda: popup.close()).props(
+                'id="journey-popup-close" flat dense round'
+            ).classes("text-gray-500")
         ui.separator().classes("my-2")
         popup_type = ui.label("").props('id="journey-popup-type"').classes(
             "text-xs font-mono uppercase tracking-wide text-sky-700"
         )
-        popup_text = ui.label("").props('id="journey-popup-text"').classes(
-            "text-base text-gray-800 mt-2 leading-relaxed"
+        chat_log = ui.column().props('id="journey-chat-log"').classes(
+            "w-full mt-3 gap-2 max-h-96 overflow-y-auto"
         )
-        with ui.row().classes("mt-4 justify-end w-full"):
-            ui.button("Got it", on_click=lambda: popup.close()).props(
-                'id="journey-popup-close" flat'
+        chat_busy = ui.row().classes("items-center gap-2 mt-1 hidden")
+        with chat_busy:
+            ui.spinner(size="sm").classes("text-sky-600")
+            ui.label("thinking …").classes("text-xs text-gray-500 italic")
+        with ui.row().classes("mt-3 gap-2 w-full items-center"):
+            chat_input = ui.input(placeholder="Reply…").props(
+                'id="journey-chat-input" outlined dense'
+            ).classes("flex-grow")
+            chat_send = ui.button("Send").props(
+                'id="journey-chat-send"'
             ).classes("bg-sky-600 text-white px-4")
+        with ui.row().classes("mt-3 justify-end w-full"):
+            ui.button("Continue journey", on_click=lambda: popup.close()).props(
+                'id="journey-popup-continue" flat'
+            ).classes("bg-sky-600 text-white px-4")
+
+    def _set_busy(busy: bool):
+        # NiceGUI's props API: `props("disable")` adds the prop;
+        # `props(remove="disable")` removes it. Earlier this passed the
+        # literal string "remove=disable" as the `add` argument, which never
+        # cleared the disable — so after the first reply the input stayed
+        # disabled and the user couldn't send a second message (read on the
+        # outside as "the chat has no memory").
+        chat_state["busy"] = busy
+        if busy:
+            chat_input.props("disable")
+            chat_send.props("disable")
+            chat_busy.classes(remove="hidden")
+        else:
+            chat_input.props(remove="disable")
+            chat_send.props(remove="disable")
+            chat_busy.classes(add="hidden")
+
+    def _render_chat():
+        chat_log.clear()
+        # Skip everything before visible_start — that's the system message and
+        # the structured prompt user message (PERSONA/SIGNALS/GUIDANCE). The
+        # first visible message is always the assistant nudge; give it the
+        # journey-popup-text id so existing test selectors keep working.
+        first_assistant_seen = False
+        with chat_log:
+            for msg in chat_state["messages"][chat_state["visible_start"]:]:
+                role = msg["role"]
+                text = msg["content"]
+                if role == "assistant":
+                    bubble_id = ""
+                    if not first_assistant_seen:
+                        bubble_id = "journey-popup-text"
+                        first_assistant_seen = True
+                    with ui.row().classes("w-full"):
+                        bubble = ui.label(text).classes(
+                            "bg-sky-50 text-gray-800 px-3 py-2 rounded-lg "
+                            "max-w-[80%] text-sm leading-relaxed"
+                        )
+                        if bubble_id:
+                            bubble.props(f'id="{bubble_id}"')
+                elif role == "user":
+                    with ui.row().classes("w-full justify-end"):
+                        ui.label(text).classes(
+                            "bg-sky-600 text-white px-3 py-2 rounded-lg "
+                            "max-w-[80%] text-sm leading-relaxed"
+                        )
+
+    def open_chat(intervention, sig):
+        """Seed the chat with the persona/intervention prompt + the first
+        assistant nudge that `realize()` just produced, then open the dialog.
+        Future turns extend `chat_state["messages"]` and call chat_followup.
+        """
+        from coach.llm_realize import build_messages
+        history = build_messages(intervention.type, sig, sess.persona)
+        # build_messages returns [system, user] — len == 2 — and the user
+        # message there is the prompt scaffold, not something the human typed.
+        # The first VISIBLE message is the assistant nudge we're about to
+        # append, so the rendered chat begins at len(history).
+        chat_state["visible_start"] = len(history)
+        history.append({"role": "assistant", "content": intervention.text})
+        chat_state["messages"] = history
+        chat_input.value = ""
+        _set_busy(False)
+        # only allow chat if LLM mode is on; in template mode there's no
+        # backend that could answer a follow-up, so we hide the input.
+        is_llm = (sess.cfg.get("realize", {}) or {}).get("method") == "llm"
+        if is_llm:
+            chat_input.classes(remove="hidden")
+            chat_send.classes(remove="hidden")
+        else:
+            chat_input.classes(add="hidden")
+            chat_send.classes(add="hidden")
+        popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
+        _render_chat()
+        popup.open()
+
+    async def send_chat(_=None):
+        # `_` swallows the event object NiceGUI passes through `.on()` so we
+        # can register this coroutine function directly. Wrapping it in a
+        # lambda (e.g. `lambda _: send_chat()`) breaks: the lambda returns
+        # an unawaited coroutine object, NiceGUI doesn't recognise it as
+        # async via `iscoroutinefunction`, and the body never runs.
+        text = (chat_input.value or "").strip()
+        if not text or chat_state["busy"]:
+            return
+        chat_state["messages"].append({"role": "user", "content": text})
+        chat_input.value = ""
+        _render_chat()
+        _set_busy(True)
+        try:
+            from coach.llm_realize import chat_followup
+            reply = await run.io_bound(chat_followup, chat_state["messages"], sess.cfg)
+            chat_state["messages"].append({"role": "assistant", "content": reply})
+        except Exception as e:  # network/timeout/empty - surface, don't crash UI
+            chat_state["messages"].append(
+                {"role": "assistant", "content": f"[chat unavailable: {e}]"}
+            )
+        finally:
+            _set_busy(False)
+            _render_chat()
+
+    chat_send.on("click", send_chat)
+    chat_input.on("keydown.enter", send_chat)
 
     # ---- styling helpers ---------------------------------------------------
     def _h1(text: str):
@@ -187,9 +318,7 @@ def render(
             sig, intervention = await run.io_bound(sess.consult_coach)
             if intervention is not None and sess.shown_intervention_step != int(sess.state):
                 sess.shown_intervention_step = int(sess.state)
-                popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
-                popup_text.set_text(intervention.text)
-                popup.open()
+                open_chat(intervention, sig)
         render_for_step(int(sess.state))
 
     async def emit_action(type_: str, target: str = None):
@@ -684,10 +813,8 @@ def render(
         if result and result["intervention"] is not None:
             iv = result["intervention"]
             render_for_step(iv.step)
-            popup_type.set_text(f"{iv.type}  ·  {iv.mode}")
-            popup_text.set_text(iv.text)
             stop_autoplay()
-            popup.open()
+            open_chat(iv, result["signals"])
             return
         if int(sess.state) != prev_state:
             render_for_step(int(sess.state))
@@ -711,9 +838,7 @@ def render(
         refresh_rules_panel()
         if intervention is not None and sess.shown_intervention_step != int(sess.state):
             sess.shown_intervention_step = int(sess.state)
-            popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
-            popup_text.set_text(intervention.text)
-            popup.open()
+            open_chat(intervention, sig)
 
     def resume_after_popup():
         popup.close()

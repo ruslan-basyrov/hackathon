@@ -243,7 +243,7 @@ This is a **checkpoint phase, not a substrate change.** No new decision logic, n
 - No new logic in `coach/`, `signals.py`, `agent_stub.py`, or `state_machine.py`. The UI consumes `coach()` and `extract()` unchanged.
 - The UI is **read-only over the simulator**: it never owns conversion accounting or intervention effectiveness — those stay in `runner.py` and `agent_stub.py`.
 - If the GBM model file is missing the UI surfaces the same `gbm_model_missing` no-fire that `detection.py` already returns — it does not retrain or recompute.
-- One new optional dependency only: `nicegui` (with its `testing` extra) is added to `[project.optional-dependencies].ui` in `pyproject.toml`, **replacing the previous `streamlit` entry**. Playwright is pulled in transitively via `nicegui[testing]` — do not add it as a top-level dependency.
+- Two new optional dependencies, both in `[project.optional-dependencies].ui` (replacing the previous `streamlit` entry): `nicegui[testing]` (the in-process `User` fixture for any pure-Python assertions we want later) and `playwright`. The on-stage demo and the headless gate are **both driven by Playwright directly** against the running NiceGUI app — NiceGUI 3.x's `Screen` fixture is Selenium-based and requires a system Chrome/Chromedriver, which we deliberately avoid. Playwright bundles its own chromium (`playwright install chromium`) so no sudo / system browser is needed.
 - No `time.sleep` or wall-clock waits anywhere in the test code path — pacing in the demo run comes from Playwright's `--slowmo` flag, nothing else.
 
 ### Phase 4 — LLM persona bots

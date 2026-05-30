@@ -24,9 +24,15 @@ phase3 = [
 phase4 = [
     "openai>=1.0",
 ]
-# Stretch: Streamlit UI.
+# Phase 3.5: NiceGUI viewer + Playwright test driver.
+# `nicegui[testing]` ships the in-process `User` fixture (no browser); the
+# actual visible / on-stage demo is driven by `playwright` directly against
+# the running NiceGUI app. We do NOT use nicegui's `Screen` fixture, which
+# is Selenium-based and requires a system Chrome (BUILD_SPEC §Phase 3.5).
 ui = [
-    "streamlit>=1.30",
+    "nicegui[testing]>=2.0",
+    "playwright>=1.40",
+    "pytest-playwright>=0.5",
 ]
 dev = [
     "pytest>=8.0",

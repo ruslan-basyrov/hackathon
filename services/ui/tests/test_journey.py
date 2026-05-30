@@ -109,6 +109,25 @@ def test_interactive_back_button_navigates_and_increments_count(page: Page, app_
     expect(page.locator("#journey-rules")).to_contain_text("1")
 
 
+def test_interactive_repeated_back_nav_fires_popup_anywhere(page: Page, app_url: str):
+    """Two `back` clicks should fire a popup REGARDLESS of persona / current
+    step. The persona policy (e.g. Judith) has no entry for S1, but the coach
+    falls back to a generic `back_nav_help` intervention when detection's
+    reason is `repeated_back_nav`. This is the "simple, fires anywhere" rule
+    the user explicitly asked for."""
+    page.goto(
+        f"{app_url}/journey?persona=judith&method=threshold&mode=interactive"
+    )
+    page.locator("#journey-continue").click()       # S0 -> S1
+    page.locator("#journey-card-doctor").click()    # S1 -> S2
+    # press Back twice. After the 2nd, back_nav_count = 2, rule trips.
+    page.locator("#journey-back").click()           # S2 -> S1
+    page.wait_for_timeout(150)
+    page.locator("#journey-back").click()           # S1 -> S1 (state no-op, signal recorded)
+    expect(page.locator("#journey-popup")).to_be_visible(timeout=5000)
+    expect(page.locator("#journey-popup-type")).to_contain_text("back_nav_help")
+
+
 def test_interactive_mode_watchdog_fires_on_dwell(page: Page, app_url: str):
     """Sit on the S4 tariff page long enough for `dwell_current_s` to exceed
     the threshold (25s in config.yaml). The 1s watchdog should detect dwell

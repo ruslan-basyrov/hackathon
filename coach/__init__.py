@@ -29,14 +29,26 @@ class Intervention:
 
 
 def coach(signals: Signals, persona: str, policy) -> Optional[Intervention]:
-    """policy == the config dict. Detection gates; the per-persona table decides what."""
-    fire, _reason = detect(signals, policy["detection"])
+    """policy == the config dict. Detection gates; the per-persona table decides what.
+
+    Narrow fallback: if detection fires for `repeated_back_nav` but the persona
+    policy has no entry for the current step (e.g. Judith pressing back at S1
+    isn't in the policy table), emit a generic `back_nav_help` intervention.
+    This keeps the back-nav friction signal responsive at any step, regardless
+    of persona / step coverage in policy.py. The fallback is intentionally
+    narrow - we only do it for back-nav, not for every detection rule, to
+    avoid silently expanding the persona-policy contract.
+    """
+    fire, reason = detect(signals, policy["detection"])
     if not fire:
         return None
 
     itype, mode = lookup(persona, signals.step)
     if itype is None:
-        return None
+        if reason == "repeated_back_nav":
+            itype, mode = "back_nav_help", "stay"
+        else:
+            return None
 
     eff = policy["intervention_effectiveness"]["default"] if mode == "stay" else 0.0
     return Intervention(

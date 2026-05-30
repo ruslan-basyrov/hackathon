@@ -30,4 +30,7 @@ def realize(itype: str, signals) -> str:
     if itype == "callback":
         return ("This can be a lot to weigh up. Would it be easier if someone called you "
                 "to walk through it?")
+    if itype == "back_nav_help":
+        return ("Looks like you're going back and forth a few times. "
+                "Need a hand? Tap 'Need help?' at the top or call 0800 123 456.")
     return ""

@@ -159,20 +159,39 @@ def render(
         return card
 
     # ---- action emit (interactive mode) ------------------------------------
-    def emit_action(type_: str, target: str = None):
-        """Build a wall-clock-dwell Action from a user click and apply it."""
+    # Two entry points. Both consult the coach ONCE, AFTER all the user's
+    # actions are applied (so detection sees the action that just crossed
+    # a threshold - e.g. the 2nd `back` taking back_nav_count from 1 to 2).
+    #
+    #   emit_action("continue")          -> single action
+    #   emit_action("hover", "cancel")   -> single action with target
+    #   emit_actions(("select", "Optimal"), ("continue",))
+    #                                    -> atomic batch: one popup check
+    def _apply_and_consult(action_specs):
         if sess.is_done():
             return
-        dwell = sess.wall_clock_dwell()
-        sig, intervention = sess.consult_coach()   # coach sees pre-action signals
-        sess.apply_action(Action(type=type_, target=target, dwell_s=dwell))
-        # show popup if intervention fired AND we haven't already shown it for this step
-        if intervention is not None and sess.shown_intervention_step != sig.step:
-            sess.shown_intervention_step = sig.step
-            popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
-            popup_text.set_text(intervention.text)
-            popup.open()
+        for spec in action_specs:
+            if sess.is_done():
+                break
+            type_ = spec[0]
+            target = spec[1] if len(spec) > 1 else None
+            dwell = sess.wall_clock_dwell()
+            sess.apply_action(Action(type=type_, target=target, dwell_s=dwell))
+        if not sess.is_done():
+            sig, intervention = sess.consult_coach()
+            if intervention is not None and sess.shown_intervention_step != int(sess.state):
+                sess.shown_intervention_step = int(sess.state)
+                popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
+                popup_text.set_text(intervention.text)
+                popup.open()
         render_for_step(int(sess.state))
+
+    def emit_action(type_: str, target: str = None):
+        _apply_and_consult([(type_, target)])
+
+    def emit_actions(*specs):
+        """Apply multiple (type, target) tuples atomically; one coach check."""
+        _apply_and_consult(list(specs))
 
     # ============================================================================
     # AUTO-mode renderers (current behaviour - disabled UI, agent drives)
@@ -329,8 +348,8 @@ def render(
         with ui.row().classes("gap-4 mt-6 flex-wrap"):
             _option_card("Private doctor visits",
                          "Outpatient care, specialists, diagnostics, therapies.",
-                         on_click=lambda: (emit_action("select", "doctor"),
-                                           emit_action("continue")),
+                         on_click=lambda: emit_actions(("select", "doctor"),
+                                                       ("continue",)),
                          elem_id="journey-card-doctor")
             _option_card("Hospital stay", "Inpatient care, surgery. Advisory.",
                          advisory=True,
@@ -345,8 +364,8 @@ def render(
         _subtitle("Pick one to continue.")
         with ui.row().classes("gap-4 mt-6"):
             _option_card("Just me", "Personal coverage.",
-                         on_click=lambda: (emit_action("select", "myself"),
-                                           emit_action("continue")),
+                         on_click=lambda: emit_actions(("select", "myself"),
+                                                       ("continue",)),
                          elem_id="journey-card-myself")
             _option_card("Family or other persons",
                          "Coverage for multiple people. Advisory.", advisory=True,
@@ -381,14 +400,14 @@ def render(
         with ui.row().classes("gap-3 mt-6 flex-wrap"):
             _tariff_card("Start", "€38.74 / mo",
                          "Outpatient essentials. Fully online.", online=True,
-                         on_click=lambda: (emit_action("select", "Start"),
-                                           emit_action("continue")),
+                         on_click=lambda: emit_actions(("select", "Start"),
+                                                       ("continue",)),
                          elem_id="journey-tariff-Start")
             _tariff_card("Optimal", "€68.14 / mo",
                          "Outpatient + therapies + medications. Fully online.",
                          online=True, badge="Popular",
-                         on_click=lambda: (emit_action("select", "Optimal"),
-                                           emit_action("continue")),
+                         on_click=lambda: emit_actions(("select", "Optimal"),
+                                                       ("continue",)),
                          elem_id="journey-tariff-Optimal")
             _tariff_card("Opt. Plus", "Advisory",
                          "Adds private hospital. Requires a short call.", online=False,

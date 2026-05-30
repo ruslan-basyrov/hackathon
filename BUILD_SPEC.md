@@ -62,6 +62,66 @@ README.md REPORT.md LICENSE requirements.txt   # submission requirements
 
 The root modules (`state_machine.py` … `runner.py`) plus `coach/` are the **coach service**; the LLM lives in a separate **inference service** (§7–§8). Submission hygiene from day one: MIT `LICENSE`, pinned `requirements.txt` (or Pixi manifest), no secrets in git (proxy creds, `HF_TOKEN`, **W&B API key**), runs from clean checkout.
 
+### Architecture at a glance
+
+The per-episode loop that ties §0's "decision logic in code" promise to the actual modules. Stub-vs-real callouts are the swap boundaries the phases (§5) progressively fill in; the data path itself (Signals → coach → Action → state machine) never changes.
+
+```mermaid
+flowchart TB
+    classDef sub fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e
+    classDef coach fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef driver fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+    classDef extern fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef tools fill:#f3f4f6,stroke:#6b7280,color:#1f2937
+
+    subgraph LOOP["runner.py — episode loop · seeded by (master_seed, episode_idx)"]
+        direction LR
+        SIG["signals.extract<br/>(state, history) → Signals"]
+        COA["coach(signals, persona, cfg)<br/>→ Intervention?"]
+        AGT["Agent.act(state, signals, iv, rng)<br/>→ Action"]
+        STP["state_machine.step<br/>(state, action) → next state"]
+        SIG --> COA --> AGT --> STP
+        STP -. until terminal .-> SIG
+    end
+
+    subgraph COACH_PKG["coach/ — pure decision logic (inspectable)"]
+        direction TB
+        DET["detection.detect<br/>threshold (P2) or GBM (P3)"]
+        POL["policy.lookup<br/>per-persona table (P2)"]
+        REL["realize.realize<br/>templates (P2/3) or LLM (P5)"]
+        DET --> POL --> REL
+    end
+    COA -.-> COACH_PKG
+
+    subgraph AGENTS["Agent protocol (driver, swappable)"]
+        direction LR
+        STUB["agent_stub.py<br/>scripted bot (P1–3)"]
+        LLM["agent_llm.py<br/>LLM persona bots (P4)"]
+    end
+    AGT -.-> AGENTS
+
+    INF["services/inference/<br/>OpenAI-compatible HTTP<br/>INFERENCE_BASE_URL + MODEL_NAME"]
+    LLM -.->|"Phase 4"| INF
+    REL -.->|"Phase 5"| INF
+
+    subgraph TOOLS["Tooling (offline)"]
+        TGBM["training/train_gbm.py<br/>+ W&B local"]
+        TLORA["training/train_lora.py<br/>+ W&B offline → sync"]
+        UI["services/ui/<br/>NiceGUI viewer (P3.5)<br/>/ debug · /journey customer"]
+    end
+    TGBM -.->|"GBM artefact"| DET
+    TLORA -.->|"merged LoRA"| INF
+    UI -.->|"reads"| LOOP
+
+    class SIG,STP,LOOP sub
+    class COA,COACH_PKG,DET,POL,REL coach
+    class AGT,AGENTS,STUB,LLM driver
+    class INF extern
+    class TOOLS,TGBM,TLORA,UI tools
+```
+
+Reading this diagram against the §0 promise: every **blue** box is the unchanging substrate; every **yellow** box is the coach's decision logic in plain code (the rubric's "traceable decision rules"); every **purple** or **red** box is behind a swap boundary (`Agent.act` signature, `INFERENCE_BASE_URL`) — those swap boundaries are the only places phase upgrades touch.
+
 ---
 
 ## 3. Frozen interfaces

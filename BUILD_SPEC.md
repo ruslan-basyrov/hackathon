@@ -56,7 +56,7 @@ docker-compose.yml    # service topology (§7)
 services/
   inference/          # OpenAI-compatible model server — the swap boundary (§8)
   coach.Dockerfile    # packages the root modules + coach/ into the coach service
-  ui.Dockerfile       # Streamlit (stretch)
+  ui.Dockerfile       # NiceGUI viewer (Phase 3.5)
 README.md REPORT.md LICENSE requirements.txt   # submission requirements
 ```
 
@@ -213,6 +213,39 @@ Discriminative signal signatures (guide thresholds now, GBM next, bots in P4):
 - **Must pass:** GBM precision/recall reported and compared against the threshold baseline (GBM need not win, but the comparison must exist and be honest). The W&B run holds the ablation comparison and the feature-importance plot.
 - **Checkpoint:** commit, report the ablation table, wait.
 
+### Phase 3.5 — Visualization (a window pops up when the coach fires)
+
+This is a **checkpoint phase, not a substrate change.** No new decision logic, no new signals — it is a thin viewer over the existing `coach()`. Built **before** Phase 4 so the LLM persona bots are developed against a runnable demo, not a CLI table. The former "Optional / stretch" visualization is promoted into this phase, and the **framework choice is NiceGUI, not Streamlit**. Rationale: NiceGUI elements carry stable named IDs and ship with a Playwright-backed test harness (`nicegui.testing`), so the **same test code runs headless in CI and headed for the on-stage demo by flipping `--headed --slowmo=...`** — the presentation deliverable and the regression suite are one artefact, not two. (Streamlit's auto-generated DOM and AppTest-vs-Playwright split would force two parallel test surfaces.)
+
+- **Builds:** a NiceGUI app at `services/ui/app.py` (the container slot reserved in §7) that runs one episode at a time and:
+  - renders the in-scope funnel (S0 → S1 → S2 → S3 → S4 → S6 → S7 → S12) with the agent's current step highlighted;
+  - shows the live `Signals` for the current state (dwell, back-navs, hovers, field changes, tariff selection, S7 price gap) — read straight from `signals.extract()`, no duplicated logic;
+  - **opens a `ui.dialog` whenever `coach()` returns an `Intervention` for the current step**, displaying `Intervention.text` (the `realize()` output) together with the intervention `type` and the detection `reason`. This is the user-visible expression of the per-persona policy table (§5 Phase 2);
+  - exposes the URL contract **`/?seed=N&episode=N&persona=X&method=X`** read into session state on first load; the headless test suite and the headed demo both bind to this contract;
+  - has a **persona switcher** (Judith / Franz / Peter / global) and a **detection-method switcher** (`threshold` ↔ `gbm`) that flip `cfg["detection"]["method"]` at runtime — same swap as the config file;
+  - supports **step-through** (one action per click) and **auto-play** (timed advance) for a presentable demo; auto-play MUST be off in tests so determinism is preserved;
+  - includes a small **aggregate panel** that calls `runner.compare(cfg, persona, n=…)` and renders the same `without / with / uplift / fired / wasted / saved` columns the CLI already prints (no duplicated metric code);
+  - every interactive element carries a **stable named id** (`step-button`, `intervention-modal`, `persona-select`, `method-select`, `narration`, `funnel-current-step`, …) — these names are the contract the tests bind to; renaming one is a spec change.
+- **Demo path (presentation deliverable):** `services/ui/tests/test_demo.py` is the **same test code** as the regression suite, run headed via `uv run pytest services/ui/tests/test_demo.py --headed --slowmo=400`. It walks one scenario per persona using fixed `(seed, episode)` pairs from `services/ui/tests/scenarios.py`, pauses on each popup for audience read time, and writes a screenshot + video per scenario to `demo_videos/` on every run as the fallback for stage-day network/USB issues. **One command on stage**, rehearsed in advance.
+- **Replaces:** the former "Optional / stretch — Streamlit visualization" section, removed below; supersedes that section's framework choice.
+- **Acceptance command:**
+  - headless gate: `uv run pytest services/ui/tests/ -k "not demo"`
+  - demo rehearsal: `uv run pytest services/ui/tests/test_demo.py --headed --slowmo=400`
+- **Must pass:**
+  - headless suite green: every persona × detection-method combination renders the in-scope path end-to-end without unhandled exceptions;
+  - each persona surfaces **≥1 intervention popup** in its seeded scenario at its documented step (Judith S4 dwell, Franz S7 gap+cancel, Peter S1–S3 form re-edits);
+  - flipping the detection method changes popup behaviour visibly (e.g. `gbm` fires more often than `threshold` at default settings, consistent with the Phase 3 ablation);
+  - the aggregate panel numbers match `python runner.py --n N` for the same seed (it is the same code path);
+  - the headed demo writes a screenshot **and** a video per persona scenario to `demo_videos/`, and the on-screen popup text matches `realize()` output for that intervention type.
+- **Checkpoint:** commit, attach the screenshots from `demo_videos/` per persona, wait.
+
+**Non-goals for this phase (do NOT cross into other phases' territory):**
+- No new logic in `coach/`, `signals.py`, `agent_stub.py`, or `state_machine.py`. The UI consumes `coach()` and `extract()` unchanged.
+- The UI is **read-only over the simulator**: it never owns conversion accounting or intervention effectiveness — those stay in `runner.py` and `agent_stub.py`.
+- If the GBM model file is missing the UI surfaces the same `gbm_model_missing` no-fire that `detection.py` already returns — it does not retrain or recompute.
+- One new optional dependency only: `nicegui` (with its `testing` extra) is added to `[project.optional-dependencies].ui` in `pyproject.toml`, **replacing the previous `streamlit` entry**. Playwright is pulled in transitively via `nicegui[testing]` — do not add it as a top-level dependency.
+- No `time.sleep` or wall-clock waits anywhere in the test code path — pacing in the demo run comes from Playwright's `--slowmo` flag, nothing else.
+
 ### Phase 4 — LLM persona bots
 - **Builds:** `agent_llm.py` — Judith/Franz/Peter as bots that emit the **same `Action` schema** (not chat). Start with a **local small model** reached via `INFERENCE_BASE_URL` + `MODEL_NAME` (§8) using the full persona briefings; the LoRA fine-tune (on Leonardo — this is the cluster training job) is the upgrade, swapped in by changing only those two values. `training/train_lora.py` logs to W&B in **offline** mode, synced from a login node (§9).
 - **Replaces:** `agent_stub.py` as the driver.
@@ -234,8 +267,8 @@ Discriminative signal signatures (guide thresholds now, GBM next, bots in P4):
 - **Must pass:** every required REPORT.md result is present and sourced from the harness; per-persona conversion definitions correctly applied in the scorer.
 - **Checkpoint:** commit, report the bundle, wait.
 
-### Optional / stretch — Streamlit visualization
-Only after Phase 5 is solid. A schematic state visualization with intervention pop-ups and a before/after dashboard. A pretty UI on weak logic scores lower than logs on strong logic — so this is additive, never the critical path, and never built before the logic is done.
+### Stretch beyond Phase 6
+Anything additive that consumes the finished harness: before/after side-by-side dashboards, per-step survival sankeys, exporting wandb runs into REPORT.md plots. A pretty UI on weak logic scores lower than logs on strong logic — so stretches stay additive, never the critical path. The core viewer (the popup-on-detection demo) is no longer stretch territory; it is Phase 3.5.
 
 ---
 
@@ -263,7 +296,7 @@ Decompose along the frozen seams, not finer. **Three services, orchestrated by `
 
 1. **`inference`** — an OpenAI-compatible model server. **This container is the swap boundary** (§8): swapping models means swapping what this service runs, not editing any other code.
 2. **`coach`** — the simulation engine: state machine, signals, detection, policy, realize, runner (the root modules + `coach/`). Talks to `inference` over HTTP.
-3. **`ui`** — Streamlit (stretch only).
+3. **`ui`** — NiceGUI viewer (Phase 3.5). Opens a `ui.dialog` whenever `coach()` fires for the current step; consumes the coach service over the same in-process imports (no extra HTTP seam introduced for the UI). The framework's built-in `nicegui.testing` (Playwright-backed) is the single test surface for both the headless regression suite and the headed on-stage demo.
 
 Rules that keep this from becoming a time-sink:
 - **The coach reaches the model only over HTTP**, using `INFERENCE_BASE_URL` + `MODEL_NAME` from env. So model swaps touch env + the inference image — never coach code.

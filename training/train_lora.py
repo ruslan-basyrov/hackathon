@@ -27,7 +27,7 @@ from typing import Dict, List, Tuple
 from datasets import Dataset
 from peft import LoraConfig, PeftModel, get_peft_model
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from trl import DataCollatorForCompletionOnlyLM, SFTConfig, SFTTrainer
+from trl import SFTConfig, SFTTrainer
 
 # Reuse the validator from the same package so train-time JSON-validity
 # matches the gate we apply to the dataset before training.
@@ -175,10 +175,6 @@ def main() -> None:
     model = get_peft_model(model, lora_cfg)
     model.print_trainable_parameters()
 
-    collator = DataCollatorForCompletionOnlyLM(
-        response_template=RESPONSE_TEMPLATE, tokenizer=tokenizer
-    )
-
     sft_cfg = SFTConfig(
         output_dir=str(Path(args.out).with_name(Path(args.out).name + "-runs")),
         num_train_epochs=args.epochs,
@@ -197,7 +193,9 @@ def main() -> None:
         save_total_limit=2,
         report_to=("none" if args.no_wandb else "wandb"),
         packing=False,
-        dataset_text_field=None,  # we use the `messages` column via the chat template
+        # trl >= 0.18: mask the prompt tokens via the chat template's assistant
+        # turn marker instead of the removed DataCollatorForCompletionOnlyLM.
+        assistant_only_loss=True,
     )
 
     trainer = SFTTrainer(
@@ -205,8 +203,7 @@ def main() -> None:
         args=sft_cfg,
         train_dataset=train_ds,
         eval_dataset=eval_ds,
-        data_collator=collator,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
     )
     trainer.train()
 

@@ -217,20 +217,31 @@ Discriminative signal signatures (guide thresholds now, GBM next, bots in P4):
 
 This is a **checkpoint phase, not a substrate change.** No new decision logic, no new signals — it is a thin viewer over the existing `coach()`. Built **before** Phase 4 so the LLM persona bots are developed against a runnable demo, not a CLI table. The former "Optional / stretch" visualization is promoted into this phase, and the **framework choice is NiceGUI, not Streamlit**. Rationale: NiceGUI elements carry stable named IDs and ship with a Playwright-backed test harness (`nicegui.testing`), so the **same test code runs headless in CI and headed for the on-stage demo by flipping `--headed --slowmo=...`** — the presentation deliverable and the regression suite are one artefact, not two. (Streamlit's auto-generated DOM and AppTest-vs-Playwright split would force two parallel test surfaces.)
 
-- **Builds:** a NiceGUI app at `services/ui/app.py` (the container slot reserved in §7) that runs one episode at a time and:
+- **Builds:** a NiceGUI app at `services/ui/app.py` (the container slot reserved in §7) registering **two routes that share the same `Session`, URL contract, and persona/method switchers**:
+
+  **`/` — debug viewer** (`services/ui/debug_view.py`)
   - renders the in-scope funnel (S0 → S1 → S2 → S3 → S4 → S6 → S7 → S12) with the agent's current step highlighted;
   - shows the live `Signals` for the current state (dwell, back-navs, hovers, field changes, tariff selection, S7 price gap) — read straight from `signals.extract()`, no duplicated logic;
-  - **opens a `ui.dialog` whenever `coach()` returns an `Intervention` for the current step**, displaying `Intervention.text` (the `realize()` output) together with the intervention `type` and the detection `reason`. This is the user-visible expression of the per-persona policy table (§5 Phase 2);
-  - exposes the URL contract **`/?seed=N&episode=N&persona=X&method=X`** read into session state on first load; the headless test suite and the headed demo both bind to this contract;
-  - has a **persona switcher** (Judith / Franz / Peter / global) and a **detection-method switcher** (`threshold` ↔ `gbm`) that flip `cfg["detection"]["method"]` at runtime — same swap as the config file;
-  - supports **step-through** (one action per click) and **auto-play** (timed advance) for a presentable demo; auto-play MUST be off in tests so determinism is preserved;
-  - includes a small **aggregate panel** that calls `runner.compare(cfg, persona, n=…)` and renders the same `without / with / uplift / fired / wasted / saved` columns the CLI already prints (no duplicated metric code);
-  - every interactive element carries a **stable named id** (`step-button`, `intervention-modal`, `persona-select`, `method-select`, `narration`, `funnel-current-step`, …) — these names are the contract the tests bind to; renaming one is a spec change.
-- **Demo path (presentation deliverable):** `services/ui/tests/test_demo.py` is the **same test code** as the regression suite, run headed via `uv run pytest services/ui/tests/test_demo.py --headed --slowmo=400`. It walks one scenario per persona using fixed `(seed, episode)` pairs from `services/ui/tests/scenarios.py`, pauses on each popup for audience read time, and writes a screenshot + video per scenario to `demo_videos/` on every run as the fallback for stage-day network/USB issues. **One command on stage**, rehearsed in advance.
+  - step-through (one action per click) + optional auto-play (off in tests);
+  - opens a `ui.dialog` with the `Intervention` text, type and detection reason whenever `coach()` fires for the current step.
+
+  **`/journey` — customer-facing journey** (`services/ui/journey_view.py`) — **this is the on-stage demo route**
+  - renders a stylized "HealthCover" insurance signup with one branded page per simulator step (welcome, coverage type, for-whom, personal data, tariff cards, health questions, personalised price, confirm) — page transitions only (no cursor/typing animation, per the Phase 3.5 design choice);
+  - auto-play is ON by default at a watchable cadence (`autoplay_ms` URL param, defaults to 900ms); a popup pauses auto-play, dismissing it resumes;
+  - the intervention popup is overlaid on the actual product page with brand-consistent styling (the "A nudge from HealthCover" card), so the audience sees the coach as a product feature, not a debug overlay;
+  - terminal states (Converted / Abandoned / Routed-to-advisor / Service-contact) get their own branded end-pages.
+
+  Both routes share:
+  - URL contract **`?seed=N&episode=N&persona=X&method=X&gbm_threshold=F&narration=…`** read into session state on first load;
+  - persona switcher (Judith / Franz / Peter / global) + detection-method switcher (`threshold` ↔ `gbm`) that flip `cfg["detection"]["method"]` at runtime;
+  - stable named element ids (`step-button`, `intervention-modal`, `intervention-type`, `intervention-text`, `funnel-current-step`, `narration` on `/`; `journey-page`, `journey-popup`, `journey-popup-type`, `journey-popup-text`, `journey-popup-close`, `journey-step-label`, `journey-narration` on `/journey`) — these names are the contract tests bind to; renaming one is a spec change.
+
+  Optional later: a small **aggregate panel** that calls `runner.compare(cfg, persona, n=…)` and renders the same `without / with / uplift / fired / wasted / saved` columns the CLI already prints (no duplicated metric code).
+- **Demo path (presentation deliverable):** `services/ui/tests/test_demo.py` drives the **`/journey` route** (not `/`) — the audience sees the branded HealthCover signup with the popup overlaid on the product page, not a debug funnel. The same test code that gates regression in headless mode runs headed for the stage via `uv run pytest services/ui/tests/test_demo.py --headed --slowmo=400 --video=on`. It walks one scenario per persona using fixed `(seed, episode)` pairs from `services/ui/tests/scenarios.py`, lets auto-play advance the journey, pauses on each popup for audience read time, and writes a screenshot + video per scenario to `demo_videos/` on every run as the fallback for stage-day network/USB issues. **One command on stage**, rehearsed in advance.
 - **Replaces:** the former "Optional / stretch — Streamlit visualization" section, removed below; supersedes that section's framework choice.
 - **Acceptance command:**
-  - headless gate: `uv run pytest services/ui/tests/ -k "not demo"`
-  - demo rehearsal: `uv run pytest services/ui/tests/test_demo.py --headed --slowmo=400`
+  - headless gate (both routes): `uv run pytest services/ui/tests/test_ui.py services/ui/tests/test_journey.py`
+  - demo rehearsal (on-stage path, `/journey`): `uv run pytest services/ui/tests/test_demo.py --headed --slowmo=400 --video=on`
 - **Must pass:**
   - headless suite green: every persona × detection-method combination renders the in-scope path end-to-end without unhandled exceptions;
   - each persona surfaces **≥1 intervention popup** in its seeded scenario at its documented step (Judith S4 dwell, Franz S7 gap+cancel, Peter S1–S3 form re-edits);

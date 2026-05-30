@@ -5,9 +5,10 @@ __pycache__/
 *.pyc
 traces.jsonl
 .hf_cache/
-.env*
+.env.example
 wandb/
 demo_videos/
 test-results/
 screenshots/
 *.pdf
+outputs/

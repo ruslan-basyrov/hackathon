@@ -10,6 +10,7 @@ requires-python = ">=3.10"
 # so the coach container stays small and CPU-only (see requirements.txt note
 # that torch/transformers belong to the Leonardo LoRA env, not here).
 dependencies = [
+    "openai>=2.38.0",
     "pyyaml>=6.0",
 ]
 

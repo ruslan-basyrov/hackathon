@@ -380,6 +380,7 @@ name = "conversion-coach"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "openai" },
     { name = "pyyaml" },
 ]
 
@@ -416,6 +417,7 @@ requires-dist = [
     { name = "accelerate", marker = "extra == 'lora'", specifier = ">=0.34" },
     { name = "datasets", marker = "extra == 'lora'", specifier = ">=2.20" },
     { name = "nicegui", extras = ["testing"], marker = "extra == 'ui'", specifier = ">=2.0" },
+    { name = "openai", specifier = ">=2.38.0" },
     { name = "openai", marker = "extra == 'phase4'", specifier = ">=1.0" },
     { name = "peft", marker = "extra == 'lora'", specifier = ">=0.12" },
     { name = "playwright", marker = "extra == 'ui'", specifier = ">=1.40" },

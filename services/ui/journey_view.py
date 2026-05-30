@@ -92,7 +92,12 @@ def render(
                 progress_dots.append(dot)
 
     page_container = ui.column().props('id="journey-page"').classes(
-        "max-w-3xl mx-auto mt-6 px-6 pb-12 w-full"
+        "max-w-3xl mx-auto mt-6 px-6 pb-4 w-full"
+    )
+
+    # ---- live detection-rules panel (visible especially in interactive mode)
+    rules_panel = ui.column().props('id="journey-rules"').classes(
+        "max-w-3xl mx-auto px-6 w-full mt-2 gap-2"
     )
 
     # ---- popup overlay -----------------------------------------------------
@@ -481,6 +486,98 @@ def render(
             _subtitle("Expect a call within the next business day — "
                       "no fuss, no obligations.")
 
+    # ---- live detection-rules panel ----------------------------------------
+    # Mirrors the conditions in coach/detection.py:_detect_threshold so the
+    # presenter can see exactly which signals are at / over their thresholds
+    # at any given moment. The panel re-paints on every user action AND on
+    # every watchdog tick, so dwell-based rules show their counter ticking up
+    # in real time.
+    def _threshold_rule_specs():
+        """Return the four threshold rules with their (condition_label,
+        is_met, current_value_str) tuples. Reads sess.last_signal AND the
+        live wall-clock dwell so the panel matches what the watchdog sees."""
+        d = sess.cfg["detection"]
+        sig = sess._compute_signals()
+        # what the watchdog would see right now (dwell incl. wall-clock)
+        elapsed = sess.wall_clock_dwell()
+        eff_dwell = sig.dwell_current_s + elapsed
+        return [
+            ("s4_dwell", "Judith at the price table", [
+                ("step == 4",
+                 sig.step == 4, f"{sig.step}", "= 4"),
+                (f"dwell_current_s > {d['dwell_threshold_s']}",
+                 eff_dwell > d['dwell_threshold_s'], f"{eff_dwell:.1f}s", f"> {d['dwell_threshold_s']}s"),
+            ]),
+            ("s7_price_gap+cancel_hover", "Franz at the final price", [
+                ("step == 7",
+                 sig.step == 7, f"{sig.step}", "= 7"),
+                (f"price_gap_eur > {d['price_gap_threshold']}",
+                 sig.price_gap_eur > d['price_gap_threshold'],
+                 f"€{sig.price_gap_eur:.2f}", f"> €{d['price_gap_threshold']:.2f}"),
+                ("hover_cancel_count >= 1",
+                 sig.hover_cancel_count >= 1, str(sig.hover_cancel_count), ">= 1"),
+            ]),
+            ("early_overwhelm", "Peter, struggling early", [
+                (f"field_change_count >= {d['overwhelm_changes']}",
+                 sig.field_change_count >= d['overwhelm_changes'],
+                 str(sig.field_change_count), f">= {d['overwhelm_changes']}"),
+                (f"steps_completed < {d['early_overwhelm_max_steps']}",
+                 sig.steps_completed < d['early_overwhelm_max_steps'],
+                 str(sig.steps_completed), f"< {d['early_overwhelm_max_steps']}"),
+            ]),
+            ("repeated_back_nav", "generic friction", [
+                (f"back_nav_count >= {d['back_nav_threshold']}",
+                 sig.back_nav_count >= d['back_nav_threshold'],
+                 str(sig.back_nav_count), f">= {d['back_nav_threshold']}"),
+            ]),
+        ]
+
+    def refresh_rules_panel():
+        rules_panel.clear()
+        method = sess.cfg["detection"].get("method", "threshold")
+        with rules_panel:
+            with ui.row().classes("items-center gap-2 mb-1"):
+                ui.label("Detection rules (live)").classes(
+                    "text-sm font-semibold text-gray-700"
+                )
+                ui.label(f"method: {method}").classes(
+                    "text-xs font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-600"
+                )
+                if interactive:
+                    ui.label("dwell counts wall-clock time").classes(
+                        "text-xs italic text-gray-400 ml-auto"
+                    )
+            if method != "threshold":
+                ui.label(
+                    "GBM detector: rules not inspectable; this panel only "
+                    "lists thresholds. Switch detector to 'threshold' to see them."
+                ).classes("text-xs italic text-gray-500 mt-1")
+                return
+            for name, narrative, conditions in _threshold_rule_specs():
+                all_met = all(c[1] for c in conditions)
+                outer_cls = "p-2 rounded border-l-4 "
+                outer_cls += ("border-emerald-500 bg-emerald-50"
+                              if all_met else "border-gray-200 bg-gray-50")
+                with ui.element("div").classes(outer_cls):
+                    with ui.row().classes("items-center gap-2"):
+                        ui.label(name).classes("font-mono font-bold text-sm")
+                        ui.label(f"— {narrative}").classes("text-xs text-gray-500")
+                        ui.element("div").classes("flex-grow")
+                        if all_met:
+                            ui.label("FIRES").classes(
+                                "text-xs font-bold bg-emerald-200 text-emerald-800 "
+                                "px-2 py-0.5 rounded"
+                            )
+                    for label, met, current, _threshold in conditions:
+                        with ui.row().classes("items-center gap-2 ml-2 text-xs font-mono"):
+                            color = "text-emerald-600" if met else "text-gray-400"
+                            ui.label("✓" if met else "·").classes(f"w-4 {color}")
+                            ui.label(label).classes("flex-1 text-gray-600")
+                            ui.label(current).classes(
+                                f"w-16 text-right font-semibold "
+                                f"{'text-emerald-700' if met else 'text-gray-700'}"
+                            )
+
     AUTO_RENDERERS = {
         0: _render_start_auto, 1: _render_s1_auto, 2: _render_s2_auto,
         3: _render_s3_auto, 4: _render_s4_auto, 6: _render_s6_auto,
@@ -531,6 +628,7 @@ def render(
     def render_for_step(cur: int):
         paint_progress(cur)
         paint_page(cur)
+        refresh_rules_panel()
 
     def stop_autoplay():
         if autoplay_timer["t"] is not None:
@@ -565,13 +663,15 @@ def render(
     def watchdog_tick():
         """Interactive-mode passive coach: if the human just sits on a page,
         synthesize dwell from wall-clock time and ask the coach. If a popup
-        fires, show it once per state (gated by `shown_intervention_step`)."""
+        fires, show it once per state (gated by `shown_intervention_step`).
+        Also re-paints the rules panel so dwell counters tick up live."""
         if sess.is_done():
             stop_watchdog()
             return
         sig, intervention = sess.consult_coach(
             virtual_dwell_s=sess.wall_clock_dwell()
         )
+        refresh_rules_panel()
         if intervention is not None and sess.shown_intervention_step != int(sess.state):
             sess.shown_intervention_step = int(sess.state)
             popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")

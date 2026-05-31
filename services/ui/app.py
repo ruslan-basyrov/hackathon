@@ -8,7 +8,7 @@ Two routes share the same Session + URL contract:
 
 URL params (read by both routes):
   ?seed=N&episode=N&persona=judith|franz|peter|global
-   &method=threshold|gbm&gbm_threshold=0.5..1.0&narration=...
+   &method=threshold|gbm|llm&gbm_threshold=0.5..1.0&narration=...
 """
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ from services.ui import debug_view, journey_view  # noqa: E402
 @ui.page("/")
 def index(
     seed: int = 0, episode: int = 0,
-    persona: str = "judith", method: str = "threshold",
+    persona: str = "judith", method: str = "llm",
     gbm_threshold: float = 0.85, narration: str = "",
 ):
     debug_view.render(seed=seed, episode=episode, persona=persona,
@@ -40,7 +40,7 @@ def index(
 @ui.page("/journey")
 def journey(
     seed: int = 0, episode: int = 0,
-    persona: str = "judith", method: str = "threshold",
+    persona: str = "judith", method: str = "llm",
     gbm_threshold: float = 0.85, narration: str = "",
     autoplay_ms: int = 900, mode: str = "auto",
 ):

@@ -380,8 +380,12 @@ name = "conversion-coach"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "nicegui" },
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
     { name = "openai" },
     { name = "pyyaml" },
+    { name = "xgboost" },
 ]
 
 [package.optional-dependencies]
@@ -416,7 +420,9 @@ ui = [
 requires-dist = [
     { name = "accelerate", marker = "extra == 'lora'", specifier = ">=0.34" },
     { name = "datasets", marker = "extra == 'lora'", specifier = ">=2.20" },
+    { name = "nicegui", specifier = ">=3.12.1" },
     { name = "nicegui", extras = ["testing"], marker = "extra == 'ui'", specifier = ">=2.0" },
+    { name = "numpy", specifier = ">=2.2.6" },
     { name = "openai", specifier = ">=2.38.0" },
     { name = "openai", marker = "extra == 'phase4'", specifier = ">=1.0" },
     { name = "peft", marker = "extra == 'lora'", specifier = ">=0.12" },
@@ -430,6 +436,7 @@ requires-dist = [
     { name = "trl", marker = "extra == 'lora'", specifier = ">=0.11" },
     { name = "wandb", marker = "extra == 'lora'", specifier = ">=0.16" },
     { name = "wandb", marker = "extra == 'phase3'", specifier = ">=0.16" },
+    { name = "xgboost", specifier = ">=3.2.0" },
     { name = "xgboost", marker = "extra == 'phase3'", specifier = ">=2.0" },
 ]
 provides-extras = ["phase3", "phase4", "ui", "lora", "dev"]

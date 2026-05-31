@@ -1,157 +1,64 @@
-"""LLM Conversion Coach (chat).
-
-Adapted for the state_machine + Signals contract:
-  * `funnel_step` is a Step name (e.g. "S4_INITIAL_PRICE"), not the old loose
-    "PRODUCT_TARIFF_SELECTION" strings.
-  * `turn_data` carries a structured Action and a Signals dict; the user prompt
-    surfaces both directly instead of dumping a free-form blob.
-  * `trigger_reason` can be a detector code (rule-based or GBM) or an LLM-authored
-    strategy string. A small decoder maps known codes to plain-English hints so
-    the chat model has something concrete to work with.
-
-The bot stays LLM-driven and keeps its rolling chat history per session. The
-canonical intervention types from coach.policy/realize are listed in the system
-prompt as a vocabulary the model is encouraged to phrase from — it doesn't
-replace coach/realize.py templates, just anchors the LLM's wording.
-"""
-from __future__ import annotations
-
 import json
-from typing import Optional
+from dataclasses import asdict
 
-from coach.policy import lookup as policy_lookup
-from coach.realize import realize as realize_wording
-from utils.llm_client import LLMClient
-
+from coach import policy
+from coach.llm_realize import llm_realize as realize
+from signals import Signals
 from simulation.json_utils import loads_lenient
-
-
-# Detector reason -> short hint for the chat LLM.
-_TRIGGER_HINTS = {
-    "s4_dwell": "Long dwell at the price table. Likely comparing or hesitating on tariffs.",
-    "s7_price_gap+cancel_hover": "Final price is above the estimate AND the user is hovering cancel. About to drop off.",
-    "early_overwhelm": "Many field edits early in the funnel. The user looks overwhelmed.",
-    "repeated_back_nav": "Back-and-forth navigation. Friction, possibly lost.",
-    "gbm_model_missing": "Detector model missing — fall back to a gentle, generic nudge.",
-}
-
-# Canonical intervention vocabulary (mirrors coach/policy.py + coach/realize.py).
-_INTERVENTION_TYPES = (
-    "price_reframe",          # €/day framing, market comparison
-    "explain_price",          # transparency on the final price
-    "explain_advisory_alt",   # Opt.Plus needs a call; Optimal is fully online
-    "justify_price",          # justify the jump vs. cheaper alt; save-progress option
-    "callback",               # offer a human handoff
-    "back_nav_help",          # generic "need a hand?" nudge
-)
-
-
-def _decode_trigger(reason: str) -> str:
-    """Detector codes -> hint. Unknown / free-form reasons are returned verbatim."""
-    if not reason:
-        return "Unspecified — judge from the signals."
-    if reason in _TRIGGER_HINTS:
-        return _TRIGGER_HINTS[reason]
-    if reason.startswith("gbm:"):
-        return f"GBM detector fired ({reason}). Treat as elevated drop-off risk; pick the intervention type that best fits the step."
-    # LLM intervention model produces a free-form strategy description.
-    return reason
+from utils.llm_client import LLMClient
 
 
 class LLMCoachBot:
-    """Chat-style Conversion Coach. One instance per simulation run."""
-
-    SYSTEM_PROMPT = (
-        "You are the UNIQA Conversion Coach. You appear in-page to help a user navigating an online "
-        "health insurance funnel (steps S1..S12 of the journey state machine).\n\n"
-        "Speak in one short, plain-language message. Match the user's apparent style: 'Online Affine' "
-        "users want fast, transparent facts; 'Service Affine' users want reassurance and an easy offer of "
-        "human help; 'Hybrids' want a clear comparison.\n\n"
-        "When useful, anchor your wording on one of the canonical intervention types: "
-        + ", ".join(_INTERVENTION_TYPES) + ".\n"
-        "  - price_reframe: €/day framing or market comparison (typically at S4_INITIAL_PRICE).\n"
-        "  - explain_price: transparency about the final, individualized price (typically at S7_FINAL_PRICE).\n"
-        "  - explain_advisory_alt: contrast advisory-only tariffs with fully-online ones (S4).\n"
-        "  - justify_price: explain a higher-than-expected final price + offer to save progress (S7).\n"
-        "  - callback: gracefully offer a human callback (early steps for service-affine users).\n"
-        "  - back_nav_help: generic 'need a hand?' nudge when the user is bouncing back and forth.\n\n"
-        "Your response MUST be a single JSON object:\n"
-        " - 'coach_message': (string) the exact message shown to the user.\n"
-        " - 'intervention_type': (string, optional) one of the canonical types above, or null if none fits.\n"
+    """
+    LLM-based coach. Sees the user's Action, the derived Signals, and a brief
+    persona description. Emits a single conversational intervention string.
+    """
+    SCHEMA_DOC = (
+        "You are a helpful, human-like customer service coach for an online insurance flow.\n"
+        "Your goal is to keep the user moving toward purchase, NOT to answer general questions.\n"
+        "Keep your tone encouraging and brief. Start with a friendly acknowledgement.\n"
+        "If the user seems stuck, offer a specific, actionable tip relevant to their current step.\n"
+        "If they seem frustrated, offer to connect them with a human advisor.\n"
+        "If they are moving smoothly, offer a simple, positive reinforcement.\n"
+        "DO NOT ask more than one question at a time. No lists. No markdown.\n"
+        "Your entire response must be a single string, no more than two sentences."
     )
 
-    def __init__(self, model_name: str):
+    def __init__(self, model_name):
         self.llm_client = LLMClient(model=model_name)
-        self.history = []
-        self.system_prompt = self.SYSTEM_PROMPT
 
-    def get_intervention(
-        self,
-        funnel_step: str,
-        turn_data: dict,
-        trigger_reason: str,
-        persona_hint: Optional[str] = None,
-        signals=None,                       # accepted for parity with RealizeCoachBot; ignored
-    ) -> str:
-        del signals  # explicit no-op
-        action = turn_data.get("action") or {}
-        signals = turn_data.get("signals") or {}
-        session_data = turn_data.get("session_data_so_far") or {}
-        reasoning = turn_data.get("reasoning")
-
-        trigger_hint = _decode_trigger(trigger_reason)
-
-        # Surface only the signal fields that matter for messaging. Keeping the prompt
-        # compact also keeps the chat model focused.
-        signal_view = {
-            "step": signals.get("step"),
-            "dwell_current_s": signals.get("dwell_current_s"),
-            "dwell_total_s": signals.get("dwell_total_s"),
-            "back_nav_count": signals.get("back_nav_count"),
-            "field_change_count": signals.get("field_change_count"),
-            "tariff_hover_count": signals.get("tariff_hover_count"),
-            "tariff_selected": signals.get("tariff_selected"),
-            "advisory_tariff_clicked": signals.get("advisory_tariff_clicked"),
-            "external_tab_opens": signals.get("external_tab_opens"),
-            "price_gap_eur": signals.get("price_gap_eur"),
-            "hover_cancel_count": signals.get("hover_cancel_count"),
-        }
-
-        persona_line = f"Persona hint: {persona_hint}\n" if persona_hint else ""
-
-        user_prompt = (
-            f"Current step: {funnel_step}\n"
-            f"{persona_line}"
-            f"User's last action: {json.dumps(action)}\n"
-            f"User's reasoning (if any): {reasoning}\n"
-            f"Live signals: {json.dumps(signal_view)}\n"
-            f"Data collected so far: {json.dumps(session_data)}\n"
-            f"Trigger reason: {trigger_reason!r}\n"
-            f"What this means: {trigger_hint}\n\n"
-            "Write one short, in-character coach message that matches the step and signals. "
-            "Respond with JSON."
+    def get_intervention(self, funnel_step, turn_data, trigger_reason, persona_hint, signals, chat_history=None):
+        """
+        Generate a coach intervention message.
+        """
+        system_prompt = self.SCHEMA_DOC
+        user_prompt = self._build_user_prompt(
+            funnel_step, turn_data, trigger_reason, persona_hint, signals, chat_history
         )
 
         messages = [
-            {"role": "system", "content": self.system_prompt},
-            *self.history,
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ]
 
-        raw_response = self.llm_client.chat_completion(messages)
+        raw_response = self.llm_client.chat_completion(messages, json_mode=False)
+        return raw_response.strip().strip('"')
 
-        parsed = loads_lenient(raw_response)
-        if parsed is None:
-            print(f"ERROR: Failed to decode Coach LLM response into JSON: {raw_response}")
-            return "It seems you might need some help. You can easily reach our customer service if you have questions."
-
-        message = parsed.get(
-            "coach_message",
-            "It seems you might need some help. You can easily reach our customer service if you have questions.",
+    def _build_user_prompt(self, funnel_step, turn_data, trigger_reason, persona_hint, signals, chat_history):
+        action = turn_data.get("action", {})
+        prompt = (
+            f"Context:\n"
+            f"- User persona hint: {persona_hint}\n"
+            f"- Funnel step: {funnel_step}\n"
+            f"- Last action: {action.get('type')} (target: {action.get('target')}, dwell: {action.get('dwell_s')}s)\n"
+            f"- Triggering condition: {trigger_reason}\n"
+            f"- Signals: {json.dumps(asdict(signals))}\n"
         )
-        self.history.append({"role": "user", "content": user_prompt})
-        self.history.append({"role": "assistant", "content": raw_response})
-        return message
+        if chat_history:
+            prompt += f"\nConversation history:\n{json.dumps(chat_history)}\n"
+
+        prompt += "\nYour task: Generate a single, brief, encouraging sentence to help the user."
+        return prompt
 
 
 class RealizeCoachBot:
@@ -187,37 +94,28 @@ class RealizeCoachBot:
         funnel_step: str,
         turn_data: dict,
         trigger_reason: str,
-        persona_hint: Optional[str] = None,
-        signals=None,
+        persona_hint: str,
+        signals: Signals,
+        chat_history: list = None,
     ) -> str:
-        del funnel_step  # step int is read off signals; the string name is unused here
-
-        if signals is None:
-            # Best-effort reconstruction from the turn_data dict. If the dict
-            # is missing fields we can't build a Signals — fall back generically.
-            from signals import Signals  # local import; avoids a hard dep at module load
-            try:
-                signals = Signals(**(turn_data.get("signals") or {}))
-            except TypeError:
-                return self.GENERIC_FALLBACK
-
-        persona = (persona_hint or "global").lower()
-        itype, _mode = policy_lookup(persona, int(signals.step))
-
-        if itype is None:
-            # Same narrow fallback coach.__init__.coach() uses: back-nav friction
-            # gets a generic helper even when the persona/step cell is empty.
-            if trigger_reason == "repeated_back_nav":
-                itype = "back_nav_help"
-            else:
-                return self.GENERIC_FALLBACK
-
-        try:
-            text = realize_wording(itype, signals, persona=persona, cfg=self.cfg)
-        except Exception as e:
-            # realize() itself handles graceful template fallback; if it still
-            # raises, the cfg explicitly asked for hard failure.
-            print(f"WARNING: realize({itype!r}) failed: {e}. Using generic fallback.")
+        """Look up the intervention type in the policy table, then realize the wording."""
+        # The persona_hint from the engine is the segment ID (e.g. "judith").
+        # The policy table is keyed on this.
+        intervention_type, _ = policy.lookup(
+            persona_hint,
+            signals.step
+        )
+        if intervention_type is None:
             return self.GENERIC_FALLBACK
 
-        return text or self.GENERIC_FALLBACK
+        try:
+            return realize(
+                intervention_type,
+                signals,
+                persona=persona_hint,
+                cfg=self.cfg,
+                chat_history=chat_history,
+            )
+        except Exception as e:
+            print(f"ERROR: realize() failed, falling back to generic. Details: {e}")
+            return self.GENERIC_FALLBACK

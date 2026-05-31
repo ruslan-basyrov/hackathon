@@ -60,6 +60,21 @@ class LLMBot:
         )
         return self._send_prompt(user_prompt)
 
+    def chat_with_coach(self, coach_message, chat_history):
+        """Generates a conversational reply to the coach."""
+        user_prompt = (
+            "A customer service coach is talking to you.\n"
+            f"Your conversation so far:\n{chat_history}\n"
+            f"The coach just said: '{coach_message}'\n\n"
+            "Reply naturally, in character. DO NOT emit JSON. Just your conversational reply."
+        )
+        messages = [
+            {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        # Note: we don't append this to the main action history
+        return self.llm_client.chat_completion(messages, json_mode=False)
+
     def _send_prompt(self, user_prompt):
         messages = [
             {"role": "system", "content": self.system_prompt},

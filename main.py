@@ -4,7 +4,15 @@ from simulation.engine import SimulationEngine, VALID_COACH_MODES, VALID_MODES
 from bots.persona_factory import PersonaFactory
 
 
-def run_simulations(personas_path, num_simulations, model_name, intervention_mode, coach_mode, gbm_cfg=None, realize_cfg=None):
+def run_simulations(
+    personas_path,
+    num_simulations,
+    model_name,
+    intervention_mode,
+    coach_mode,
+    gbm_cfg=None,
+    realize_cfg=None
+):
     print(
         f"--- Running {num_simulations} simulation(s) "
         f"[Intervention: {intervention_mode.upper()} | Coach: {coach_mode.upper()}] "
@@ -40,7 +48,7 @@ def main():
     parser.add_argument(
         '--intervention-mode',
         choices=VALID_MODES,
-        default='llm',
+        default='llm',  # Changed default to 'llm'
         help="Decider for whether the coach intervenes: off | rule | llm | gbm.",
     )
     parser.add_argument(
@@ -56,7 +64,8 @@ def main():
         '--realize-method',
         choices=('llm', 'template'),
         default='llm',
-        help="Only used with --coach-mode realize. 'llm' calls coach.llm_realize; 'template' uses hand-written wording.",
+        help="Only used with --coach-mode realize. 'llm' calls coach.llm_realize; "
+             "'template' uses hand-written wording.",
     )
     parser.add_argument(
         '--gbm-model-path',
@@ -79,7 +88,7 @@ def main():
     parser.add_argument(
         '--model',
         type=str,
-        default="deepseek-ai/DeepSeek-V4-Flash",#"meta-llama/Meta-Llama-3.1-8B-Instruct",
+        default="deepseek-ai/DeepSeek-V4-Flash",  # "meta-llama/Meta-Llama-3.1-8B-Instruct",
         help="The name of the LLM model to use.",
     )
     args = parser.parse_args()

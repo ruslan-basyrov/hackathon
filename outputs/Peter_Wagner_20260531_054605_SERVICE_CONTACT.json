@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054605",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 10.0
+      },
+      "reasoning": "I want someone to explain this to me and guide me through the process. I don't want to be left figuring everything out alone.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 0,
+        "dwell_current_s": 0,
+        "dwell_total_s": 10.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user's preference for advisor assistance aligns with the 'Service Affine' segment behavior. The coach should intervene to offer reassurance and clarify that speaking with an advisor is a supportive choice, ensuring the user feels their need for guidance is understood and properly addressed."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user's preference for advisor assistance aligns with the 'Service Affine' segment behavior. The coach should intervene to offer reassurance and clarify that speaking with an advisor is a supportive choice, ensuring the user feels their need for guidance is understood and properly addressed.",
+        "coach_message": "Peter, we understand you prefer a guided approach. Our advisors are here to help and can walk you through the process, ensuring you find the perfect insurance for your needs. We're just a call away!",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 5.0
+          },
+          "reasoning": "That sounds reassuring. I want to talk to an advisor to make sure everything is taken care of without any hassle on my part.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 0,
+            "dwell_current_s": 5.0,
+            "dwell_total_s": 15.0,
+            "time_since_last_action_s": 5.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

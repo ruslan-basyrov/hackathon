@@ -1,0 +1,625 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054402",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 12,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "dob": "1963-05-23",
+      "social_insurance_number": "987654321987"
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to ensure I get the right advice and don't want to feel overwhelmed by all the options on my own.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user shows a clear preference for seeking professional advice to avoid feeling overwhelmed, aligning with the 'Service Affine' segment. The coach should intervene to offer reassurance and support the decision to speak with an advisor, ensuring the user feels the process is being handled appropriately."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user shows a clear preference for seeking professional advice to avoid feeling overwhelmed, aligning with the 'Service Affine' segment. The coach should intervene to offer reassurance and support the decision to speak with an advisor, ensuring the user feels the process is being handled appropriately.",
+        "coach_message": "Great choice! Speaking with an advisor will ensure you get the best insurance for your needs. We'll arrange a call at a time that suits you best.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 20.0
+          },
+          "reasoning": "I've asked for a callback from an advisor, and I want to proceed with the process until they can provide me with the best advice.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 0,
+            "dwell_total_s": 35.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 2,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 10.0
+      },
+      "reasoning": "I am looking to insure only myself since I am single and do not have any dependents to consider.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 10.0,
+        "dwell_total_s": 45.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I am only applying for insurance for myself since I do not have any dependents.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 25.0,
+        "dwell_total_s": 60.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 25.0
+      },
+      "reasoning": "Since I am retired and single, I am insuring only myself and not considering any others at this point.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 50.0,
+        "dwell_total_s": 85.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is taking a long time to select coverage for themselves which may indicate some hesitation or confusion. Given this behavior, the user may resemble characteristics from Segment 3 (Service Affine), who feel overwhelmed by complex decisions. The coach should offer support, ensuring that the user feels reassured and that their concerns are being addressed."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is taking a long time to select coverage for themselves which may indicate some hesitation or confusion. Given this behavior, the user may resemble characteristics from Segment 3 (Service Affine), who feel overwhelmed by complex decisions. The coach should offer support, ensuring that the user feels reassured and that their concerns are being addressed.",
+        "coach_message": "We're here to help! If you have any questions or need guidance, you can speak with an advisor who can assist you further.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "myself",
+            "dwell_s": 20.0
+          },
+          "reasoning": "I want to avoid any unnecessary complexity and is only interested in insuring myself. The offer for help is good to know, but I'm confident in my decision to insure only myself.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 70.0,
+            "dwell_total_s": 105.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 5,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 18.0
+      },
+      "reasoning": "As a retired single individual, insuring myself is the clear choice.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 88.0,
+        "dwell_total_s": 123.0,
+        "time_since_last_action_s": 18.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is exhibiting prolonged dwell time, which may indicate hesitation or confusion, pointing towards the 'Service Affine' segment behavior. The coach should intervene to provide reassurance and clarify any concerns, ensuring the user feels supported and understood in their decision-making process."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is exhibiting prolonged dwell time, which may indicate hesitation or confusion, pointing towards the 'Service Affine' segment behavior. The coach should intervene to provide reassurance and clarify any concerns, ensuring the user feels supported and understood in their decision-making process.",
+        "coach_message": "We understand that this can be a lot to consider. If you have any doubts or need guidance, feel free to talk to an advisor who can help you through this.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "myself",
+            "dwell_s": 24.0
+          },
+          "reasoning": "The information is clear, and I’m confident in insuring myself. However, it's reassuring to know an advisor is available if I change my mind or need further clarification.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 112.0,
+            "dwell_total_s": 147.0,
+            "time_since_last_action_s": 24.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 6,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I am retired and single, so I intend to secure health insurance only for myself.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 127.0,
+        "dwell_total_s": 162.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has a high dwell time on the 'S2_FOR_WHOM' step, suggesting possible confusion or hesitation, consistent with the 'Service Affine' segment. The coach should intervene with a clarifying message to speed up the process and ensure the user feels supported and comfortable with their selection."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has a high dwell time on the 'S2_FOR_WHOM' step, suggesting possible confusion or hesitation, consistent with the 'Service Affine' segment. The coach should intervene with a clarifying message to speed up the process and ensure the user feels supported and comfortable with their selection.",
+        "coach_message": "It sounds like you're securing insurance for yourself. If you need any help or have questions, we can connect you with an advisor to guide you further.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "myself",
+            "dwell_s": 20.0
+          },
+          "reasoning": "I am confident in my decision to get insurance for myself, but it is nice to know that a personal advisor can assist if I need detailed recommendations.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 147.0,
+            "dwell_total_s": 182.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 7,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 18.0
+      },
+      "reasoning": "I'm securing insurance for myself as I am single and do not need coverage for others.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 165.0,
+        "dwell_total_s": 200.0,
+        "time_since_last_action_s": 18.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a significant amount of time on the 'S2_FOR_WHOM' step, indicating potential hesitation or uncertainty, which aligns with the 'Service Affine' segment. The coach should intervene to offer reassurance and clarification, ensuring the user feels confident in their selection and supported throughout the process."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a significant amount of time on the 'S2_FOR_WHOM' step, indicating potential hesitation or uncertainty, which aligns with the 'Service Affine' segment. The coach should intervene to offer reassurance and clarification, ensuring the user feels confident in their selection and supported throughout the process.",
+        "coach_message": "It looks like you're securing insurance just for yourself. If you need any assistance or have questions, we can arrange a call with an advisor to help you along.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 12.0
+          },
+          "reasoning": "I am comfortable with securing insurance for myself, but it's good to know an advisor is available if I need more specific advice. I'll proceed to the next step and await the callback from the advisor.",
+          "post_state": "S3_PERSONAL_DATA",
+          "post_signals": {
+            "step": 3,
+            "max_steps_completed": 3,
+            "dwell_current_s": 0,
+            "dwell_total_s": 212.0,
+            "time_since_last_action_s": 12.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 8,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S3_PERSONAL_DATA",
+      "action": {
+        "type": "change_field",
+        "target": "personal_data",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I want to make sure I enter all the personal data meticulously to avoid any errors that might delay the process.",
+      "session_data_so_far": {
+        "dob": "1965-03-15",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 3,
+        "max_steps_completed": 3,
+        "dwell_current_s": 45.0,
+        "dwell_total_s": 257.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 9,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S3_PERSONAL_DATA",
+      "action": {
+        "type": "change_field",
+        "target": "personal_data",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I need to carefully input my date of birth and social insurance number to ensure accuracy.",
+      "session_data_so_far": {
+        "dob": "1970-01-01",
+        "social_insurance_number": "0987654321"
+      },
+      "signals": {
+        "step": 3,
+        "max_steps_completed": 3,
+        "dwell_current_s": 75.0,
+        "dwell_total_s": 287.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 2,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S3_PERSONAL_DATA",
+      "action": {
+        "type": "change_field",
+        "target": "personal_data",
+        "dwell_s": 50.0
+      },
+      "reasoning": "I want to enter my personal information correctly to avoid any issues later on. The date of birth and social insurance number are crucial for the insurance process.",
+      "session_data_so_far": {
+        "dob": "1965-02-16",
+        "social_insurance_number": "11122233344"
+      },
+      "signals": {
+        "step": 3,
+        "max_steps_completed": 3,
+        "dwell_current_s": 125.0,
+        "dwell_total_s": 337.0,
+        "time_since_last_action_s": 50.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 3,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 11,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S3_PERSONAL_DATA",
+      "action": {
+        "type": "change_field",
+        "target": "personal_data",
+        "dwell_s": 60.0
+      },
+      "reasoning": "I need to fill in my personal details, like date of birth and social insurance number, accurately for the application to proceed smoothly.",
+      "session_data_so_far": {
+        "dob": "1963-05-23",
+        "social_insurance_number": "987654321987"
+      },
+      "signals": {
+        "step": 3,
+        "max_steps_completed": 3,
+        "dwell_current_s": 185.0,
+        "dwell_total_s": 397.0,
+        "time_since_last_action_s": 60.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 4,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a considerable amount of time filling in personal data, which might indicate hesitation or difficulty in understanding the fields. This behavior aligns with the 'Service Affine' segment, who prefer guidance and avoid complexity. The coach should intervene to provide reassurance and confirm the correct fields, ensuring the user feels supported and reduces time spent on this step."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a considerable amount of time filling in personal data, which might indicate hesitation or difficulty in understanding the fields. This behavior aligns with the 'Service Affine' segment, who prefer guidance and avoid complexity. The coach should intervene to provide reassurance and confirm the correct fields, ensuring the user feels supported and reduces time spent on this step.",
+        "coach_message": "We understand that filling out personal details can be a bit overwhelming. If you have any questions or need help, feel free to contact an advisor for assistance.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 45.0
+          },
+          "reasoning": "Having my personal details at hand, I feel confident enough to continue on my own, but it's reassuring to know that expert advice is available if necessary.",
+          "post_state": "S4_INITIAL_PRICE",
+          "post_signals": {
+            "step": 4,
+            "max_steps_completed": 4,
+            "dwell_current_s": 0,
+            "dwell_total_s": 442.0,
+            "time_since_last_action_s": 45.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 4,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 12,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "hover",
+        "target": "OptPlus",
+        "dwell_s": 40.0
+      },
+      "reasoning": "I want to know more about the 'OptPlus' tariff and understand what it covers compared to the other options before making a decision.",
+      "session_data_so_far": {
+        "dob": "1963-05-23",
+        "social_insurance_number": "987654321987"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 40.0,
+        "dwell_total_s": 482.0,
+        "time_since_last_action_s": 40.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 4,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": true,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is hovering over the 'OptPlus' tariff, indicating interest but also potential hesitation or confusion about the differences in coverage. This aligns with the 'Rising Hybrids' segment, who tend to compare multiple offers and need reassurance. The coach should intervene by offering a brief, clear explanation of the 'OptPlus' tariff's benefits and how it compares to other options, helping the user make a more informed decision."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is hovering over the 'OptPlus' tariff, indicating interest but also potential hesitation or confusion about the differences in coverage. This aligns with the 'Rising Hybrids' segment, who tend to compare multiple offers and need reassurance. The coach should intervene by offering a brief, clear explanation of the 'OptPlus' tariff's benefits and how it compares to other options, helping the user make a more informed decision.",
+        "coach_message": "The 'OptPlus' tariff offers comprehensive coverage with additional benefits like dental and vision. If you need more details or help comparing options, we can connect you with an advisor.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 20.0
+          },
+          "reasoning": "I appreciate the comprehensive coverage offered by the 'OptPlus' tariff, but I want to ensure it is the best fit for my needs. I'll consult an advisor to get a detailed comparison.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 4,
+            "dwell_current_s": 0,
+            "dwell_total_s": 502.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 4,
+            "tariff_hover_count": 1,
+            "advisory_tariff_clicked": true,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

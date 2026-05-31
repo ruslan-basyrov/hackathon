@@ -1,0 +1,572 @@
+{
+  "metadata": {
+    "timestamp": "20260531_052423",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "S4_INITIAL_PRICE",
+    "total_turns": 15,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "date_of_birth": "01.01.1980",
+      "social_insurance_number": "34567897654"
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 15.0
+      },
+      "reasoning": "I don't want to spend too much time on this page, just want to see what kind of deals are available. Since I prefer self-service and digital options, I'll skip asking for a callback and proceed.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 25.0
+      },
+      "reasoning": "I know I want coverage for regular check-ups and visits, so I'll select doctor visits and move along. I don't want to get bogged down in options I don't need.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 25.0,
+        "dwell_total_s": 40.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I prefer making decisions based on practicality. Since I visit a doctor more often than I go to a hospital, I'll choose coverage for doctor visits.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 40.0,
+        "dwell_total_s": 55.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I usually prefer to have coverage for regular visits to the doctor. Hospitals are not something I frequent often, so I'll chose 'doctor visits'. I want to make sure this is the most important step since the focus is on sustainability and transparency.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 60.0,
+        "dwell_total_s": 75.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want coverage for my regular doctor visits and I prefer handling everything online without having to call an advisor or ticking multiple boxes. I'm spending a bit of time here just to make sure I'm choosing the right option.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 75.0,
+        "dwell_total_s": 90.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 6,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I want simple coverage for my doctor visits and prefer not to complicate things with hospital coverage right now. Plus, I want to be sure everything is clearly laid out and honestly, I don't want to spend too long on this step.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 95.0,
+        "dwell_total_s": 110.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has been lingering on the coverage type selection page with multiple selections, which may indicate some uncertainty or hesitation. This behavior is somewhat characteristic of Segment 1 (Rising Hybrids) or Segment 3 (Service Affine). An intervention offering clarification and possibly a callback for further assistance could help provide the confidence needed to proceed or confirm their selection."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has been lingering on the coverage type selection page with multiple selections, which may indicate some uncertainty or hesitation. This behavior is somewhat characteristic of Segment 1 (Rising Hybrids) or Segment 3 (Service Affine). An intervention offering clarification and possibly a callback for further assistance could help provide the confidence needed to proceed or confirm their selection.",
+        "coach_message": "You’ve chosen simple coverage for doctor visits. If you need any clarification or just want to talk it over with a human, we can arrange a callback at your convenience.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "I appreciate the offer but I'm the type who prefers digital options and self-service. I trust my initial choice and want to move on. The last thing I need is more complexity, and I don't see the need for a callback.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 0,
+            "dwell_total_s": 120.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 7,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 5.0
+      },
+      "reasoning": "I'm only looking to get insurance for myself since I'm single and don't have anyone else to cover. I don't see a need to contact an advisor - I'll keep things straightforward.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 5.0,
+        "dwell_total_s": 125.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 8,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 7.0
+      },
+      "reasoning": "I just need to insure myself and I'm comfortable with the self-service options. I'll avoid contacting an advisor because it gives me more control over the process.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 12.0,
+        "dwell_total_s": 132.0,
+        "time_since_last_action_s": 7.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 9,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 10.0
+      },
+      "reasoning": "I'm looking to secure insurance for myself since that's the most immediate need. I prefer handling it all myself without needing to talk to an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 22.0,
+        "dwell_total_s": 142.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 12.0
+      },
+      "reasoning": "I need to get insurance for myself, as I do not have any dependents to cover. Furthermore, I prefer to manage things on my own without any external intervention.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 34.0,
+        "dwell_total_s": 154.0,
+        "time_since_last_action_s": 12.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 11,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 8.0
+      },
+      "reasoning": "I'm only insuring myself since I'm a single person and I don't have any dependents. I'll stick with the online options and avoid any advisor callbacks.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 42.0,
+        "dwell_total_s": 162.0,
+        "time_since_last_action_s": 8.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 12,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 5.0
+      },
+      "reasoning": "Since I'm single and only need insurance for myself, I'll select 'myself' and continue with the process. I do not need to cover anyone else and prefer to handle everything online.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 47.0,
+        "dwell_total_s": 167.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 13,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 10.0
+      },
+      "reasoning": "I want to ensure I'm only insuring myself. I'm single and do not have anyone else to cover, so I will move forward by selecting myself and proceed with the self-service process.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 57.0,
+        "dwell_total_s": 177.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 14,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I am only insuring myself since I am unmarried and have no other dependents. I prefer to do it all online so I won't need to speak to an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 72.0,
+        "dwell_total_s": 192.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a considerable amount of time on the 'For whom' selection step. Though the reasoning aligns with someone who prefers self-service (like Segment 2, Online Affine), the extended dwell time suggests some hesitation or confusion. An intervention to offer clarification on the selection or reassurance that proceeding with self-service is a smooth path could help the user feel more assured moving forward."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a considerable amount of time on the 'For whom' selection step. Though the reasoning aligns with someone who prefers self-service (like Segment 2, Online Affine), the extended dwell time suggests some hesitation or confusion. An intervention to offer clarification on the selection or reassurance that proceeding with self-service is a smooth path could help the user feel more assured moving forward.",
+        "coach_message": "You’ve selected coverage for yourself only. Proceeding with online selection is straightforward and efficient. If you have any doubts, just let us know!",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 5.0
+          },
+          "reasoning": "I confirm that I want to insure only myself. The customer service coach has provided me with reassurance that the process is efficient. I don't have any doubts, so I'll proceed to the next step.",
+          "post_state": "S3_PERSONAL_DATA",
+          "post_signals": {
+            "step": 3,
+            "max_steps_completed": 3,
+            "dwell_current_s": 0,
+            "dwell_total_s": 197.0,
+            "time_since_last_action_s": 5.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 15,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 30.0
+      },
+      "reasoning": "This seems like a straightforward form to fill out. I'll enter my date of birth and social insurance number as required. I prefer to handle everything myself and not wait for a callback.",
+      "session_data_so_far": {
+        "date_of_birth": "01.01.1980",
+        "social_insurance_number": "34567897654"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 227.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "timestamp": "20260531_052546",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 3,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I don't want to deal with this on my own. I'll let an advisor guide me through the process.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I'll choose doctor visits since that's something I need and I want this to be as straightforward as possible.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 15.0,
+        "dwell_total_s": 45.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I'm not sure what's best; I think getting an advisor's input will save me time and ensure I choose correctly.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 90.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

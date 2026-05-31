@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054408",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to get a quick and simple understanding of what I need. An advisor can give me straightforward information.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is opting for an advisor callback, indicating a preference for professional guidance to avoid complexity. This behavior aligns with the 'Service Affine' segment. The coach should intervene to offer reassurance and confirm that speaking with an advisor is a good choice, ensuring the user feels supported and understood in their decision."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is opting for an advisor callback, indicating a preference for professional guidance to avoid complexity. This behavior aligns with the 'Service Affine' segment. The coach should intervene to offer reassurance and confirm that speaking with an advisor is a good choice, ensuring the user feels supported and understood in their decision.",
+        "coach_message": "Great choice, Peter! Speaking with an advisor will give you clear, personalized information. We’ll make sure you get all the details you need quickly. Should I arrange this for you now?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 20.0
+          },
+          "reasoning": "I am relieved that an advisor can help me and will probably get me the clear guidance I prefer.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 35.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

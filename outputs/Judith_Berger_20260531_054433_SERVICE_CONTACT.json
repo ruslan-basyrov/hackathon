@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054433",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 3,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I want to get a quick understanding of my options and talk to someone who can explain the specifics. I prefer to gather information online first before making a decision, but having a trusted advisor is crucial to me as well.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I believe that covering doctor visits is a necessity, especially considering my family's health history. I want to personalize my insurance coverage, but I also need comprehensive information on why doctor visits coverage is important.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 50.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 25.0
+      },
+      "reasoning": "Before making a decision here, I would like to talk to an advisor to understand the full implications of choosing doctor visits over hospital coverage, and to confirm that I'm making the best decision for my health needs.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 75.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

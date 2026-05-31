@@ -1,0 +1,605 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054732",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "CONVERTED",
+    "total_turns": 13,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "dob": "1985-05-15",
+      "social_insurance_number": "123456789012",
+      "smoker": "no",
+      "chronic_conditions": "none",
+      "recent_operations": "no",
+      "dietary_restrictions": "no",
+      "payment_method": "credit_card",
+      "agree_to_terms": "yes",
+      "provide_contact_info": "yes"
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 30.0
+      },
+      "reasoning": "I want to get a clear overview of the available health insurance plans. The landing page needs to show me the information I need quickly without making me call an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I need insurance that covers doctor visits since I'm retired and might see the doctor more often. I want to make sure I select the right coverage type without needing to speak with an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 45.0,
+        "dwell_total_s": 75.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 50.0
+      },
+      "reasoning": "I believe I'll need more frequent doctor visits being retired, and I prefer to handle this choice online without any unnecessary guidance from an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 95.0,
+        "dwell_total_s": 125.0,
+        "time_since_last_action_s": 50.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is repeatedly selecting the same option and has accumulated significant dwell time. This behavior is indicative of potential hesitation or confusion, which is common in Segment 3 (Service Affine). An intervention to reassure the user and confirm their selection can help them proceed with confidence."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is repeatedly selecting the same option and has accumulated significant dwell time. This behavior is indicative of potential hesitation or confusion, which is common in Segment 3 (Service Affine). An intervention to reassure the user and confirm their selection can help them proceed with confidence.",
+        "coach_message": "Great choice, Franz! Choosing to cover more frequent doctor visits is a smart move. You're making good progress, and it looks like you prefer handling this online. Ready to move on?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "I agree with the coach's assessment — continuing forward and staying online to make the next selections seems efficient and straightforward.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 0,
+            "dwell_total_s": 135.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I'm primarily concerned with my own health insurance coverage since I'm retired and living in partnership, but I want to handle this without needing to contact an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 155.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I’m getting my own health insurance done here. Since I’m retired, it’s essential to take care of my health, and I prefer to do everything myself without contacting an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 35.0,
+        "dwell_total_s": 170.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is repeatedly selecting the same option, indicating some level of hesitation or need for reassurance, which is typical for Segment 3 (Service Affine). A brief intervention to confirm their selection and provide reassurance could help them proceed without further delays."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is repeatedly selecting the same option, indicating some level of hesitation or need for reassurance, which is typical for Segment 3 (Service Affine). A brief intervention to confirm their selection and provide reassurance could help them proceed without further delays.",
+        "coach_message": "Perfect choice, Franz! You’re taking great care of your health by getting insurance for yourself. If you need any help along the way, we’re here for you. Ready to move forward?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "I appreciate the encouragement from the coach, but I'm confident I can handle everything online. I should proceed to the next step to save more time.",
+          "post_state": "S3_PERSONAL_DATA",
+          "post_signals": {
+            "step": 3,
+            "max_steps_completed": 3,
+            "dwell_current_s": 0,
+            "dwell_total_s": 180.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 6,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 40.0
+      },
+      "reasoning": "I'm here to enter my personal data, so I will input my date of birth and social insurance number to continue getting my insurance sorted out. I want to keep things moving along quickly without consulting an advisor.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 220.0,
+        "time_since_last_action_s": 40.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 7,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Optimal",
+        "dwell_s": 60.0
+      },
+      "reasoning": "I'm going for the 'Optimal' tariff as it seems a good balance between coverage and price. I want to avoid more expensive options if they're not necessary for my needs, but I’m also not looking to cut costs significantly at the expense of quality.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 60.0,
+        "dwell_total_s": 280.0,
+        "time_since_last_action_s": 60.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 8,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "hover",
+        "target": "Optimal",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I want to hover over the 'Optimal' tariff to see more details about its coverage and cost without having to select it right away. I prefer to gather information before making a decision.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 90.0,
+        "dwell_total_s": 310.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has hovered over the 'Optimal' tariff for a notable duration, indicating consideration or confusion. This behavior aligns with Segment 1 (Rising Hybrids) who take time to understand their options before committing. An intervention to highlight key benefits of the 'Optimal' tariff and a gentle nudge to proceed might help them move forward."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has hovered over the 'Optimal' tariff for a notable duration, indicating consideration or confusion. This behavior aligns with Segment 1 (Rising Hybrids) who take time to understand their options before committing. An intervention to highlight key benefits of the 'Optimal' tariff and a gentle nudge to proceed might help them move forward.",
+        "coach_message": "The 'Optimal' tariff offers great coverage with balanced costs. It's a popular choice for comprehensive protection. Ready to see the details and move forward?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "Optimal",
+            "dwell_s": 15.0
+          },
+          "reasoning": "The coach's reassurance about the 'Optimal' tariff aligns with my preference for clear, well-rounded coverage at a reasonable price. I'll select it to proceed with my choice.",
+          "post_state": "S4_INITIAL_PRICE",
+          "post_signals": {
+            "step": 4,
+            "max_steps_completed": 4,
+            "dwell_current_s": 105.0,
+            "dwell_total_s": 325.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 1,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": "Optimal",
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 9,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Optimal",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I believe the 'Optimal' tariff is the best fit for my needs as it provides a good mix of price and coverage. I'm a self-reliant person; selecting a tariff should be straightforward if I make an informed decision.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 150.0,
+        "dwell_total_s": 370.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Optimal",
+        "dwell_s": 50.0
+      },
+      "reasoning": "I'm choosing the 'Optimal' tariff because it represents a solid balance between price and coverage options, matching my pragmatic view of insurance. I can make a good decision based on the online information without needing further assistance.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 200.0,
+        "dwell_total_s": 420.0,
+        "time_since_last_action_s": 50.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "This user is spending a considerable amount of time at the initial price screen, indicating some hesitance or a need for more information to finalize their decision. A gentle coach intervention can emphasize the benefits of the 'Optimal' tariff and help reassure the user that their choice is informed and well-balanced, potentially reducing hesitation."
+      },
+      "coach_intervention": {
+        "trigger_context": "This user is spending a considerable amount of time at the initial price screen, indicating some hesitance or a need for more information to finalize their decision. A gentle coach intervention can emphasize the benefits of the 'Optimal' tariff and help reassure the user that their choice is informed and well-balanced, potentially reducing hesitation.",
+        "coach_message": "Great choice, Franz! The 'Optimal' tariff offers robust coverage at a balanced price. You’re doing well on your own, but let us know if you need any further details to feel completely confident.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 20.0
+          },
+          "reasoning": "The coach's confirmation adds to my confidence in selecting the 'Optimal' tariff. I'm set to move forward to see what other elements of the insurance package I can review online.",
+          "post_state": "S6_HEALTH_QS",
+          "post_signals": {
+            "step": 6,
+            "max_steps_completed": 5,
+            "dwell_current_s": 0,
+            "dwell_total_s": 440.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 1,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": "Optimal",
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 11,
+      "state": "S6_HEALTH_QS",
+      "next_state": "S7_FINAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 90.0
+      },
+      "reasoning": "I'll answer the health questions to the best of my ability without contacting an advisor. Transparency is key here, and I want to move through the process as quickly as possible.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012",
+        "smoker": "no",
+        "chronic_conditions": "none",
+        "recent_operations": "no",
+        "dietary_restrictions": "no"
+      },
+      "signals": {
+        "step": 7,
+        "max_steps_completed": 6,
+        "dwell_current_s": 0,
+        "dwell_total_s": 530.0,
+        "time_since_last_action_s": 90.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 15.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 12,
+      "state": "S7_FINAL_PRICE",
+      "next_state": "S12_CLOSING",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 45.0
+      },
+      "reasoning": "I’m satisfied with the final price and the transparency of the pricing. I don’t want to waste any more time on this process and prefer handling the purchase online without speaking to an advisor.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012",
+        "smoker": "no",
+        "chronic_conditions": "none",
+        "recent_operations": "no",
+        "dietary_restrictions": "no"
+      },
+      "signals": {
+        "step": 12,
+        "max_steps_completed": 7,
+        "dwell_current_s": 0,
+        "dwell_total_s": 575.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 13,
+      "state": "S12_CLOSING",
+      "next_state": "CONVERTED",
+      "action": {
+        "type": "purchase",
+        "target": null,
+        "dwell_s": 60.0
+      },
+      "reasoning": "I have reviewed all details and am satisfied with the insurance package. I want to finalize everything online without any further delays or consultations.",
+      "session_data_so_far": {
+        "dob": "1985-05-15",
+        "social_insurance_number": "123456789012",
+        "smoker": "no",
+        "chronic_conditions": "none",
+        "recent_operations": "no",
+        "dietary_restrictions": "no",
+        "payment_method": "credit_card",
+        "agree_to_terms": "yes",
+        "provide_contact_info": "yes"
+      },
+      "signals": {
+        "step": 90,
+        "max_steps_completed": 8,
+        "dwell_current_s": 0,
+        "dwell_total_s": 635.0,
+        "time_since_last_action_s": 60.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

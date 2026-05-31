@@ -1,0 +1,510 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054715",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "S1_COVERAGE_TYPE",
+    "total_turns": 15,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to see if this health insurance service is simple and straightforward enough for me to handle everything online without any hassle.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I mainly need health insurance for routine doctor visits. Hospital coverage seems excessive for my needs and might just increase the premiums unnecessarily.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 35.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 18.0
+      },
+      "reasoning": "I just need basic coverage for doctor visits, and I want to keep my costs as low as possible. Plus, online is my preference, so the less complex the better.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 38.0,
+        "dwell_total_s": 53.0,
+        "time_since_last_action_s": 18.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 16.0
+      },
+      "reasoning": "I'd prefer a simpler plan focusing on routine doctor visits to keep my insurance costs down and remain true to my preference for straightforward processes.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 54.0,
+        "dwell_total_s": 69.0,
+        "time_since_last_action_s": 16.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I'll go with coverage for doctor visits to ensure the premium stays within my budget and aligns with my independent approach to managing my health insurance online.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 69.0,
+        "dwell_total_s": 84.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 6,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I just need insurance coverage for regular doctor visits. It's a simpler plan and likely less expensive than comprehensive hospital coverage, which is perfect for my budget and lifestyle.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 89.0,
+        "dwell_total_s": 104.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 7,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I'm selecting only coverage for doctor visits because I want to keep my health insurance simple and affordable. This will suit my needs and fit my independent style of managing my health insurance online without unnecessary complexity.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 119.0,
+        "dwell_total_s": 134.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 8,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 18.0
+      },
+      "reasoning": "I need to keep things simple and affordable, so I'll choose the doctor visits coverage. Hospitals are not in my regular healthcare plan.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 137.0,
+        "dwell_total_s": 152.0,
+        "time_since_last_action_s": 18.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 9,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 25.0
+      },
+      "reasoning": "I want to keep my insurance straightforward and focused on doctor visits, which will be more cost-effective. This option suits my independent, information-driven approach and ensures I don't overpay for services I won't use.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 162.0,
+        "dwell_total_s": 177.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 22.0
+      },
+      "reasoning": "I prefer a simple plan that covers doctor visits to maintain a strong price-performance ratio. This will keep my costs down, and everything should be easily managed online.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 184.0,
+        "dwell_total_s": 199.0,
+        "time_since_last_action_s": 22.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 11,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I just need coverage for doctor visits to save on costs and because that's the majority of my health needs. Keeping it simple online suits my preference.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 199.0,
+        "dwell_total_s": 214.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 12,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I will choose coverage for doctor visits because it aligns with my preference for a straightforward, budget-friendly insurance plan that can be easily managed online.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 219.0,
+        "dwell_total_s": 234.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 13,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I opt for doctor visits because it keeps the coverage simple and the costs down. This aligns with my preference for handling everything online and my need for a clear, transparent offer.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 234.0,
+        "dwell_total_s": 249.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 14,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 10.0
+      },
+      "reasoning": "Doctor visits coverage is the most suitable for me since it is simpler and cheaper than hospital coverage. It aligns with my way of managing things independently online without unnecessary complexity.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 244.0,
+        "dwell_total_s": 259.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 15,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 25.0
+      },
+      "reasoning": "I'm selecting only coverage for doctor visits to keep things simple and cost-effective, which is what I need given my independent approach to handling things online.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 269.0,
+        "dwell_total_s": 284.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

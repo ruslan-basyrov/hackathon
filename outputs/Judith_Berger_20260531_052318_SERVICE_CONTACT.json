@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "timestamp": "20260531_052318",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 2,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 120.0
+      },
+      "reasoning": "I want someone to talk me through the options and help me decide on the best health insurance plan for my family.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 120.0,
+        "time_since_last_action_s": 120.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I need to make sure I get coverage for routine doctor visits which are important for my family's health, but I want to check if I can add hospital coverage later.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 45.0,
+        "dwell_total_s": 165.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a considerable amount of time before selecting 'doctor' coverage, suggesting they are deliberate and thoughtful in their decision-making, which aligns with Segment 1 (Rising Hybrids). Given the dwell time and their reasoning, an intervention offering a callback from a trusted advisor may help reassure them and guide them through any questions they might have about coverage options. This early engagement could be beneficial for their continued progress through the process."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a considerable amount of time before selecting 'doctor' coverage, suggesting they are deliberate and thoughtful in their decision-making, which aligns with Segment 1 (Rising Hybrids). Given the dwell time and their reasoning, an intervention offering a callback from a trusted advisor may help reassure them and guide them through any questions they might have about coverage options. This early engagement could be beneficial for their continued progress through the process.",
+        "coach_message": "I see you're taking your time to choose the right coverage. If you have any questions about adding hospital coverage later or anything else, our trusted advisors are here to help. Would you like a callback at a convenient time?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 30.0
+          },
+          "reasoning": "It's reassuring to know that a trusted advisor is available to help clarify any doubts I might have about adding hospital coverage later.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 195.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

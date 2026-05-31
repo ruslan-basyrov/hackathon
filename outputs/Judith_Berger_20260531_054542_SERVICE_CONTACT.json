@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054542",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 5.0
+      },
+      "reasoning": "I want to get more information and speak with someone about the plans, so I'm requesting a callback.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 5.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user's action and reasoning indicate a preference for obtaining guidance from an advisor, aligning with the 'Rising Hybrids' segment. The coach should intervene to confirm and support the user's desire to speak with an advisor, ensuring they feel their need for personalized assistance is recognized and addressed."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user's action and reasoning indicate a preference for obtaining guidance from an advisor, aligning with the 'Rising Hybrids' segment. The coach should intervene to confirm and support the user's desire to speak with an advisor, ensuring they feel their need for personalized assistance is recognized and addressed.",
+        "coach_message": "Great choice! Our advisor will call you soon to discuss the best health insurance plans for you. Is there anything specific you'd like them to focus on?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 3.0
+          },
+          "reasoning": "I prefer to let the advisor know to call back with more details. I want to make sure the insurance covers all necessary medical aspects, but I want the expertise of someone I can trust to guide me.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 8.0,
+            "time_since_last_action_s": 3.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

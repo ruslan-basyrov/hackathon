@@ -1,0 +1,175 @@
+{
+  "metadata": {
+    "timestamp": "20260531_052308",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 4,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 25.0
+      },
+      "reasoning": "I spent some time looking at the landing page. It seems the process is mostly online, which I like, but there's an option to request a callback from an advisor. I might need that since I don't want to commit to a deal without understanding all the fine print. I'll proceed to see if I can get a clearer view of the offerings and perhaps a callback later.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 25.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 18.0
+      },
+      "reasoning": "I'm looking for something that provides peace of mind without breaking the bank, but I definitely prefer to handle doctor visits without worrying about costs. Since I tend to go to the doctor more often than the hospital, I'll choose the doctor visits coverage to start.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 18.0,
+        "dwell_total_s": 43.0,
+        "time_since_last_action_s": 18.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I need to cover regular doctor visits. I've had some minor health issues lately and visiting the doctor is becoming a regular part of my routine. I don't want to have to worry about unexpected costs. Hospital stays don't seem necessary right now since they're less frequent.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 38.0,
+        "dwell_total_s": 63.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I'll choose doctor visits because I have to go to the doctor frequently for a pre-existing condition. I'll consider hospital coverage later if needed. I want to make sure that the day-to-day costs of medical care are covered as effectively as possible without spending more than necessary.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 68.0,
+        "dwell_total_s": 93.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a considerable amount of time on the current step and seems to be hesitating despite multiple selections. This behavior is consistent with someone who values making a well-thought-out decision, possibly from Segment 1 (Rising Hybrids). The intervention should offer reassurance and a personalized callback option to discuss their needs, which can help ease their decision-making process."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a considerable amount of time on the current step and seems to be hesitating despite multiple selections. This behavior is consistent with someone who values making a well-thought-out decision, possibly from Segment 1 (Rising Hybrids). The intervention should offer reassurance and a personalized callback option to discuss their needs, which can help ease their decision-making process.",
+        "coach_message": "Franz, we understand you want to ensure your day-to-day medical costs are covered efficiently. If you need more personalized advice, we can offer a callback from one of our experts to help you decide. Would you like that?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 15.0
+          },
+          "reasoning": "The offer of a callback is perfect. It sounds like they can help tailor a solution suited to my needs. I'm not sure yet what's the most cost-effective choice, even though I lean towards doctor visits, so some guidance from an expert would be ideal.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 108.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

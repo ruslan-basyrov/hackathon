@@ -1,0 +1,344 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054423",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "ROUTED_ADVISOR",
+    "total_turns": 8,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "date_of_birth": "1970-06-30",
+      "social_insurance_number": "123456789012"
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 30.0
+      },
+      "reasoning": "I don't want to waste time by calling an advisor. I'll start looking for the best health insurance online and choose a plan that suits me best.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I've seen online that it's important for me to have coverage for doctor visits, especially as I get older. I'll pick that option, as I'm less concerned about hospitalization at the moment.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 45.0,
+        "dwell_total_s": 75.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 50.0
+      },
+      "reasoning": "I prefer a plan that covers doctor visits extensively since I have some ongoing health issues. I tend to avoid hospital plans as they can be more expensive and I want to get the most out of the digital tools and cost-effectiveness of the insurance.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 95.0,
+        "dwell_total_s": 125.0,
+        "time_since_last_action_s": 50.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "Given the(dwelling time and repeated selection of the same option, the user might be experiencing some hesitation or confusion, potentially indicating they are from Segment 1 (Rising Hybrids) or Segment 3 (Service Affine). An intervention to clarify coverage options and reinforce the benefit of the selected 'doctor' coverage could help guide them towards a more confident decision and keep them engaged."
+      },
+      "coach_intervention": {
+        "trigger_context": "Given the(dwelling time and repeated selection of the same option, the user might be experiencing some hesitation or confusion, potentially indicating they are from Segment 1 (Rising Hybrids) or Segment 3 (Service Affine). An intervention to clarify coverage options and reinforce the benefit of the selected 'doctor' coverage could help guide them towards a more confident decision and keep them engaged.",
+        "coach_message": "Choosing a plan that covers doctor visits extensively is a great choice, especially with ongoing health issues. It keeps your costs lower and ensures you have great digital support. Ready to move forward with this choice?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 15.0
+          },
+          "reasoning": "The coach's endorsement of the doctor visits coverage aligns with my needs and preferences. I want to proceed and explore the options in more detail.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 0,
+            "dwell_total_s": 140.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I'm only looking to insure myself as I live alone and don’t have any dependents. I can manage that without needing to talk to an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 160.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to secure my own health insurance without any complications. Insuring others would be unnecessary for me since I'm living alone.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 35.0,
+        "dwell_total_s": 175.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 6,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 25.0
+      },
+      "reasoning": "Since I live alone and am not responsible for anyone else's coverage, insuring myself is the clear choice. I find it most efficient to handle everything online without additional complexity.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 60.0,
+        "dwell_total_s": 200.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has repeatedly selected the same option on this step with a growing dwell time, indicating some level of hesitation or confusion. This behavior aligns more with the Segment 1 (Rising Hybrids) profile, where users appreciate clarity and speed in the online process. A gentle intervention to reassure the user that insuring oneself is a valid and efficient choice could help drive them forward without disrupting their preference for a self-service process."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has repeatedly selected the same option on this step with a growing dwell time, indicating some level of hesitation or confusion. This behavior aligns more with the Segment 1 (Rising Hybrids) profile, where users appreciate clarity and speed in the online process. A gentle intervention to reassure the user that insuring oneself is a valid and efficient choice could help drive them forward without disrupting their preference for a self-service process.",
+        "coach_message": "Insuring yourself is a smart and efficient choice, especially if you prefer handling everything online without extra complexity. Ready to proceed?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "The coach's confirmation that insuring myself is efficient and fits my preference for handling everything online is reassuring. I'm ready to proceed to the next step.",
+          "post_state": "S3_PERSONAL_DATA",
+          "post_signals": {
+            "step": 3,
+            "max_steps_completed": 3,
+            "dwell_current_s": 0,
+            "dwell_total_s": 210.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 7,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 35.0
+      },
+      "reasoning": "I want to move forward quickly and supply the necessary information for my application. The online process should be straightforward, and I trust the portal to handle my data securely.",
+      "session_data_so_far": {
+        "date_of_birth": "1970-06-30",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 245.0,
+        "time_since_last_action_s": 35.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 8,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "ROUTED_ADVISOR",
+      "action": {
+        "type": "select",
+        "target": "OptPlus",
+        "dwell_s": 50.0
+      },
+      "reasoning": "I want a plan that provides a solid balance between cost and coverage. The OptPlus tariff seems to fit well with what I am looking for in terms of coverage for my ongoing health issues without breaking my budget. I remain averse to any forced media breaks due to advisors.",
+      "session_data_so_far": {
+        "date_of_birth": "1970-06-30",
+        "social_insurance_number": "123456789012"
+      },
+      "signals": {
+        "step": 92,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 295.0,
+        "time_since_last_action_s": 50.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": true,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

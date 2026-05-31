@@ -1,0 +1,469 @@
+{
+  "metadata": {
+    "timestamp": "20260531_013515",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "CONVERTED",
+    "total_turns": 14,
+    "model_name": "deepseek-ai/DeepSeek-V4-Flash",
+    "intervention_mode": "off",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "dob": "01.01.1955",
+      "social_insurance_number": "1234 567890",
+      "payment_method": "online_banking",
+      "consent_given": true
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 3.0
+      },
+      "reasoning": "I want to explore the options online without talking to an advisor. The landing page looks straightforward, so I'll proceed.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 3.0,
+        "time_since_last_action_s": 3.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 4.0
+      },
+      "reasoning": "I want basic coverage for doctor visits since I'm generally healthy and only need occasional check-ups. This is simple and transparent.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 4.0,
+        "dwell_total_s": 7.0,
+        "time_since_last_action_s": 4.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 2.0
+      },
+      "reasoning": "I've selected what I need, now I want to move forward quickly without unnecessary steps.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 0,
+        "dwell_total_s": 9.0,
+        "time_since_last_action_s": 2.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 2.0
+      },
+      "reasoning": "It's just for me, no need to complicate things with insuring others. Fast and straightforward.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 2.0,
+        "dwell_total_s": 11.0,
+        "time_since_last_action_s": 2.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S3_PERSONAL_DATA",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 1.0
+      },
+      "reasoning": "Selected myself, let's move on quickly.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 3,
+        "max_steps_completed": 3,
+        "dwell_current_s": 0,
+        "dwell_total_s": 12.0,
+        "time_since_last_action_s": 1.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 6,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S3_PERSONAL_DATA",
+      "action": {
+        "type": "change_field",
+        "target": "dob",
+        "dwell_s": 6.0
+      },
+      "reasoning": "I need to enter my date of birth and social insurance number to proceed. I want to do this online quickly and correctly.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 3,
+        "max_steps_completed": 3,
+        "dwell_current_s": 6.0,
+        "dwell_total_s": 18.0,
+        "time_since_last_action_s": 6.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 7,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 1.0
+      },
+      "reasoning": "Data entered, now I want to see the offers quickly.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 19.0,
+        "time_since_last_action_s": 1.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 8,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "hover",
+        "target": "Start",
+        "dwell_s": 5.0
+      },
+      "reasoning": "I'm checking the cheapest tariff first because I only want basic coverage and low cost. I need clear, transparent pricing without hidden extras.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 5.0,
+        "dwell_total_s": 24.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 9,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Start",
+        "dwell_s": 4.0
+      },
+      "reasoning": "The Start tariff is the cheapest and covers exactly what I need - doctor visits. I don't want any extras that complicate things or raise the price.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 9.0,
+        "dwell_total_s": 28.0,
+        "time_since_last_action_s": 4.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S6_HEALTH_QS",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 2.0
+      },
+      "reasoning": "I've chosen the Start tariff — simple and affordable. Let's proceed quickly to the next step.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 6,
+        "max_steps_completed": 5,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 2.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 11,
+      "state": "S6_HEALTH_QS",
+      "next_state": "S7_FINAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 5.0
+      },
+      "reasoning": "I'll answer the health questions honestly but quickly. I want to get through this step without delays.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 7,
+        "max_steps_completed": 6,
+        "dwell_current_s": 0,
+        "dwell_total_s": 35.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 15.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 12,
+      "state": "S7_FINAL_PRICE",
+      "next_state": "S7_FINAL_PRICE",
+      "action": {
+        "type": "hover",
+        "target": "price",
+        "dwell_s": 4.0
+      },
+      "reasoning": "I want to check the final price carefully to make sure it's still transparent and affordable. No hidden surprises.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 7,
+        "max_steps_completed": 6,
+        "dwell_current_s": 4.0,
+        "dwell_total_s": 39.0,
+        "time_since_last_action_s": 4.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 15.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 13,
+      "state": "S7_FINAL_PRICE",
+      "next_state": "S12_CLOSING",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 3.0
+      },
+      "reasoning": "The price is clear and acceptable for the coverage I need. I want to complete the process online without delay.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890"
+      },
+      "signals": {
+        "step": 12,
+        "max_steps_completed": 7,
+        "dwell_current_s": 0,
+        "dwell_total_s": 42.0,
+        "time_since_last_action_s": 3.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    },
+    {
+      "turn": 14,
+      "state": "S12_CLOSING",
+      "next_state": "CONVERTED",
+      "action": {
+        "type": "purchase",
+        "target": null,
+        "dwell_s": 4.0
+      },
+      "reasoning": "Everything is clear and simple. I don't need any advisor — I want to finalize the purchase online now. The price and coverage are transparent, and that's exactly what I was looking for.",
+      "session_data_so_far": {
+        "dob": "01.01.1955",
+        "social_insurance_number": "1234 567890",
+        "payment_method": "online_banking",
+        "consent_given": true
+      },
+      "signals": {
+        "step": 90,
+        "max_steps_completed": 8,
+        "dwell_current_s": 0,
+        "dwell_total_s": 46.0,
+        "time_since_last_action_s": 4.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 1,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": null,
+      "coach_intervention": null
+    }
+  ]
+}

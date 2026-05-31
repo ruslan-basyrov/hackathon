@@ -1,0 +1,175 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054322",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 4,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 5.0
+      },
+      "reasoning": "I want to make sure I get some clear, straightforward advice without having to do too much on my own. I'll select the option to be called back by an advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 5.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 10.0
+      },
+      "reasoning": "I think I need coverage for doctor visits since I'm more likely to see a doctor regularly than stay in a hospital. I also want to get this done fast and efficiently.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 10.0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 7.0
+      },
+      "reasoning": "Considering my regular doctor visits, doctor coverage is more relevant to me. I want to make sure I cover the specifics that I need for my age group.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 17.0,
+        "dwell_total_s": 22.0,
+        "time_since_last_action_s": 7.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 5.0
+      },
+      "reasoning": "I choose doctor visits since they will be most relevant to my needs at this stage of life, and I find the interface easy to navigate.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 22.0,
+        "dwell_total_s": 27.0,
+        "time_since_last_action_s": 5.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "This user shows signs of hesitation and potential confusion at the initial coverage type selection step, possibly from Segment 3 (Service Affine). They have dwelled on this step multiple times without proceeding, indicating they may benefit from a gentle intervention to clarify their options and possibly offer a callback to an advisor for more personalized guidance."
+      },
+      "coach_intervention": {
+        "trigger_context": "This user shows signs of hesitation and potential confusion at the initial coverage type selection step, possibly from Segment 3 (Service Affine). They have dwelled on this step multiple times without proceeding, indicating they may benefit from a gentle intervention to clarify their options and possibly offer a callback to an advisor for more personalized guidance.",
+        "coach_message": "Hi Franz, I see you're taking your time choosing the coverage type. If you need a hand or more info on your options, we can arrange a call with an advisor to help guide you.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 3.0
+          },
+          "reasoning": "While I prefer to handle things online, getting a quick call from an advisor to explain the specifics of the different coverage types seems like a good way to make an informed decision quickly.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 30.0,
+            "time_since_last_action_s": 3.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

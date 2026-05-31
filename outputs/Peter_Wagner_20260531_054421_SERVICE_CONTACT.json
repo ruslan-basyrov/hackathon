@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054421",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I want a clear choice and don't want to waste time figuring it all out myself. An advisor can guide me.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user prefers professional guidance to avoid wasting time on complex decisions, aligning with the 'Service Affine' segment. The coach should intervene to confirm the user's preference for advisory help and provide reassurance about the benefits and next steps in the process, ensuring a smooth and supportive experience."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user prefers professional guidance to avoid wasting time on complex decisions, aligning with the 'Service Affine' segment. The coach should intervene to confirm the user's preference for advisory help and provide reassurance about the benefits and next steps in the process, ensuring a smooth and supportive experience.",
+        "coach_message": "Great choice, Peter! An advisor can help streamline the process and ensure you get the best fit for your needs. When would be a good time to call you?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 30.0
+          },
+          "reasoning": "I'll stick with getting an advisor callback. It's better to get a professional to walk me through the options.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 60.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

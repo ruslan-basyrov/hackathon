@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_051339",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I don't want to deal with this - just tell me what I need. I'd prefer someone calls me back to guide me through the process.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user appears to be from Segment 3, Service Affine (like Peter). They prefer a direct handoff to a customer service representative to guide them through the process. The intervention strategy should be to offer an immediate callback, addressing their request explicitly and reassuring them that a specialist will walk them through the necessary steps."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user appears to be from Segment 3, Service Affine (like Peter). They prefer a direct handoff to a customer service representative to guide them through the process. The intervention strategy should be to offer an immediate callback, addressing their request explicitly and reassuring them that a specialist will walk them through the necessary steps.",
+        "coach_message": "Great, I can arrange that for you! A UNIQA specialist will call you back to guide you through the process and answer any questions. When would be a convenient time for you?",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 45.0
+          },
+          "reasoning": "I want to sort this out but with a bit of hand-holding. I'll let the advisor choose which times work best for them while ensuring it fits my schedule too.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 75.0,
+            "time_since_last_action_s": 45.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

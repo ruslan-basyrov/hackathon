@@ -1,0 +1,81 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054414",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "ROUTED_ADVISOR",
+    "total_turns": 2,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 10.0
+      },
+      "reasoning": "I want to make sure I don't have to speak to an advisor to get a quote or handle my insurance needs. I’ll continue to the next step to look for self-service options.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 10.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "ROUTED_ADVISOR",
+      "action": {
+        "type": "select",
+        "target": "hospital",
+        "dwell_s": 7.0
+      },
+      "reasoning": "I want broad life coverage, so hospital coverage is what I need. Doctor visits can be handled through a separate plan, and I don't want to waste time navigating through too many options.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 92,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 17.0,
+        "time_since_last_action_s": 7.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

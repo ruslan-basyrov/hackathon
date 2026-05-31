@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_051344",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I prefer to research things myself online — but for important decisions I want someone I can trust. Before making a decision, I'd like to get some tailored advice.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 45.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user seems to be from Segment 1, Rising Hybrids (like Judith), who are comfortable with online research but prefer a trusted advisor for important decisions. The intervention strategy should be to offer a callback or advice session that reinforces the idea of personalized, trusted guidance to help them feel secure in their decision-making process."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user seems to be from Segment 1, Rising Hybrids (like Judith), who are comfortable with online research but prefer a trusted advisor for important decisions. The intervention strategy should be to offer a callback or advice session that reinforces the idea of personalized, trusted guidance to help them feel secure in their decision-making process.",
+        "coach_message": "We understand you're looking for trusted advice. Would you like to schedule a callback from one of our advisors who can provide personalized guidance? This can help clarify any doubts and ensure you make the right choice.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 30.0
+          },
+          "reasoning": "I want to make sure I'm getting the right coverage and having a conversation with an advisor will help me understand what I need.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 75.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

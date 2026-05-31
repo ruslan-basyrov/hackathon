@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054558",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I don't have time to sort through all this on my own. I'll ask for a callback from a knowledgeable advisor who can walk me through this.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is opting for an advisor callback due to time constraints and a preference for professional guidance, which aligns with the 'Rising Hybrids' segment. The coach should intervene to offer reassurance and confirm that seeking advisor assistance is a reasonable and supportive choice, ensuring the user feels their needs for clarity and efficiency are met."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is opting for an advisor callback due to time constraints and a preference for professional guidance, which aligns with the 'Rising Hybrids' segment. The coach should intervene to offer reassurance and confirm that seeking advisor assistance is a reasonable and supportive choice, ensuring the user feels their needs for clarity and efficiency are met.",
+        "coach_message": "Great choice, Peter! Getting a callback from an advisor is a smart way to get personalized assistance and save time. You’ll get all the support you need to find the right insurance for you.",
+        "bot_reaction": {
+          "action": {
+            "type": "select",
+            "target": "advisor_callback",
+            "dwell_s": 10.0
+          },
+          "reasoning": "I want to make sure I don't do anything wrong. Reaching out to an advisor seems like the best way to ensure that everything is handled correctly and I get a plan that suits my needs.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 0,
+            "dwell_total_s": 25.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

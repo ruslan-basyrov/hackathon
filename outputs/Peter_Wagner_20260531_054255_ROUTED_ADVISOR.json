@@ -1,0 +1,203 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054255",
+    "persona_name": "Peter Wagner",
+    "segment_id": "segment_3",
+    "final_state": "ROUTED_ADVISOR",
+    "total_turns": 4,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to speak with someone who can guide me through this process without all the confusing paperwork. An advisor can help me choose the right plan.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user's reasoning and action align with Personas from Segment 3, 'Service Affine', who prefer human guidance to handle the complexity of insurance decisions. The intervention should be supportive, confirming the user’s choice to speak with an advisor and offering reassurance that it’s a suitable approach for their comfort."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user's reasoning and action align with Personas from Segment 3, 'Service Affine', who prefer human guidance to handle the complexity of insurance decisions. The intervention should be supportive, confirming the user’s choice to speak with an advisor and offering reassurance that it’s a suitable approach for their comfort.",
+        "coach_message": "Great choice, Peter! Speaking with an advisor will make the process easier and ensure you find the right plan for you. We’ll get someone to call you shortly.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "Now that I’ve requested a callback, I’ll wait for the advisor to call and won't need to make choices here without guidance.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 0,
+            "dwell_total_s": 25.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 2,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 12.0
+      },
+      "reasoning": "I need health insurance for myself at the moment, but I expect the advisor to guide me if my children need to be included too.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 12.0,
+        "dwell_total_s": 37.0,
+        "time_since_last_action_s": 12.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 8.0
+      },
+      "reasoning": "I want health insurance for myself first, and I assume my children are covered under a family plan that the advisor can help me set up.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 45.0,
+        "time_since_last_action_s": 8.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "ROUTED_ADVISOR",
+      "action": {
+        "type": "select",
+        "target": "others",
+        "dwell_s": 7.0
+      },
+      "reasoning": "I have children and need to ensure they are insured as well. I'll start with my family and receive guidance on the best option from the advisor.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 92,
+        "max_steps_completed": 2,
+        "dwell_current_s": 0,
+        "dwell_total_s": 52.0,
+        "time_since_last_action_s": 7.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user is routing to an advisor for guidance, which aligns with the 'Rising Hybrids' segment behavior. The coach should intervene to provide reassurance and confirm that speaking with an advisor is a suitable choice for their needs, especially given their interest in insuring their family."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user is routing to an advisor for guidance, which aligns with the 'Rising Hybrids' segment behavior. The coach should intervene to provide reassurance and confirm that speaking with an advisor is a suitable choice for their needs, especially given their interest in insuring their family.",
+        "coach_message": "Perfect choice, Peter! Speaking with an advisor will help ensure you get the best plan to cover your family. We’ll connect you as soon as possible.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 20.0
+          },
+          "reasoning": "I'll wait for the advisor's call to discuss the family health insurance options. No need to proceed further without their guidance.",
+          "post_state": "ROUTED_ADVISOR",
+          "post_signals": {
+            "step": 92,
+            "max_steps_completed": 3,
+            "dwell_current_s": 20.0,
+            "dwell_total_s": 72.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,564 @@
+{
+  "metadata": {
+    "timestamp": "20260531_052712",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "CONVERTED",
+    "total_turns": 13,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "DOB": "23.04.1960",
+      "social_insurance_number": "1164206X",
+      "question1": "no",
+      "question2": "yes",
+      "question3": "no",
+      "payment_method": "bank_direct_debit",
+      "consent_to_market": "false",
+      "terms_conditions": "true"
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to quickly find out about the offers. There's no advisor, and that's fine because everything should be clear online.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 15.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 30.0
+      },
+      "reasoning": "I've decided to go with basic coverage for now, and I don't want to waste time deciding between the two options. I can always change my mind later if I need something more specific.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 0,
+        "dwell_total_s": 45.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I'm looking for a health insurance policy for myself since we're all responsible for our own coverage within the partnership.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 65.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 25.0
+      },
+      "reasoning": "I'm focused on securing coverage for myself first since that's the most urgent need at the moment.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 45.0,
+        "dwell_total_s": 90.0,
+        "time_since_last_action_s": 25.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I'm only looking to insure myself at the moment; I can consider covering others at a later stage if necessary.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 65.0,
+        "dwell_total_s": 110.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 6,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "I want to get insurance for myself first. Once I have my own policy figured out, I can look into covering others if needed.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 80.0,
+        "dwell_total_s": 125.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 7,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 10.0
+      },
+      "reasoning": "I'll be insuring myself to keep it simple and clear. Everything should be straightforward online without needing to check for others.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 90.0,
+        "dwell_total_s": 135.0,
+        "time_since_last_action_s": 10.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has made multiple selections and spent considerable time on the 'S2_FOR_WHOM' step, suggesting some hesitation or uncertainty despite the clear reasoning. An intervention that reassures the user that selecting 'myself' is a solid choice and offers a brief explanation or confirmation of the next steps can help alleviate any doubts and encourage continued progress."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has made multiple selections and spent considerable time on the 'S2_FOR_WHOM' step, suggesting some hesitation or uncertainty despite the clear reasoning. An intervention that reassures the user that selecting 'myself' is a solid choice and offers a brief explanation or confirmation of the next steps can help alleviate any doubts and encourage continued progress.",
+        "coach_message": "Great choice, Franz! Selecting 'myself' keeps things simple. Next, we'll pick the coverage that fits your needs. If you have any questions, just reach out to us!",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "I'm confident in my choice and ready to proceed to the next step where I can choose a coverage plan that fits my needs.",
+          "post_state": "S3_PERSONAL_DATA",
+          "post_signals": {
+            "step": 3,
+            "max_steps_completed": 3,
+            "dwell_current_s": 0,
+            "dwell_total_s": 145.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 8,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 45.0
+      },
+      "reasoning": "I need to be careful when entering my personal information, but I trust this site to keep my data safe and proceed with the purchase.",
+      "session_data_so_far": {
+        "DOB": "23.04.1960",
+        "social_insurance_number": "1164206X"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 190.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 9,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Optimal",
+        "dwell_s": 60.0
+      },
+      "reasoning": "After comparing the tariffs, the 'Optimal' plan seems to provide the right balance between price and coverage that I'm looking for.",
+      "session_data_so_far": {
+        "DOB": "23.04.1960",
+        "social_insurance_number": "1164206X"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 60.0,
+        "dwell_total_s": 250.0,
+        "time_since_last_action_s": 60.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Optimal",
+        "dwell_s": 50.0
+      },
+      "reasoning": "I checked all the plans and 'Optimal' seems to offer a good price-performance ratio, which is crucial for my decision.",
+      "session_data_so_far": {
+        "DOB": "23.04.1960",
+        "social_insurance_number": "1164206X"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 110.0,
+        "dwell_total_s": 300.0,
+        "time_since_last_action_s": 50.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 11,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Optimal",
+        "dwell_s": 45.0
+      },
+      "reasoning": "The 'Optimal' plan fits well within my budget and offered coverage needs, and I want this process to be fast and straightforward.",
+      "session_data_so_far": {
+        "DOB": "23.04.1960",
+        "social_insurance_number": "1164206X"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 155.0,
+        "dwell_total_s": 345.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a significant amount of time on the 'S4_INITIAL_PRICE' step, repeatedly selecting the 'Optimal' plan, which indicates some hesitation or uncertainty despite the clear reasoning. An intervention to offer a brief summary of the 'Optimal' tariff's benefits and confirm it meets their criteria for price-performance can help reassure the user and reduce hesitation."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a significant amount of time on the 'S4_INITIAL_PRICE' step, repeatedly selecting the 'Optimal' plan, which indicates some hesitation or uncertainty despite the clear reasoning. An intervention to offer a brief summary of the 'Optimal' tariff's benefits and confirm it meets their criteria for price-performance can help reassure the user and reduce hesitation.",
+        "coach_message": "The 'Optimal' plan is a great choice, Franz! It offers comprehensive coverage at a daily cost of just €1.50. This ensures you're well protected without breaking the bank. Ready to proceed?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 15.0
+          },
+          "reasoning": "I'm satisfied with the information and the plan 'Optimal', so I am ready to move on to the next step to finalize the coverage.",
+          "post_state": "S6_HEALTH_QS",
+          "post_signals": {
+            "step": 6,
+            "max_steps_completed": 5,
+            "dwell_current_s": 0,
+            "dwell_total_s": 360.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": "Optimal",
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 12,
+      "state": "S6_HEALTH_QS",
+      "next_state": "S7_FINAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 75.0
+      },
+      "reasoning": "I spent some time on the health questions, but I prefer to keep the process straightforward. I've answered all relevant questions truthfully, so I'll proceed now.",
+      "session_data_so_far": {
+        "DOB": "23.04.1960",
+        "social_insurance_number": "1164206X",
+        "question1": "no",
+        "question2": "yes",
+        "question3": "no"
+      },
+      "signals": {
+        "step": 7,
+        "max_steps_completed": 6,
+        "dwell_current_s": 0,
+        "dwell_total_s": 435.0,
+        "time_since_last_action_s": 75.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 15.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent considerable time on the health questions and there is a price gap of 15 euros at the final price. An intervention could explain the price difference and reassure the user that the selected health choices are affecting the premium appropriately. This could alleviate any unexpected concern and encourage them to proceed."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent considerable time on the health questions and there is a price gap of 15 euros at the final price. An intervention could explain the price difference and reassure the user that the selected health choices are affecting the premium appropriately. This could alleviate any unexpected concern and encourage them to proceed.",
+        "coach_message": "The slight increase in price is due to your health responses, Franz. Your answers help us tailor the best coverage for you. The 'Optimal' plan still offers great value at just €1.55 per day. Ready to finalize?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 30.0
+          },
+          "reasoning": "Although there's a slight increase, €1.55 per day is still a fair price for the coverage I need. I trust the coach and I'm ready to move forward with the purchase.",
+          "post_state": "S12_CLOSING",
+          "post_signals": {
+            "step": 12,
+            "max_steps_completed": 7,
+            "dwell_current_s": 0,
+            "dwell_total_s": 465.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": "Optimal",
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 13,
+      "state": "S12_CLOSING",
+      "next_state": "CONVERTED",
+      "action": {
+        "type": "purchase",
+        "target": null,
+        "dwell_s": 45.0
+      },
+      "reasoning": "I've carefully reviewed all the details, the terms are clear, and it aligns with my needs. It’s time to confirm my health insurance purchase to gain peace of mind.",
+      "session_data_so_far": {
+        "DOB": "23.04.1960",
+        "social_insurance_number": "1164206X",
+        "question1": "no",
+        "question2": "yes",
+        "question3": "no",
+        "payment_method": "bank_direct_debit",
+        "consent_to_market": "false",
+        "terms_conditions": "true"
+      },
+      "signals": {
+        "step": 90,
+        "max_steps_completed": 8,
+        "dwell_current_s": 0,
+        "dwell_total_s": 510.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Optimal",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

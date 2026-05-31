@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054239",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 2,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 30.0
+      },
+      "reasoning": "I need to get a better idea of what's out there. I don't want to waste too much time, but I also want to understand my options better.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 40.0
+      },
+      "reasoning": "I prefer to know that there's a professional guiding my decision. I don't want to make a mistake by myself without understanding all the implications.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 70.0,
+        "time_since_last_action_s": 40.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user shows a preference for professional guidance which aligns with the 'Rising Hybrids' segment. The intervention should focus on confirming the user's preference for an advisor and ensuring they feel supported in their decision-making process, potentially by explaining the next steps for a smooth advisor interaction."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user shows a preference for professional guidance which aligns with the 'Rising Hybrids' segment. The intervention should focus on confirming the user's preference for an advisor and ensuring they feel supported in their decision-making process, potentially by explaining the next steps for a smooth advisor interaction.",
+        "coach_message": "Great choice! One of our insurance advisors will guide you through the process and ensure you find the best offer. We’ll connect you shortly.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 15.0
+          },
+          "reasoning": "I have requested the advisor's assistance, and I feel reassured that I will get the help I need to navigate this process. I'll wait for the advisor to contact me.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 2,
+            "dwell_current_s": 15.0,
+            "dwell_total_s": 85.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

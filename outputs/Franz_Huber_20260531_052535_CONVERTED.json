@@ -1,0 +1,627 @@
+{
+  "metadata": {
+    "timestamp": "20260531_052535",
+    "persona_name": "Franz Huber",
+    "segment_id": "segment_2",
+    "final_state": "CONVERTED",
+    "total_turns": 14,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {
+      "DOB": "01.05.1965",
+      "Social_Insurance_Number": "123456789012",
+      "Do you smoke?": "No",
+      "Do you have any pre-existing conditions?": "Yes",
+      "Have you been hospitalized in the past 10 years?": "Yes",
+      "Payment Method": "Credit Card",
+      "Credit Card Number": "•••• •••• •••• 1234",
+      "Expiry Date": "05/25",
+      "CVC": "•••"
+    }
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 30.0
+      },
+      "reasoning": "I need to find the cheapest and best health insurance quickly, and the landing page seems to promise straightforward information.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 45.0
+      },
+      "reasoning": "My primary concern is the cost, and doctor visits are more frequent for me. I want insurance that covers the essentials without unnecessary extras.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 45.0,
+        "dwell_total_s": 75.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 3,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "select",
+        "target": "doctor",
+        "dwell_s": 60.0
+      },
+      "reasoning": "I know that hospital coverage is more expensive and may include unnecessary features for my needs. Sticking with what is essential to keep the costs down.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 105.0,
+        "dwell_total_s": 135.0,
+        "time_since_last_action_s": 60.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a significant amount of time on the 'S1_COVERAGE_TYPE' step, indicating some hesitation despite their clear reasoning. This behavior aligns with the Segment 1 (Rising Hybrids), who prefer to make informed decisions and do not want to rush into commitments. An intervention that could offer a brief summary of the selected options or confirm that selecting 'doctor' as coverage type is a sensible choice according to their primary concern (cost) could help reassure them and move forward."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a significant amount of time on the 'S1_COVERAGE_TYPE' step, indicating some hesitation despite their clear reasoning. This behavior aligns with the Segment 1 (Rising Hybrids), who prefer to make informed decisions and do not want to rush into commitments. An intervention that could offer a brief summary of the selected options or confirm that selecting 'doctor' as coverage type is a sensible choice according to their primary concern (cost) could help reassure them and move forward.",
+        "coach_message": "You've chosen 'doctor' coverage, which focuses on essential services and is often more cost-effective if you're looking to keep expenses down. This is a sensible choice based on your needs. Ready to move forward?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 15.0
+          },
+          "reasoning": "The feedback aligns with my initial decision, so there's no need to change anything. Moving forward to see the pricing and details.",
+          "post_state": "S2_FOR_WHOM",
+          "post_signals": {
+            "step": 2,
+            "max_steps_completed": 2,
+            "dwell_current_s": 0,
+            "dwell_total_s": 150.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 4,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I'm only interested in getting insurance for myself, since I live alone and have no dependents.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 20.0,
+        "dwell_total_s": 170.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 5,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I'm looking for health insurance just for myself, as I am single and therefore responsible only for my own health coverage.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 50.0,
+        "dwell_total_s": 200.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 6,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I need health insurance for myself, not for others, so I'll select 'myself' to move the process forward.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 70.0,
+        "dwell_total_s": 220.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 7,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 15.0
+      },
+      "reasoning": "Since I am only concerned with obtaining health insurance for myself, I will choose 'myself' to proceed.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 85.0,
+        "dwell_total_s": 235.0,
+        "time_since_last_action_s": 15.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 8,
+      "state": "S2_FOR_WHOM",
+      "next_state": "S2_FOR_WHOM",
+      "action": {
+        "type": "select",
+        "target": "myself",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I only require health insurance for myself, as I am single and not responsible for the coverage of anyone else.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 2,
+        "max_steps_completed": 2,
+        "dwell_current_s": 105.0,
+        "dwell_total_s": 255.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a significant amount of time on the 'S2_FOR_WHOM' step, indicating some hesitation. Given the dwell time and multiple selections for the same option, it suggests the user might be second-guessing their choice despite clear reasoning. An intervention offering reassurance that selecting 'myself' is appropriate and a clear next step could alleviate hesitation and help the user to progress further."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a significant amount of time on the 'S2_FOR_WHOM' step, indicating some hesitation. Given the dwell time and multiple selections for the same option, it suggests the user might be second-guessing their choice despite clear reasoning. An intervention offering reassurance that selecting 'myself' is appropriate and a clear next step could alleviate hesitation and help the user to progress further.",
+        "coach_message": "You've selected 'myself' for health insurance, which is perfect if you're only needing coverage for yourself. No need to second-guess—this choice aligns with your situation. Ready to move on to the next step?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 10.0
+          },
+          "reasoning": "The guidance from the customer service coach confirms my selection. I'm ready to move on and see the rest of the options for my insurance.",
+          "post_state": "S3_PERSONAL_DATA",
+          "post_signals": {
+            "step": 3,
+            "max_steps_completed": 3,
+            "dwell_current_s": 0,
+            "dwell_total_s": 265.0,
+            "time_since_last_action_s": 10.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 9,
+      "state": "S3_PERSONAL_DATA",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 120.0
+      },
+      "reasoning": "I entered my date of birth and social insurance number, as this information is necessary for calculating my insurance premium and for processing my insurance. I want to ensure an accurate quote.",
+      "session_data_so_far": {
+        "DOB": "01.05.1965",
+        "Social_Insurance_Number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 0,
+        "dwell_total_s": 385.0,
+        "time_since_last_action_s": 120.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 10,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Start",
+        "dwell_s": 60.0
+      },
+      "reasoning": "I'm very sensitive to pricing and I'm looking for the best health insurance I can get for the lowest cost. The 'Start' tariff seems to offer the most basic coverage at the lowest price.",
+      "session_data_so_far": {
+        "DOB": "01.05.1965",
+        "Social_Insurance_Number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 60.0,
+        "dwell_total_s": 445.0,
+        "time_since_last_action_s": 60.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 11,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "hover",
+        "target": "Start",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I am interested in the lowest cost option first to check if it meets my basic needs without unnecessary add-ons.",
+      "session_data_so_far": {
+        "DOB": "01.05.1965",
+        "Social_Insurance_Number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 105.0,
+        "dwell_total_s": 490.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    },
+    {
+      "turn": 12,
+      "state": "S4_INITIAL_PRICE",
+      "next_state": "S4_INITIAL_PRICE",
+      "action": {
+        "type": "select",
+        "target": "Start",
+        "dwell_s": 90.0
+      },
+      "reasoning": "I want to go for the most cost-effective option, which seems to be the 'Start' tariff. As long as it covers the basic necessities, this should be sufficient for my needs.",
+      "session_data_so_far": {
+        "DOB": "01.05.1965",
+        "Social_Insurance_Number": "123456789012"
+      },
+      "signals": {
+        "step": 4,
+        "max_steps_completed": 4,
+        "dwell_current_s": 195.0,
+        "dwell_total_s": 580.0,
+        "time_since_last_action_s": 90.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a considerable amount of time on the initial price screen, indicating some hesitation or careful consideration, particularly with multiple selections and hovers. This suggests that even though the user is looking for the most cost-effective option, they might need reassurance or clarification about the basic tariff they have selected. An intervention offering a brief summary of the 'Start' tariff’s coverage and emphasizing its suitability for basic needs could help the user feel more confident in their choice."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a considerable amount of time on the initial price screen, indicating some hesitation or careful consideration, particularly with multiple selections and hovers. This suggests that even though the user is looking for the most cost-effective option, they might need reassurance or clarification about the basic tariff they have selected. An intervention offering a brief summary of the 'Start' tariff’s coverage and emphasizing its suitability for basic needs could help the user feel more confident in their choice.",
+        "coach_message": "You've selected the 'Start' tariff, which covers the essentials for basic health needs. This is a cost-effective choice that provides the necessary coverage. Ready to continue with this option?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 15.0
+          },
+          "reasoning": "The 'Start' tariff seems to be the best fit for my needs as it provides basic coverage at a good price. I'm ready to move forward without making any changes.",
+          "post_state": "S6_HEALTH_QS",
+          "post_signals": {
+            "step": 6,
+            "max_steps_completed": 5,
+            "dwell_current_s": 0,
+            "dwell_total_s": 595.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 1,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": "Start",
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 13,
+      "state": "S6_HEALTH_QS",
+      "next_state": "S7_FINAL_PRICE",
+      "action": {
+        "type": "continue",
+        "target": null,
+        "dwell_s": 180.0
+      },
+      "reasoning": "I carefully answered each question truthfully to ensure accurate and fair pricing. Avoiding any unnecessary complications or exclusions in my insurance coverage.",
+      "session_data_so_far": {
+        "DOB": "01.05.1965",
+        "Social_Insurance_Number": "123456789012",
+        "Do you smoke?": "No",
+        "Do you have any pre-existing conditions?": "Yes",
+        "Have you been hospitalized in the past 10 years?": "Yes"
+      },
+      "signals": {
+        "step": 7,
+        "max_steps_completed": 6,
+        "dwell_current_s": 0,
+        "dwell_total_s": 775.0,
+        "time_since_last_action_s": 180.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 15.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user has spent a significant amount of time on the 'S6_HEALTH_QS' step, which may indicate hesitation or careful consideration of the health questions' impact on their final price. Given that the final price has a gap of €15, it might be beneficial to intervene with a brief explanation of why the price changed and confirm that the user has made accurate and fair selections based on their health details. This can help alleviate any unexpected shock or confusion regarding the final price."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user has spent a significant amount of time on the 'S6_HEALTH_QS' step, which may indicate hesitation or careful consideration of the health questions' impact on their final price. Given that the final price has a gap of €15, it might be beneficial to intervene with a brief explanation of why the price changed and confirm that the user has made accurate and fair selections based on their health details. This can help alleviate any unexpected shock or confusion regarding the final price.",
+        "coach_message": "You've answered the health questions carefully, and the final price was adjusted based on your responses. The €15 increase is due to your pre-existing conditions and past hospitalization, but this ensures accurate and fair coverage. Ready to review the details?",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 30.0
+          },
+          "reasoning": "I trust that the price adjustment reflects my health status honestly. I am ready to review the details of the insurance to ensure it meets my expectations.",
+          "post_state": "S12_CLOSING",
+          "post_signals": {
+            "step": 12,
+            "max_steps_completed": 7,
+            "dwell_current_s": 0,
+            "dwell_total_s": 805.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 1,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": "Start",
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 14,
+      "state": "S12_CLOSING",
+      "next_state": "CONVERTED",
+      "action": {
+        "type": "purchase",
+        "target": null,
+        "dwell_s": 90.0
+      },
+      "reasoning": "After reviewing all the details, I trust that this health insurance plan will provide me with the necessary coverage at a cost-effective price. It's time to complete the purchase.",
+      "session_data_so_far": {
+        "DOB": "01.05.1965",
+        "Social_Insurance_Number": "123456789012",
+        "Do you smoke?": "No",
+        "Do you have any pre-existing conditions?": "Yes",
+        "Have you been hospitalized in the past 10 years?": "Yes",
+        "Payment Method": "Credit Card",
+        "Credit Card Number": "•••• •••• •••• 1234",
+        "Expiry Date": "05/25",
+        "CVC": "•••"
+      },
+      "signals": {
+        "step": 90,
+        "max_steps_completed": 8,
+        "dwell_current_s": 0,
+        "dwell_total_s": 895.0,
+        "time_since_last_action_s": 90.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 1,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": "Start",
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": false,
+        "strategy": "None"
+      },
+      "coach_intervention": null
+    }
+  ]
+}

@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054547",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 45.0
+      },
+      "reasoning": "I'm a bit overwhelmed with all the options and want to speak with someone who can help me make the right decision based on my needs and the sustainability focus I'm looking for.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 0,
+        "dwell_current_s": 0,
+        "dwell_total_s": 45.0,
+        "time_since_last_action_s": 45.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user expressed feeling overwhelmed and is seeking assistance from an advisor. This aligns well with Segment 3 (Service Affine) behavior. A brief, supportive message encouraging the advisor callback selection and reaffirming that they will receive the personalized help they need can reinforce their decision and keep them engaged."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user expressed feeling overwhelmed and is seeking assistance from an advisor. This aligns well with Segment 3 (Service Affine) behavior. A brief, supportive message encouraging the advisor callback selection and reaffirming that they will receive the personalized help they need can reinforce their decision and keep them engaged.",
+        "coach_message": "Great choice! Speaking with an advisor will help tailor the right insurance for your needs and sustainability goals. We'll be in touch soon to assist you.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 30.0
+          },
+          "reasoning": "I'm glad I opted for the callback from an advisor; however, I do not need to take any additional action and prefer to wait for them to contact me.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 30.0,
+            "dwell_total_s": 75.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

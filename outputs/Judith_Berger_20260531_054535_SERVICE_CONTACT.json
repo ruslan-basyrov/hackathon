@@ -1,0 +1,137 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054535",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 2,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "S1_COVERAGE_TYPE",
+      "action": {
+        "type": "continue",
+        "target": "advisor_callback",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I want to get in touch with an advisor to make sure I understand all my options and can trust their guidance.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 1,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user's reasoning indicates a preference for advisor guidance, aligning with the 'Rising Hybrids' segment. The coach should intervene to confirm the user's preference for advisor assistance and provide reassurance about the advisor's capability to guide them through the process, ensuring a smooth and trusted experience."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user's reasoning indicates a preference for advisor guidance, aligning with the 'Rising Hybrids' segment. The coach should intervene to confirm the user's preference for advisor assistance and provide reassurance about the advisor's capability to guide them through the process, ensuring a smooth and trusted experience.",
+        "coach_message": "Great choice! Our advisors are here to help you understand all your options and guide you through the process. We'll connect you shortly!",
+        "bot_reaction": {
+          "action": {
+            "type": "hover",
+            "target": "advisor_callback",
+            "dwell_s": 15.0
+          },
+          "reasoning": "I'll wait for the advisor to get in touch as I believe they can provide the most helpful guidance.",
+          "post_state": "S1_COVERAGE_TYPE",
+          "post_signals": {
+            "step": 1,
+            "max_steps_completed": 1,
+            "dwell_current_s": 15.0,
+            "dwell_total_s": 45.0,
+            "time_since_last_action_s": 15.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    },
+    {
+      "turn": 2,
+      "state": "S1_COVERAGE_TYPE",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 20.0
+      },
+      "reasoning": "I prefer to have a personal advisor help me choose the right coverage type based on my needs.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 1,
+        "dwell_current_s": 0,
+        "dwell_total_s": 65.0,
+        "time_since_last_action_s": 20.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user's behavior aligns well with the 'Rising Hybrids' segment, who prefer personal advisor guidance. The coach should confirm the user's decision to speak with an advisor and offer reassurance about the benefits of professional guidance, ensuring the user feels supported and their decision understood."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user's behavior aligns well with the 'Rising Hybrids' segment, who prefer personal advisor guidance. The coach should confirm the user's decision to speak with an advisor and offer reassurance about the benefits of professional guidance, ensuring the user feels supported and their decision understood.",
+        "coach_message": "That's a smart choice! Our advisors will guide you through selecting the right coverage type based on your needs. We'll connect you shortly!",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 30.0
+          },
+          "reasoning": "I'll wait for the advisor to contact me to discuss my needs for choosing the right coverage type.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 2,
+            "dwell_current_s": 30.0,
+            "dwell_total_s": 95.0,
+            "time_since_last_action_s": 30.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

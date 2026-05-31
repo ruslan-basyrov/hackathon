@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "timestamp": "20260531_054613",
+    "persona_name": "Judith Berger",
+    "segment_id": "segment_1",
+    "final_state": "SERVICE_CONTACT",
+    "total_turns": 1,
+    "model_name": "qwen2.5-32b-instruct",
+    "intervention_mode": "llm",
+    "coach_mode": "chat",
+    "final_collected_data": {}
+  },
+  "journey_log": [
+    {
+      "turn": 1,
+      "state": "START",
+      "next_state": "SERVICE_CONTACT",
+      "action": {
+        "type": "select",
+        "target": "advisor_callback",
+        "dwell_s": 30.0
+      },
+      "reasoning": "I really should talk to someone who knows what they're doing before diving in. I don't want to end up with something that isn't right for me.",
+      "session_data_so_far": {},
+      "signals": {
+        "step": 93,
+        "max_steps_completed": 0,
+        "dwell_current_s": 0,
+        "dwell_total_s": 30.0,
+        "time_since_last_action_s": 30.0,
+        "back_nav_count": 0,
+        "back_from_step": null,
+        "field_change_count": 0,
+        "tariff_hover_count": 0,
+        "advisory_tariff_clicked": false,
+        "tariff_selected": null,
+        "external_tab_opens": 0,
+        "price_gap_eur": 0.0,
+        "hover_cancel_count": 0
+      },
+      "intervention_model_decision": {
+        "trigger": true,
+        "strategy": "The user's reasoning emphasizes the importance of speaking with a knowledgeable advisor before making a decision, which aligns closely with the 'Rising Hybrids' segment. The coach should intervene to confirm the user’s decision to request a callback and provide reassurance that seeking professional guidance is a prudent choice, ensuring the user feels supported in their need for trustworthy advice."
+      },
+      "coach_intervention": {
+        "trigger_context": "The user's reasoning emphasizes the importance of speaking with a knowledgeable advisor before making a decision, which aligns closely with the 'Rising Hybrids' segment. The coach should intervene to confirm the user’s decision to request a callback and provide reassurance that seeking professional guidance is a prudent choice, ensuring the user feels supported in their need for trustworthy advice.",
+        "coach_message": "Great choice! Speaking with an advisor will ensure you get a plan that’s perfect for you. We’ll set up the callback right away.",
+        "bot_reaction": {
+          "action": {
+            "type": "continue",
+            "target": null,
+            "dwell_s": 20.0
+          },
+          "reasoning": "Good, they're setting up the callback. I'll wait for the advisor to call me and ask all my questions.",
+          "post_state": "SERVICE_CONTACT",
+          "post_signals": {
+            "step": 93,
+            "max_steps_completed": 1,
+            "dwell_current_s": 20.0,
+            "dwell_total_s": 50.0,
+            "time_since_last_action_s": 20.0,
+            "back_nav_count": 0,
+            "back_from_step": null,
+            "field_change_count": 0,
+            "tariff_hover_count": 0,
+            "advisory_tariff_clicked": false,
+            "tariff_selected": null,
+            "external_tab_opens": 0,
+            "price_gap_eur": 0.0,
+            "hover_cancel_count": 0
+          }
+        }
+      }
+    }
+  ]
+}

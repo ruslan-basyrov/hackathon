@@ -1,0 +1,308 @@
+/* ============================================================
+   Conversion Coach — Slidev theme
+   Ported from the HealthCover "Warm" design system
+   (design_idea/healthcover-warm.css): UNIQA-style deep blue +
+   warm cream + amber accent. Keeps the product and the deck
+   visually identical.
+   ============================================================ */
+
+:root {
+  /* brand */
+  --hc-blue: #0a51d0;
+  --hc-blue-700: #0844b0;
+  --hc-blue-900: #062a6e;
+  --hc-amber: #e0962f;
+  --hc-amber-700: #c47f1d;
+  --hc-amber-soft: #f6e6cd;
+
+  /* surfaces */
+  --hc-cream: #fbf7f0;
+  --hc-cream-line: #ece3d4;
+  --hc-surface: #ffffff;
+  --hc-tint-50: #eef3fd;
+  --hc-tint-100: #dde7fb;
+
+  /* ink */
+  --hc-ink: #16203a;
+  --hc-ink-2: #46506a;
+  --hc-ink-3: #7e879b;
+
+  /* persona accents */
+  --hc-judith: #6b4ee0;
+  --hc-franz: #0a51d0;
+  --hc-peter: #e0962f;
+
+  /* radii */
+  --hc-r-card: 20px;
+  --hc-r-modal: 24px;
+  --hc-r-pill: 999px;
+  --hc-r-sm: 10px;
+
+  /* shadows */
+  --hc-sh-card: 0 12px 30px -22px rgba(120, 90, 30, .40);
+  --hc-sh-rec: 0 18px 40px -18px rgba(224, 150, 47, .50);
+  --hc-sh-modal: 0 40px 80px -24px rgba(6, 42, 110, .50);
+
+  /* type */
+  --hc-font-ui: 'Hanken Grotesk', system-ui, sans-serif;
+  --hc-font-serif: 'Source Serif 4', Georgia, serif;
+  --hc-font-mono: 'IBM Plex Mono', monospace;
+
+  /* hook Slidev's own theming to our palette */
+  --slidev-theme-primary: var(--hc-blue);
+}
+
+/* ---------- base slide surface ---------- */
+.slidev-layout {
+  background: var(--hc-cream);
+  color: var(--hc-ink);
+  font-family: var(--hc-font-ui);
+  -webkit-font-smoothing: antialiased;
+  font-size: 18px;
+  line-height: 1.5;
+  padding: 3rem 3.5rem;
+}
+
+/* make sure the cream / cards actually print in the PDF export */
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+.slidev-layout h1,
+.slidev-layout h2,
+.slidev-layout h3 {
+  font-family: var(--hc-font-ui);
+  color: var(--hc-ink);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.slidev-layout h1 { font-size: 2.1rem; line-height: 1.12; margin-bottom: .35em; }
+.slidev-layout h2 { font-size: 1.5rem; line-height: 1.2; margin-bottom: .5em; }
+.slidev-layout h3 { font-size: 1.1rem; }
+
+.slidev-layout p,
+.slidev-layout li { color: var(--hc-ink-2); }
+.slidev-layout strong { color: var(--hc-ink); font-weight: 700; }
+.slidev-layout a { color: var(--hc-blue); text-decoration: none; border-bottom: 1px solid var(--hc-tint-100); }
+
+.slidev-layout ul { list-style: none; padding-left: 0; }
+.slidev-layout ul > li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin: .45rem 0;
+  line-height: 1.45;
+}
+.slidev-layout ul > li::before {
+  content: "";
+  position: absolute;
+  left: 0; top: .5em;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--hc-amber-soft);
+  box-shadow: inset 0 0 0 2px var(--hc-amber);
+}
+
+/* ---------- the eyebrow / kicker ---------- */
+.hc-eyebrow {
+  font: 700 .72rem/1 var(--hc-font-ui);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--hc-amber);
+  margin-bottom: .9rem;
+  display: inline-block;
+}
+.hc-kicker {
+  font: 600 .7rem/1 var(--hc-font-mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--hc-ink-3);
+}
+.hc-serif { font-family: var(--hc-font-serif) !important; }
+
+/* ---------- brand logo ---------- */
+.hc-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.1rem; letter-spacing: -.01em; color: var(--hc-ink); }
+.hc-brand b span { font-weight: 500; opacity: .85; }
+
+/* ---------- persona switcher chips ---------- */
+.hc-personas { display: inline-flex; align-items: center; gap: 4px; padding: 4px; border-radius: var(--hc-r-pill); background: var(--hc-surface); border: 1px solid var(--hc-cream-line); }
+.hc-pl { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: var(--hc-r-pill); font-size: .78rem; font-weight: 700; color: var(--hc-ink-2); white-space: nowrap; }
+.hc-pl.on { background: var(--hc-tint-50); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
+.pd { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.pd.judith { background: var(--hc-judith); }
+.pd.franz { background: var(--hc-franz); }
+.pd.peter { background: var(--hc-peter); }
+
+.hc-help { display: inline-flex; align-items: center; gap: 7px; font-size: .82rem; font-weight: 600; color: var(--hc-ink-2); }
+.hc-help .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hc-blue); box-shadow: 0 0 0 3px var(--hc-tint-100); }
+
+/* ---------- generic warm card ---------- */
+.hc-card {
+  border: 1px solid var(--hc-cream-line);
+  border-radius: var(--hc-r-card);
+  background: var(--hc-surface);
+  padding: 1.1rem 1.2rem;
+  box-shadow: var(--hc-sh-card);
+}
+.hc-card.is-rec { border-color: var(--hc-amber); border-width: 2px; box-shadow: var(--hc-sh-rec); }
+
+/* progress bar */
+.hc-prog { display: flex; align-items: center; gap: 8px; }
+.hc-prog .seg { height: 4px; border-radius: 3px; flex: 1; background: var(--hc-cream-line); }
+.hc-prog .seg.done { background: var(--hc-amber); }
+.hc-prog .seg.now { background: var(--hc-amber); opacity: .5; }
+.hc-prog .lbl { font-size: .72rem; font-weight: 700; color: var(--hc-ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* pills / chips / badges */
+.hc-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: var(--hc-r-pill); font-size: .72rem; font-weight: 700; background: var(--hc-tint-50); color: var(--hc-ink-2); border: 1px solid var(--hc-cream-line); }
+.hc-chip.amber { background: var(--hc-amber-soft); color: var(--hc-amber-700); border-color: transparent; }
+.hc-chip.blue { background: var(--hc-tint-50); color: var(--hc-blue-700); }
+
+/* ---------- code / mono ---------- */
+.slidev-layout code {
+  font-family: var(--hc-font-mono);
+  font-size: .85em;
+  background: var(--hc-tint-50);
+  color: var(--hc-blue-700);
+  padding: .12em .4em;
+  border-radius: 6px;
+}
+.slidev-layout pre {
+  border: 1px solid var(--hc-cream-line);
+  border-radius: 12px !important;
+  box-shadow: var(--hc-sh-card);
+  font-size: .8rem;
+}
+.slidev-layout pre code { background: transparent; padding: 0; }
+
+/* ---------- tables ---------- */
+.slidev-layout table { border-collapse: collapse; width: 100%; font-size: .82rem; }
+.slidev-layout th {
+  text-align: left;
+  font: 700 .68rem/1 var(--hc-font-mono);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--hc-ink-3);
+  border-bottom: 2px solid var(--hc-cream-line);
+  padding: 8px 12px;
+}
+.slidev-layout td { padding: 9px 12px; border-bottom: 1px solid var(--hc-cream-line); color: var(--hc-ink-2); vertical-align: top; }
+.slidev-layout tr:last-child td { border-bottom: none; }
+
+/* blockquote (used for the big statement) */
+.slidev-layout blockquote {
+  border-left: 4px solid var(--hc-amber);
+  background: var(--hc-surface);
+  border-radius: 0 14px 14px 0;
+  padding: 1rem 1.4rem;
+  color: var(--hc-ink);
+  font-style: normal;
+}
+
+/* a soft amber-bordered "callout" */
+.hc-note {
+  border: 1px solid var(--hc-cream-line);
+  border-left: 4px solid var(--hc-amber);
+  background: #fffdf8;
+  border-radius: 0 12px 12px 0;
+  padding: .8rem 1.1rem;
+  font-size: .85rem;
+  color: var(--hc-ink-2);
+}
+
+/* utility text colors */
+.t-blue { color: var(--hc-blue) !important; }
+.t-amber { color: var(--hc-amber-700) !important; }
+.t-ink2 { color: var(--hc-ink-2) !important; }
+.t-ink3 { color: var(--hc-ink-3) !important; }
+.tabnum { font-variant-numeric: tabular-nums; }
+
+/* big stat number */
+.hc-stat { font-size: 3rem; font-weight: 800; letter-spacing: -.02em; line-height: 1; font-variant-numeric: tabular-nums; }
+
+/* slide footer adornment (page furniture) */
+.hc-foot-brand {
+  position: absolute;
+  left: 3.5rem; bottom: 1.4rem;
+  display: flex; align-items: center; gap: 8px;
+  font: 700 .68rem/1 var(--hc-font-mono);
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--hc-ink-3);
+}
+.hc-foot-brand .sq { width: 12px; height: 12px; border-radius: 4px; background: var(--hc-blue); }
+
+/* scale-down helper for dense slides */
+.tight li { margin: .28rem 0; }
+
+/* ============================================================
+   THE COACH NUDGE — popup card (the hero moment)
+   Ported from healthcover-warm.css.
+   ============================================================ */
+.hc-modal {
+  width: 460px; max-width: 100%;
+  background: var(--hc-surface);
+  border-radius: var(--hc-r-modal);
+  overflow: hidden;
+  box-shadow: var(--hc-sh-modal);
+  border: 1px solid var(--hc-cream-line);
+}
+.hc-nudge-head { display: flex; align-items: center; gap: 10px; padding: 14px 20px; border-bottom: 1px solid #f0e7d8; }
+.hc-nudge-head .spark { width: 28px; height: 28px; border-radius: 8px; background: var(--hc-amber-soft); color: var(--hc-amber-700); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.hc-nudge-kicker { font: 700 .62rem/1.1 var(--hc-font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--hc-amber); }
+.hc-nudge-from { font-size: .85rem; font-weight: 700; color: var(--hc-ink); }
+.hc-nudge-persona { margin-left: auto; font-size: .68rem; font-weight: 700; background: var(--hc-tint-50); color: var(--hc-ink-2); padding: 4px 9px; border-radius: var(--hc-r-pill); display: flex; align-items: center; gap: 6px; }
+.hc-close { width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(0, 0, 0, .06); color: var(--hc-ink-2); font-size: 15px; display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+.hc-nudge-type { font: 600 .62rem/1 var(--hc-font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--hc-ink-3); padding: 12px 20px 0; }
+
+.hc-chat { display: flex; flex-direction: column; gap: 10px; padding: 10px 20px 0; }
+.hc-msg { max-width: 90%; font-size: .82rem; line-height: 1.46; padding: 10px 13px; border-radius: 15px; }
+.hc-msg.bot { align-self: flex-start; background: var(--hc-tint-50); color: var(--hc-ink); border-bottom-left-radius: 5px; }
+.hc-msg.user { align-self: flex-end; background: var(--hc-blue); color: #fff; border-bottom-right-radius: 5px; }
+.hc-msg .rich { margin-top: 12px; }
+
+/* €/day reframe block (Judith) */
+.hc-perday { display: flex; align-items: center; gap: 14px; margin: 4px 0; padding: 14px; border-radius: 12px; background: var(--hc-surface); border: 1px solid #f0e7d8; }
+.hc-perday .big { font-size: 2rem; font-weight: 800; letter-spacing: -.02em; color: var(--hc-amber); font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1; }
+.hc-perday .cap { font-size: .76rem; color: var(--hc-ink-2); line-height: 1.4; }
+.hc-perday .cap b { color: var(--hc-ink); }
+
+/* market comparison bars (Judith) */
+.hc-cmp { margin: 12px 0 2px; display: flex; flex-direction: column; gap: 9px; }
+.hc-cmp .row { display: grid; grid-template-columns: 84px 1fr auto; align-items: center; gap: 10px; }
+.hc-cmp .rl { font-size: .72rem; font-weight: 700; color: var(--hc-ink-2); }
+.hc-cmp .track { height: 9px; border-radius: 5px; background: var(--hc-tint-100); overflow: hidden; }
+.hc-cmp .fill { height: 100%; border-radius: 5px; }
+.hc-cmp .rv { font-size: .76rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.hc-cmp .row.you .fill { background: var(--hc-blue); } .hc-cmp .row.you .rv { color: var(--hc-blue); }
+.hc-cmp .row.mkt .fill { background: var(--hc-ink-3); } .hc-cmp .row.mkt .rv { color: var(--hc-ink-3); }
+
+.hc-actions { display: flex; gap: 9px; padding: 14px 20px 18px; }
+.hc-actions .primary { flex: 1; height: 42px; border: none; border-radius: var(--hc-r-pill); background: var(--hc-blue); color: #fff; font: 800 .82rem var(--hc-font-ui); display: flex; align-items: center; justify-content: center; }
+.hc-actions .ghost { height: 42px; padding: 0 16px; border: 1px solid var(--hc-cream-line); border-radius: var(--hc-r-pill); background: var(--hc-surface); color: var(--hc-ink); font: 700 .76rem var(--hc-font-ui); white-space: nowrap; display: flex; align-items: center; }
+
+/* ---------- tariff card (S4) ---------- */
+.hc-tcard { border: 1px solid var(--hc-cream-line); border-radius: var(--hc-r-card); background: var(--hc-surface); padding: 16px 14px 14px; display: flex; flex-direction: column; position: relative; box-shadow: var(--hc-sh-card); }
+.hc-tcard .nm { font-size: .9rem; font-weight: 800; letter-spacing: -.01em; color: var(--hc-ink); }
+.hc-tcard .tier { font-size: .68rem; color: var(--hc-ink-3); font-weight: 600; margin-top: 2px; }
+.hc-tprice { margin: 12px 0 10px; display: flex; align-items: baseline; gap: 3px; }
+.hc-tprice .amt { font-size: 1.5rem; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--hc-ink); }
+.hc-tprice .per { font-size: .72rem; color: var(--hc-ink-3); font-weight: 600; }
+.hc-pick { margin-top: auto; height: 34px; border: 1px solid var(--hc-cream-line); background: var(--hc-surface); color: var(--hc-blue-700); border-radius: var(--hc-r-pill); font: 700 .76rem var(--hc-font-ui); display: flex; align-items: center; justify-content: center; }
+.hc-tcard.is-rec { border-color: var(--hc-amber); border-width: 2px; box-shadow: var(--hc-sh-rec); }
+.hc-tcard.is-rec .hc-pick { background: var(--hc-amber); color: #3a2a08; border-color: var(--hc-amber); }
+.hc-ribbon { position: absolute; top: -10px; left: 14px; background: var(--hc-amber); color: #fff; font: 700 .56rem/1 var(--hc-font-ui); letter-spacing: .08em; text-transform: uppercase; padding: 5px 9px; border-radius: 6px; }
+.hc-tcard.is-adv { background: var(--hc-cream); }
+.hc-lock { display: inline-flex; align-items: center; gap: 5px; font-size: .6rem; font-weight: 700; color: var(--hc-amber-700); background: var(--hc-amber-soft); padding: 3px 7px; border-radius: 5px; margin-top: 6px; width: max-content; }
+
+/* ---------- terminal end-page badge ---------- */
+.hc-badge-end { width: 52px; height: 52px; border-radius: var(--hc-r-pill); display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff; }
+.hc-badge-end.ok { background: var(--hc-blue); }
+.hc-badge-end.adv { background: var(--hc-amber); }
+.hc-badge-end.off { background: var(--hc-ink-3); }
+
+/* compact nudge (for tight slides) */
+.hc-modal.compact .hc-nudge-head { padding: 10px 18px; }
+.hc-modal.compact .hc-nudge-type { padding: 8px 18px 0; }
+.hc-modal.compact .hc-chat { padding: 8px 18px 0; gap: 8px; }
+.hc-modal.compact .hc-msg { font-size: .78rem; padding: 9px 12px; }
+.hc-modal.compact .hc-perday { padding: 11px; margin: 2px 0; }
+.hc-modal.compact .hc-perday .big { font-size: 1.7rem; }
+.hc-modal.compact .hc-actions { padding: 12px 18px 14px; }

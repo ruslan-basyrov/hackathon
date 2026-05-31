@@ -1,7 +1,8 @@
 """Customer-facing journey at `/journey` (BUILD_SPEC §Phase 3.5).
 
-A stylized "HealthCover" insurance signup. Three driver modes share the same
-visual layout and the same `Session`:
+A stylized "HealthCover" insurance signup, skinned with the **"Warm"** design
+system in `design_idea/healthcover-warm.css` (UNIQA-style deep blue + warm
+cream + amber). Three driver modes share the same visual layout and `Session`:
 
   * **auto mode** (default, `?mode=auto`) - `StubAgent` drives via auto-play;
     the audience watches a persona traverse the funnel; popups overlay on
@@ -16,15 +17,27 @@ visual layout and the same `Session`:
     `SimulationEngine`; similar to auto mode but uses the actual LLM bot
     and intervention logic from the engine.
 
-Stable element IDs (test contract):
-  journey-page, journey-step-label, journey-progress,
+Presentation only: this module reads the simulator (`coach()` / `extract()`),
+it never computes conversion. The funnel screens + coach popup wear the warm
+skin; the presenter chrome (rules panel, mode/persona/method switchers, quick
+scenarios) lives below the cream surface as plain dev tooling.
+
+Stable element IDs (test contract - keep on the matching nodes):
+  journey-page, journey-step-label, journey-progress, journey-narration,
   journey-popup, journey-popup-type, journey-popup-text, journey-popup-close,
-  journey-narration, journey-autoplay-toggle, journey-step-button,
-  journey-persona-select, journey-method-select,
-  journey-mode-toggle, journey-quick-judith, journey-quick-franz, journey-quick-peter,
-  journey-cancel-link, journey-edit-dob, journey-continue
+  journey-popup-continue, journey-chat-log, journey-chat-input, journey-chat-send,
+  journey-autoplay-toggle, journey-step-button, journey-persona-select,
+  journey-method-select, journey-mode-toggle, journey-live-toggle,
+  journey-quick-judith, journey-quick-franz, journey-quick-peter, journey-rules,
+  journey-back, journey-continue, journey-cancel-link, journey-edit-dob,
+  journey-card-doctor, journey-card-hospital, journey-card-both,
+  journey-card-myself, journey-card-others,
+  journey-tariff-Start, journey-tariff-Optimal, journey-tariff-OptPlus,
+  journey-tariff-Premium
 """
 from __future__ import annotations
+
+from pathlib import Path
 
 from nicegui import run, ui
 
@@ -32,20 +45,90 @@ from services.ui.session import Session
 from state_machine import Action
 
 
-# Step int -> page title.
+# Step int -> page title (used for the progress label on terminal pages).
 PAGE_TITLES = {
     0: "Welcome", 1: "What kind of coverage?", 2: "Who is this for?",
     3: "Your details", 4: "Choose your tariff", 6: "A few health questions",
     7: "Your personalised price", 12: "Confirm and finish",
-    90: "You're covered", 91: "Session ended",
-    92: "An advisor will be in touch", 93: "We'll call you back",
+    90: "You’re covered", 91: "Session ended",
+    92: "An advisor will be in touch", 93: "We’ll call you back",
 }
 FUNNEL_STEPS = [1, 2, 3, 4, 6, 7, 12]
 TERMINALS = {90, 91, 92, 93}
 
-# Brand colours
+# Presenter-chrome accent (the dev tooling below the cream surface only).
 BRAND_PRIMARY = "bg-sky-600"
-BRAND_PRIMARY_HOVER = "hover:bg-sky-700"
+
+# --- warm design system assets ---------------------------------------------
+_CSS_PATH = Path(__file__).parent / "static" / "healthcover-warm.css"
+
+_FONTS_HEAD = (
+    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+    '<link href="https://fonts.googleapis.com/css2?'
+    'family=Hanken+Grotesk:wght@400;500;600;700;800&'
+    'family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&'
+    'family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">'
+)
+
+# Adapt the fixed-frame reference to a full-page NiceGUI route and tame Quasar
+# defaults that fight the design. Kept here (not in healthcover-warm.css) so the
+# design file stays the pristine source of truth.
+_OVERRIDES = """
+.nicegui-content{padding:0 !important;gap:0 !important;width:100%;max-width:100%}
+body{background:var(--hc-cream)}
+.hc-scr{height:auto;min-height:100vh}
+.hc-main{overflow:visible}
+.hc-cont:disabled,.hc-back:disabled,.hc-pick:disabled{opacity:.45;cursor:default}
+.hc-narration{margin:10px 40px 0;font-style:italic;color:var(--hc-blue-900);font-size:13.5px}
+.hc-mode-chip{font:600 11px var(--hc-font-mono);letter-spacing:.04em;background:var(--hc-amber-soft);color:var(--hc-amber-700);padding:4px 10px;border-radius:var(--hc-r-pill)}
+.hc-mode-chip.live{background:var(--hc-amber);color:#3a2a08}
+/* coach reply: make the NiceGUI/Quasar input read like .hc-reply input */
+.hc-reply{align-items:center}
+.hc-reply .q-field{flex:1;min-width:0}
+.hc-reply .q-field__control{min-height:42px;height:42px;border-radius:var(--hc-r-pill);background:var(--hc-surface);border:1px solid var(--hc-cream-line);padding:0 14px}
+.hc-reply .q-field__control:before,.hc-reply .q-field__control:after{display:none !important}
+.hc-reply input{border:none !important;height:auto !important;padding:0 !important;background:transparent !important}
+"""
+
+_LOGO_SVG = (
+    '<span class="hc-brand">'
+    '<svg width="28" height="28" viewBox="0 0 28 28">'
+    '<rect width="28" height="28" rx="8" fill="#0a51d0"/>'
+    '<rect x="12.4" y="6.5" width="3.2" height="15" rx="1.6" fill="#fff"/>'
+    '<rect x="6.5" y="12.4" width="15" height="3.2" rx="1.6" fill="#fff"/>'
+    '</svg><b>Health<span>Cover</span></b></span>'
+)
+
+_SPARK_SVG = (
+    '<span class="spark"><svg width="14" height="14" viewBox="0 0 14 14">'
+    '<path d="M7 0l1.6 4.2L13 5.6 9 7.8 8.2 12 7 8.6 4 11l1-4L0 5.4l4.8-.5z" '
+    'fill="currentColor"/></svg></span>'
+)
+
+# Per-persona popup action labels: (primary / continue, secondary / branch).
+# The primary keeps id=journey-popup-continue and advances; the ghost is the
+# persona-specific branch (Judith soft handoff, Franz cheaper option, Peter
+# callback). Both close the popup (the UI stays read-only over the simulator).
+_ACTION_LABELS = {
+    "judith": ("Continue with Optimal", "Book a 10-min call"),
+    "franz": ("Keep my Optimal plan", "Show a cheaper tariff"),
+    "peter": ("Continue online", "Yes, call me back"),
+}
+
+# Judith's rich attachment on her first nudge bubble: the €/day reframe + a
+# market-comparison. Illustrative marketing copy (€2.27/day = €68.14/mo for
+# Optimal); the funnel's own prices stay bound to the simulator.
+_JUDITH_RICH = (
+    '<div class="rich">'
+    '<div class="hc-perday"><span class="big">€2.27</span>'
+    '<span class="cap">per day for <b>Optimal</b> — <b>€68.14</b>/mo, cancel anytime.</span></div>'
+    '<div class="hc-cmp">'
+    '<div class="row you"><span class="rl">HealthCover</span>'
+    '<span class="track"><span class="fill" style="width:70%"></span></span><span class="rv">€68</span></div>'
+    '<div class="row mkt"><span class="rl">Market avg.</span>'
+    '<span class="track"><span class="fill" style="width:86%"></span></span><span class="rv">€81</span></div>'
+    '</div></div>'
+)
 
 
 def render(
@@ -65,152 +148,167 @@ def render(
         method=method, gbm_threshold=gbm_threshold, mode=mode,
     )
 
-    # ---- top branding bar --------------------------------------------------
-    with ui.element("div").classes("w-full bg-sky-600 text-white px-6 py-3 shadow"):
-        with ui.row().classes("w-full items-center max-w-5xl mx-auto"):
-            ui.label("HealthCover").classes("text-2xl font-bold tracking-tight")
-            ui.label("private medical insurance").classes("text-sky-100 text-sm ml-2")
-            ui.element("div").classes("flex-grow")
-            if interactive:
-                ui.label("manual mode — your clicks are the user").classes(
-                    "text-xs bg-sky-700 px-2 py-1 rounded font-mono"
+    def _scenario_url(p: str, ep: int) -> str:
+        return (f"/journey?seed={seed}&episode={ep}"
+                f"&persona={p}&method={method}&gbm_threshold={gbm_threshold}"
+                f"&mode={mode}")
+
+    # ---- load the warm design system (this page only) ----------------------
+    ui.add_head_html(_FONTS_HEAD)
+    ui.add_css(_CSS_PATH.read_text())
+    ui.add_css(_OVERRIDES)
+
+    # ========================================================================
+    # CUSTOMER-FACING SURFACE (.hc-scr) — top bar, progress, page, footer
+    # ========================================================================
+    with ui.element("div").classes("hc-scr"):
+        # ---- top bar -------------------------------------------------------
+        with ui.element("div").classes("hc-top"):
+            ui.html(_LOGO_SVG)
+            with ui.element("div").classes("hc-top-right"):
+                with ui.element("div").classes("hc-personas"):
+                    for p in ("judith", "franz", "peter"):
+                        pill = ui.element("button").classes(
+                            "hc-pl on" if p == persona else "hc-pl"
+                        )
+                        with pill:
+                            ui.element("span").classes(f"pd {p}")
+                            ui.label(p.title())
+                        pill.on("click", lambda _=None, pp=p:
+                                ui.navigate.to(_scenario_url(pp, episode)))
+                if interactive:
+                    ui.label("manual mode").classes("hc-mode-chip")
+                elif live:
+                    ui.label("live · LLM driving").classes("hc-mode-chip live")
+                ui.html('<span class="hc-help"><span class="dot"></span>Coach active</span>')
+
+        # ---- narration -----------------------------------------------------
+        if narration:
+            ui.label(narration).props('id="journey-narration"').classes("hc-narration")
+        else:
+            ui.label("").props('id="journey-narration"').classes("hidden")
+
+        # ---- progress (segments hidden on welcome/terminal; label always on
+        #      so #journey-step-label stays visible for the load test) -------
+        prog_row = ui.element("div").props('id="journey-progress"').classes("hc-prog")
+        with prog_row:
+            progress_segs = [ui.element("span").classes("seg") for _ in FUNNEL_STEPS]
+            progress_label = ui.label("").props('id="journey-step-label"').classes("lbl")
+
+        # ---- per-step page root (the .hc-main content area) ----------------
+        page_container = ui.element("div").props('id="journey-page"').classes("hc-main")
+
+        # ---- footer (Back / Continue; repainted per step) ------------------
+        footer_container = ui.element("div").classes("hc-foot")
+
+    # ========================================================================
+    # COACH NUDGE POPUP — conversational chat (styled to .hc-modal)
+    # ========================================================================
+    # Kept as a ui.dialog (the README sanctions "ui.dialog styled to .hc-modal")
+    # so the existing .open()/.close()/on("hide") resume machinery is preserved.
+    with ui.dialog().props('id="journey-popup"') as popup:
+        with ui.element("div").classes("hc-modal"):
+            with ui.element("div").classes("hc-nudge-head"):
+                ui.html(_SPARK_SVG)
+                ui.html('<span><div class="hc-nudge-kicker">Smart assist</div>'
+                        '<div class="hc-nudge-from">A nudge from HealthCover</div></span>')
+                ui.html(f'<span class="hc-nudge-persona"><span class="pd {persona}"></span>'
+                        f'{persona.title()}</span>')
+                close_btn = ui.element("button").classes("hc-close").props(
+                    'id="journey-popup-close"'
                 )
-            elif live:
-                ui.label("live simulation — LLM is driving").classes(
-                    "text-xs bg-amber-600 px-2 py-1 rounded font-mono text-white"
+                with close_btn:
+                    ui.html("&times;")
+                close_btn.on("click", lambda: popup.close())
+
+            popup_type = ui.label("").props('id="journey-popup-type"').classes("hc-nudge-type")
+
+            chat_log = ui.element("div").props('id="journey-chat-log"').classes("hc-chat")
+
+            chat_busy = ui.element("div").classes("hc-think hidden")
+            with chat_busy:
+                ui.html('<span class="hc-spin"></span>')
+                ui.label("thinking …")
+
+            reply_row = ui.element("div").classes("hc-reply")
+            with reply_row:
+                chat_input = ui.input(placeholder="Reply to the coach…").props(
+                    'id="journey-chat-input" borderless dense'
+                ).classes("flex-grow")
+                chat_send = ui.element("button").classes("send").props(
+                    'id="journey-chat-send"'
                 )
-            ui.label("Need help? 0800 123 456").classes("text-sm ml-3")
+                with chat_send:
+                    ui.label("Send")
 
-    # ---- narration strip ---------------------------------------------------
-    if narration:
-        ui.label(narration).props('id="journey-narration"').classes(
-            "max-w-5xl mx-auto mt-2 px-6 italic text-sky-900 text-sm"
-        )
-    else:
-        ui.label("").props('id="journey-narration"').classes("hidden")
+            with ui.element("div").classes("hc-actions"):
+                primary = ui.element("button").classes("primary").props(
+                    'id="journey-popup-continue"'
+                )
+                with primary:
+                    primary_label = ui.label("Continue journey")
+                primary.on("click", lambda: popup.close())
+                ghost_btn = ui.element("button").classes("ghost")
+                with ghost_btn:
+                    ghost_label = ui.label("")
+                ghost_btn.on("click", lambda: popup.close())
 
-    # ---- progress bar ------------------------------------------------------
-    with ui.row().classes("max-w-5xl mx-auto mt-4 px-6 items-center gap-3 w-full"):
-        progress_label = ui.label("").props('id="journey-step-label"').classes(
-            "text-sm font-semibold text-gray-700"
-        )
-        with ui.row().props('id="journey-progress"').classes("gap-1 flex-grow items-center"):
-            progress_dots = []
-            for _ in FUNNEL_STEPS:
-                dot = ui.element("div").classes("h-2 flex-1 rounded-full bg-gray-200")
-                progress_dots.append(dot)
-
-    page_container = ui.column().props('id="journey-page"').classes(
-        "max-w-3xl mx-auto mt-6 px-6 pb-4 w-full"
-    )
-
-    # ---- live detection-rules panel (visible especially in interactive mode)
-    rules_panel = ui.column().props('id="journey-rules"').classes(
-        "max-w-3xl mx-auto px-6 w-full mt-2 gap-2"
-    )
-
-    # ---- popup overlay (chat) ----------------------------------------------
-    # Chat state lives in this closure. Each new intervention resets it.
+    # ---- chat state + logic (unchanged behaviour) --------------------------
     # `messages` is the full OpenAI-style history we SEND to the model:
     # build_messages(itype, sig, persona) gives [system, prompt-scaffold-user];
     # we then append the first assistant nudge and each follow-up turn.
-    #
-    # `visible_start` is the index in `messages` where the chat UI begins
-    # rendering. Everything before it (the system message + the structured
-    # user message containing PERSONA / SIGNALS / GUIDANCE) is prompt
-    # scaffolding the user must NEVER see — it's only what we send. The first
-    # rendered bubble is the assistant's nudge.
-    chat_state = {"messages": [], "busy": False, "visible_start": 0}
-
-    with ui.dialog().props('id="journey-popup"') as popup, ui.card().classes(
-        "min-w-[32rem] max-w-lg p-6 border-l-4 border-sky-600"
-    ):
-        with ui.row().classes("items-center gap-2 w-full"):
-            ui.icon("auto_awesome").classes("text-sky-600 text-2xl")
-            ui.label("A nudge from HealthCover").classes("text-lg font-bold")
-            ui.element("div").classes("flex-grow")
-            ui.button(icon="close", on_click=lambda: popup.close()).props(
-                'id="journey-popup-close" flat dense round'
-            ).classes("text-gray-500")
-        ui.separator().classes("my-2")
-        popup_type = ui.label("").props('id="journey-popup-type"').classes(
-            "text-xs font-mono uppercase tracking-wide text-sky-700"
-        )
-        chat_log = ui.column().props('id="journey-chat-log"').classes(
-            "w-full mt-3 gap-2 max-h-96 overflow-y-auto"
-        )
-        chat_busy = ui.row().classes("items-center gap-2 mt-1 hidden")
-        with chat_busy:
-            ui.spinner(size="sm").classes("text-sky-600")
-            ui.label("thinking …").classes("text-xs text-gray-500 italic")
-        with ui.row().classes("mt-3 gap-2 w-full items-center"):
-            chat_input = ui.input(placeholder="Reply…").props(
-                'id="journey-chat-input" outlined dense'
-            ).classes("flex-grow")
-            chat_send = ui.button("Send").props(
-                'id="journey-chat-send"'
-            ).classes("bg-sky-600 text-white px-4")
-        with ui.row().classes("mt-3 justify-end w-full"):
-            ui.button("Continue journey", on_click=lambda: popup.close()).props(
-                'id="journey-popup-continue" flat'
-            ).classes("bg-sky-600 text-white px-4")
+    # `visible_start` is the index where the chat UI begins rendering — the
+    # system message + structured prompt user message are scaffolding the user
+    # must NEVER see. The first rendered bubble is the assistant's nudge.
+    chat_state = {"messages": [], "busy": False, "visible_start": 0, "itype": None}
 
     def _set_busy(busy: bool):
-        # NiceGUI's props API: `props("disable")` adds the prop;
-        # `props(remove="disable")` removes it. Earlier this passed the
-        # literal string "remove=disable" as the `add` argument, which never
-        # cleared the disable — so after the first reply the input stayed
-        # disabled and the user couldn't send a second message (read on the
-        # outside as "the chat has no memory").
         chat_state["busy"] = busy
         if busy:
-            chat_input.props("disable")
-            chat_send.props("disable")
+            chat_input.props("disable")        # Quasar input prop
+            chat_send.props("disabled")        # native <button> attribute
             chat_busy.classes(remove="hidden")
         else:
             chat_input.props(remove="disable")
-            chat_send.props(remove="disable")
+            chat_send.props(remove="disabled")
             chat_busy.classes(add="hidden")
 
     def _render_chat():
         chat_log.clear()
-        # Skip everything before visible_start — that's the system message and
-        # the structured prompt user message (PERSONA/SIGNALS/GUIDANCE). The
-        # first visible message is always the assistant nudge; give it the
-        # journey-popup-text id so existing test selectors keep working.
         first_assistant_seen = False
         with chat_log:
             for msg in chat_state["messages"][chat_state["visible_start"]:]:
                 role = msg["role"]
                 text = msg["content"]
                 if role == "assistant":
-                    bubble_id = ""
-                    if not first_assistant_seen:
-                        bubble_id = "journey-popup-text"
+                    is_first = not first_assistant_seen
+                    if is_first:
                         first_assistant_seen = True
-                    with ui.row().classes("w-full"):
-                        bubble = ui.label(text).classes(
-                            "bg-sky-50 text-gray-800 px-3 py-2 rounded-lg "
-                            "max-w-[80%] text-sm leading-relaxed"
+                    # Judith's first nudge carries the €/day + market-bar rich
+                    # attachment, but only on her actual price reframe (not a
+                    # generic nudge like back_nav_help); everyone else gets a
+                    # plain bubble.
+                    if (is_first and sess.persona == "judith"
+                            and chat_state.get("itype") == "price_reframe"):
+                        bubble = ui.element("div").classes("hc-msg bot").props(
+                            'id="journey-popup-text"'
                         )
-                        if bubble_id:
-                            bubble.props(f'id="{bubble_id}"')
+                        with bubble:
+                            ui.label(text)
+                            ui.html(_JUDITH_RICH)
+                    else:
+                        lbl = ui.label(text).classes("hc-msg bot")
+                        if is_first:
+                            lbl.props('id="journey-popup-text"')
                 elif role == "user":
-                    with ui.row().classes("w-full justify-end"):
-                        ui.label(text).classes(
-                            "bg-sky-600 text-white px-3 py-2 rounded-lg "
-                            "max-w-[80%] text-sm leading-relaxed"
-                        )
+                    ui.label(text).classes("hc-msg user")
 
     def open_chat(intervention, sig):
         """Seed the chat with the persona/intervention prompt + the first
-        assistant nudge that `realize()` just produced, then open the dialog.
-        Future turns extend `chat_state["messages"]` and call chat_followup.
-        """
+        assistant nudge that `realize()` just produced, then open the dialog."""
         from coach.llm_realize import build_messages
         if isinstance(sig, dict):
             from signals import Signals
-            # Create a full Signals object with default values, then update with dict values
             _sig = Signals(
                 step=sig.get('step', 0),
                 max_steps_completed=sig.get('max_steps_completed', 0),
@@ -238,27 +336,27 @@ def render(
             history.append({"role": "assistant", "content": intervention.text})
             chat_state["messages"] = history
 
+        chat_state["itype"] = intervention.type
         chat_input.value = ""
         _set_busy(False)
-        # only allow chat if LLM mode is on; in template mode there's no
-        # backend that could answer a follow-up, so we hide the input.
+        # only allow chat in LLM mode; in template mode there's no backend to
+        # answer a follow-up, so hide the reply row entirely.
         is_llm = (sess.cfg.get("realize", {}) or {}).get("method") == "llm" or live
-        if is_llm:
-            chat_input.classes(remove="hidden")
-            chat_send.classes(remove="hidden")
+        reply_row.set_visibility(is_llm)
+        # persona-specific action labels
+        pri, gho = _ACTION_LABELS.get(sess.persona, ("Continue journey", ""))
+        primary_label.set_text(pri)
+        if gho:
+            ghost_label.set_text(gho)
+            ghost_btn.set_visibility(True)
         else:
-            chat_input.classes(add="hidden")
-            chat_send.classes(add="hidden")
+            ghost_btn.set_visibility(False)
         popup_type.set_text(f"{intervention.type}  ·  {intervention.mode}")
         _render_chat()
         popup.open()
 
     async def send_chat(_=None):
-        # `_` swallows the event object NiceGUI passes through `.on()` so we
-        # can register this coroutine function directly. Wrapping it in a
-        # lambda (e.g. `lambda _: send_chat()`) breaks: the lambda returns
-        # an unawaited coroutine object, NiceGUI doesn't recognise it as
-        # async via `iscoroutinefunction`, and the body never runs.
+        # `_` swallows the event object NiceGUI passes through `.on()`.
         text = (chat_input.value or "").strip()
         if not text or chat_state["busy"]:
             return
@@ -281,12 +379,14 @@ def render(
     chat_send.on("click", send_chat)
     chat_input.on("keydown.enter", send_chat)
 
-    # ---- styling helpers ---------------------------------------------------
-    def _h1(text: str):
-        ui.label(text).classes("text-3xl font-bold text-gray-900 mb-2")
-
-    def _subtitle(text: str):
-        ui.label(text).classes("text-base text-gray-600 mb-6")
+    # ---- presentation helpers ----------------------------------------------
+    def _intro(eyebrow: str, h1: str, sub: str, *, serif: bool = False):
+        h1_style = (' style="font-family:var(--hc-font-serif);font-size:46px;max-width:640px"'
+                    if serif else "")
+        sub_style = ' style="font-size:17px"' if serif else ""
+        ui.html(f'<div class="hc-eyebrow">{eyebrow}</div>'
+                f'<h1 class="hc-h1"{h1_style}>{h1}</h1>'
+                f'<p class="hc-sub"{sub_style}>{sub}</p>')
 
     def _selected_tariff_name() -> str:
         p = sess.provisional
@@ -294,47 +394,54 @@ def render(
             return "Optimal"
         if abs(p - 38.74) < 0.01:
             return "Start"
-        if abs(p - 68.14) < 0.01:
-            return "Optimal"
         return "Optimal"
 
-    # ---- generic option card ------------------------------------------------
-    def _option_card(title: str, sub: str, selected: bool = False,
-                     advisory: bool = False, on_click=None, elem_id: str = ""):
-        cls = "p-5 rounded-lg border-2 transition-all flex-1 min-w-48 max-w-72 "
-        if selected:
-            cls += "border-sky-600 bg-sky-50 shadow-md "
-        elif advisory:
-            cls += "border-amber-300 bg-amber-50 "
-        else:
-            cls += "border-gray-200 bg-white "
+    def _option_card(title: str, sub: str, *, selected: bool = False,
+                     on_click=None, elem_id: str = ""):
+        card = ui.element("div").classes("hc-opt sel" if selected else "hc-opt")
+        if elem_id:
+            card.props(f'id="{elem_id}"')
         if on_click is not None:
-            cls += "cursor-pointer hover:shadow-lg hover:border-sky-400 "
+            card.on("click", lambda _=None, h=on_click: h())
+            card.style("cursor:pointer")
+        ck = "✓ Selected" if selected else "Choose"
+        with card:
+            ui.html(f'<div class="pic hc-img">lifestyle photo</div>'
+                    f'<div class="body"><div class="ot">{title}</div>'
+                    f'<div class="od">{sub}</div></div>'
+                    f'<div class="ck">{ck}</div>')
+
+    def _tariff_card(name: str, tier: str, price: str, per: str, feats: list[str],
+                     *, rec: bool = False, adv: bool = False, on_click=None,
+                     elem_id: str = "", pick_label: str = "Select"):
+        cls = "hc-card" + (" is-rec" if rec else "") + (" is-adv" if adv else "")
         card = ui.element("div").classes(cls)
         if elem_id:
             card.props(f'id="{elem_id}"')
         if on_click is not None:
             card.on("click", lambda _=None, h=on_click: h())
+            card.style("cursor:pointer")
+        feats_li = "".join(f"<li>{f}</li>" for f in feats)
+        inner = ""
+        if rec:
+            inner += '<span class="hc-ribbon">Recommended</span>'
+        inner += f'<span class="nm">{name}</span><span class="tier">{tier}</span>'
+        inner += (f'<div class="hc-price"><span class="amt">{price}</span>'
+                  f'<span class="per">{per}</span></div>')
+        inner += f'<ul class="hc-feats">{feats_li}</ul>'
+        if adv:
+            inner += '<span class="hc-lock">Advisor only</span>'
         with card:
-            ui.label(title).classes("text-lg font-semibold mb-1")
-            ui.label(sub).classes("text-sm text-gray-600")
-        return card
+            ui.html(inner)
+            pick = ui.element("button").classes("hc-pick")
+            with pick:
+                ui.label(pick_label)
 
     # ---- action emit (interactive mode) ------------------------------------
-    # Two entry points. Both consult the coach ONCE, AFTER all the user's
-    # actions are applied (so detection sees the action that just crossed
-    # a threshold - e.g. the 2nd `back` taking back_nav_count from 1 to 2).
-    #
-    #   emit_action("continue")          -> single action
-    #   emit_action("hover", "cancel")   -> single action with target
-    #   emit_actions(("select", "Optimal"), ("continue",))
-    #                                    -> atomic batch: one popup check
-    #
-    # The coach consult is wrapped in `run.io_bound` because in LLM mode
-    # (cfg.realize.method=llm) it makes a blocking HTTP call to the inference
-    # endpoint. Running it on the event loop would block the WebSocket
-    # heartbeat and drop the connection. io_bound runs it in a thread pool
-    # so the UI stays responsive.
+    # Both entry points consult the coach ONCE, AFTER all the user's actions
+    # are applied. The consult is wrapped in run.io_bound because in LLM mode
+    # it makes a blocking HTTP call; running it on the event loop would block
+    # the WebSocket heartbeat and drop the connection.
     async def _apply_and_consult(action_specs):
         if sess.is_done():
             return
@@ -359,331 +466,222 @@ def render(
         """Apply multiple (type, target) tuples atomically; one coach check."""
         await _apply_and_consult(list(specs))
 
-    # ============================================================================
-    # AUTO-mode renderers (current behaviour - disabled UI, agent drives)
-    # ============================================================================
-    def _render_start_auto():
-        _h1("Health insurance, online in minutes")
-        _subtitle("A personalised quote in under five minutes. No paperwork. "
-                  "No phone calls unless you want them.")
-        with ui.row().classes("mt-8"):
-            ui.button("Get a quote").props("disable").classes(
-                f"{BRAND_PRIMARY} text-white px-8 py-3 text-base font-semibold"
-            )
+    # ========================================================================
+    # PER-STEP RENDERERS — one set, branching on `interactive`. In auto/live
+    # mode the controls are disabled (the agent drives); Back/Continue live in
+    # the footer (see paint_footer), so the renderers paint content only.
+    # ========================================================================
+    def _r_s0():
+        _intro("Private health cover", "Health cover, made clear.",
+               "Get a personalised quote for private outpatient care in about "
+               "two minutes. Free choice of doctor, adjust or cancel anytime.",
+               serif=True)
+        cta = ui.element("button").classes("hc-cont").style("margin-top:24px")
+        with cta:
+            ui.label("Get my quote →")
+        if interactive:
+            cta.props('id="journey-continue"')
+            cta.on("click", lambda: emit_action("continue"))
+        else:
+            cta.props('id="journey-continue" disabled')
 
-    def _render_s1_auto():
-        _h1("What kind of coverage are you looking for?")
-        _subtitle("You can change this later. We'll tailor the rest of the journey.")
-        with ui.row().classes("gap-4 mt-6 flex-wrap"):
-            _option_card("Private doctor visits",
-                         "Outpatient care, specialists, diagnostics, therapies.",
-                         selected=True)
-            _option_card("Hospital stay", "Inpatient care, surgery, private room. Advisory.",
-                         advisory=True)
-            _option_card("Both", "Comprehensive coverage. Advisory.", advisory=True)
-
-    def _render_s2_auto():
-        _h1("Who would you like to insure?")
-        _subtitle("")
-        with ui.row().classes("gap-4 mt-6"):
-            _option_card("Just me", "Personal coverage.", selected=True)
-            _option_card("Family or other persons",
-                         "Coverage for multiple people. Advisory.", advisory=True)
-
-    def _render_s3_auto():
-        _h1("Tell us a bit about yourself")
-        _subtitle("We need a couple of basics before we can show you a price.")
-        with ui.column().classes("gap-4 mt-4 max-w-md"):
-            ui.input(label="Date of birth", value="15.07.1985").props("disable outlined").classes("w-full")
-            ui.input(label="Social insurance number",
-                     value="1234 150785").props("disable outlined").classes("w-full")
-
-    def _render_s4_auto():
-        _h1("Choose your tariff")
-        _subtitle("Two tariffs you can buy online; two require a short advisory call.")
-        with ui.row().classes("gap-3 mt-6 flex-wrap"):
-            _tariff_card("Start", "€38.74 / mo",
-                         "Outpatient essentials. Fully online.", online=True,
-                         selected=(sess.last_action and sess.last_action.target == "Start"))
-            _tariff_card("Optimal", "€68.14 / mo",
-                         "Outpatient + therapies + medications. Fully online.",
-                         online=True, badge="Popular",
-                         selected=(sess.last_action and sess.last_action.target == "Optimal"))
-            _tariff_card("Opt. Plus", "Advisory",
-                         "Adds private hospital. Requires a short call.", online=False)
-            _tariff_card("Premium", "Advisory",
-                         "Top-tier coverage. Requires a short call.", online=False)
-
-    def _tariff_card(name, price, body, online: bool, badge: str = "",
-                     selected: bool = False, on_click=None, elem_id: str = ""):
-        ring = "border-sky-600 bg-sky-50 shadow-md" if selected else (
-            "border-amber-300 bg-amber-50" if not online else
-            "border-gray-200 bg-white"
-        )
-        extra = " cursor-pointer hover:shadow-lg hover:border-sky-400" if on_click else ""
-        card = ui.element("div").classes(
-            f"p-4 rounded-lg border-2 flex-1 min-w-44 max-w-60 {ring}{extra}"
-        )
-        if elem_id:
-            card.props(f'id="{elem_id}"')
-        if on_click is not None:
-            card.on("click", lambda _=None, h=on_click: h())
-        with card:
-            with ui.row().classes("items-center gap-2"):
-                ui.label(name).classes("text-lg font-semibold")
-                if badge:
-                    ui.label(badge).classes(
-                        "text-xs bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full"
-                    )
-            ui.label(price).classes("text-xl font-bold text-sky-700 mt-1")
-            ui.label(body).classes("text-sm text-gray-600 mt-2 leading-snug")
-            ui.label("✓ Buy online" if online else "📞 Advisor only").classes(
-                f"text-xs mt-3 {'text-emerald-700' if online else 'text-amber-800'} font-semibold"
-            )
-
-    def _render_s6_auto():
-        _h1("A few health questions")
-        _subtitle("Honest answers keep your cover valid. This stays private.")
-        for q in [
-            "Have you had any major surgery in the last 5 years?",
-            "Are you currently on prescription medication?",
-            "Do you have any chronic conditions?",
-            "Have you smoked in the last 12 months?",
-        ]:
-            with ui.row().classes("items-center gap-4 my-2"):
-                ui.label(q).classes("flex-1 text-sm")
-                ui.radio(["Yes", "No"], value="No").props("disable inline").classes("text-sm")
-
-    def _render_s7_auto():
-        provisional = sess.provisional or 68.14
-        final = round(provisional * (1 + sess.surcharge), 2)
-        gap = round(final - provisional, 2)
-        _h1("Your personalised price")
-        _subtitle("Based on your health profile.")
-        with ui.element("div").classes(
-            "p-6 rounded-lg bg-gradient-to-br from-sky-50 to-white border border-sky-200"
-        ):
-            ui.label(_selected_tariff_name()).classes(
-                "text-sm uppercase tracking-wide text-sky-700 font-semibold"
-            )
-            ui.label(f"€{final:.2f} / month").classes(
-                "text-4xl font-bold text-gray-900 mt-1"
-            )
-            if gap > 0.01:
-                ui.label(
-                    f"€{gap:.2f} above the estimated €{provisional:.2f}, "
-                    "based on the health questions you answered."
-                ).classes("text-sm text-gray-600 mt-2 max-w-md")
-        with ui.row().classes("mt-6 gap-3"):
-            ui.button("Continue to checkout").props("disable").classes(
-                f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold"
-            )
-            ui.button("Cancel").props("disable flat").classes("text-gray-500 px-3")
-
-    def _render_s12_auto():
-        provisional = sess.provisional or 68.14
-        final = round(provisional * (1 + sess.surcharge), 2)
-        _h1("Review and confirm")
-        _subtitle("Almost done.")
-        for k, v in [("Plan", _selected_tariff_name()), ("Monthly", f"€{final:.2f}"),
-                     ("Billing", "Monthly, paperless"), ("Coverage starts", "Next month")]:
-            with ui.row().classes("py-2 border-b border-gray-100"):
-                ui.label(k).classes("w-40 text-gray-600")
-                ui.label(v).classes("font-semibold text-gray-900")
-        ui.checkbox("I agree to the terms and the privacy notice").props("disable").classes("mt-4")
-        ui.button("Confirm and purchase").props("disable").classes(
-            f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-4"
-        )
-
-    # ============================================================================
-    # INTERACTIVE-mode renderers (clickable; build Actions from user clicks)
-    # ============================================================================
-    def _render_start_interactive():
-        _h1("Health insurance, online in minutes")
-        _subtitle("A personalised quote in under five minutes. No paperwork. "
-                  "No phone calls unless you want them.")
-        with ui.row().classes("mt-8"):
-            ui.button("Get a quote",
-                      on_click=lambda: emit_action("continue")).props(
-                'id="journey-continue"'
-            ).classes(f"{BRAND_PRIMARY} text-white px-8 py-3 text-base font-semibold")
-
-    def _render_s1_interactive():
-        _h1("What kind of coverage are you looking for?")
-        _subtitle("Pick one to continue.")
-        with ui.row().classes("gap-4 mt-6 flex-wrap"):
-            _option_card("Private doctor visits",
-                         "Outpatient care, specialists, diagnostics, therapies.",
-                         on_click=lambda: emit_actions(("select", "doctor"),
-                                                       ("continue",)),
+    def _r_s1():
+        _intro("Getting started", "What kind of cover are you looking for?",
+               "This tailors the plans we show you. You can change it later.")
+        with ui.element("div").classes("hc-opts"):
+            _option_card("Private doctor",
+                         "Outpatient visits with your own choice of specialist.",
+                         selected=not interactive,
+                         on_click=(lambda: emit_actions(("select", "doctor"), ("continue",)))
+                         if interactive else None,
                          elem_id="journey-card-doctor")
-            _option_card("Hospital stay", "Inpatient care, surgery. Advisory.",
-                         advisory=True,
-                         on_click=lambda: emit_action("select", "hospital"),
+            _option_card("Hospital", "Inpatient stays, private or single rooms.",
+                         on_click=(lambda: emit_action("select", "hospital"))
+                         if interactive else None,
                          elem_id="journey-card-hospital")
-            _option_card("Both", "Comprehensive. Advisory.", advisory=True,
-                         on_click=lambda: emit_action("select", "both"),
+            _option_card("Both", "Full outpatient and inpatient cover combined.",
+                         on_click=(lambda: emit_action("select", "both"))
+                         if interactive else None,
                          elem_id="journey-card-both")
 
-    def _render_s2_interactive():
-        _h1("Who would you like to insure?")
-        _subtitle("Pick one to continue.")
-        with ui.row().classes("gap-4 mt-6"):
-            _option_card("Just me", "Personal coverage.",
-                         on_click=lambda: emit_actions(("select", "myself"),
-                                                       ("continue",)),
+    def _r_s2():
+        _intro("Getting started", "Who is this cover for?",
+               "We’ll keep the questions relevant to you.")
+        with ui.element("div").classes("hc-opts").style("grid-template-columns:repeat(2,1fr)"):
+            _option_card("Just me", "Personal cover for one person.",
+                         selected=not interactive,
+                         on_click=(lambda: emit_actions(("select", "myself"), ("continue",)))
+                         if interactive else None,
                          elem_id="journey-card-myself")
-            _option_card("Family or other persons",
-                         "Coverage for multiple people. Advisory.", advisory=True,
-                         on_click=lambda: emit_action("select", "others"),
+            _option_card("Me and others", "Cover for family or additional people.",
+                         on_click=(lambda: emit_action("select", "others"))
+                         if interactive else None,
                          elem_id="journey-card-others")
 
-    def _render_s3_interactive():
-        _h1("Tell us a bit about yourself")
-        _subtitle("Click an Edit button to re-check a field (each click counts as a re-edit).")
-        with ui.column().classes("gap-3 mt-4 max-w-md"):
-            with ui.row().classes("gap-2 items-end"):
-                ui.input(label="Date of birth", value="15.07.1985").props("disable outlined").classes("flex-grow")
-                ui.button("Edit",
-                          on_click=lambda: emit_action("change_field", "dob")).props(
-                    'id="journey-edit-dob" flat'
-                ).classes("text-sky-700")
-            with ui.row().classes("gap-2 items-end"):
-                ui.input(label="Social insurance number",
-                         value="1234 150785").props("disable outlined").classes("flex-grow")
-                ui.button("Edit",
-                          on_click=lambda: emit_action("change_field", "ssn")).props(
-                    "flat"
-                ).classes("text-sky-700")
-        ui.button("Continue", on_click=lambda: emit_action("continue")).props(
-            'id="journey-continue"'
-        ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-6")
+    def _r_s3():
+        _intro("About you", "Tell us a bit about yourself",
+               "We need a couple of basics before we can show you a price.")
+        with ui.element("div").classes("hc-card").style(
+            "max-width:540px;margin-top:24px;padding:20px;gap:14px;"
+            "display:flex;flex-direction:column"
+        ):
+            with ui.row().classes("items-end w-full").style("gap:10px"):
+                ui.input(label="Date of birth", value="15.07.1985").props(
+                    "outlined dense disable"
+                ).classes("flex-grow")
+                if interactive:
+                    b = ui.element("button").classes("hc-pick").style(
+                        "width:auto;padding:0 16px;margin-top:0"
+                    ).props('id="journey-edit-dob"')
+                    with b:
+                        ui.label("Edit")
+                    b.on("click", lambda: emit_action("change_field", "dob"))
+            with ui.row().classes("items-end w-full").style("gap:10px"):
+                ui.input(label="Social insurance number", value="1234 150785").props(
+                    "outlined dense disable"
+                ).classes("flex-grow")
+                if interactive:
+                    b2 = ui.element("button").classes("hc-pick").style(
+                        "width:auto;padding:0 16px;margin-top:0"
+                    )
+                    with b2:
+                        ui.label("Edit")
+                    b2.on("click", lambda: emit_action("change_field", "ssn"))
 
-    def _render_s4_interactive():
-        _h1("Choose your tariff")
-        _subtitle("Click a card to pick it. Hover the advisory ones if you want to "
-                  "compare — that hover counts as a signal.")
-        with ui.row().classes("gap-3 mt-6 flex-wrap"):
-            _tariff_card("Start", "€38.74 / mo",
-                         "Outpatient essentials. Fully online.", online=True,
-                         on_click=lambda: emit_actions(("select", "Start"),
-                                                       ("continue",)),
+    def _r_s4():
+        _intro("Your cover", "Choose the cover that fits",
+               "Private outpatient care with free choice of doctor. "
+               "Adjust or cancel anytime.")
+        with ui.element("div").classes("hc-cards"):
+            _tariff_card("Start", "Essentials", "€38.74", "/mo",
+                         ["Free choice of doctor", "€500 outpatient / yr",
+                          "Online claims in-app"],
+                         on_click=(lambda: emit_actions(("select", "Start"), ("continue",)))
+                         if interactive else None,
                          elem_id="journey-tariff-Start")
-            _tariff_card("Optimal", "€68.14 / mo",
-                         "Outpatient + therapies + medications. Fully online.",
-                         online=True, badge="Popular",
-                         on_click=lambda: emit_actions(("select", "Optimal"),
-                                                       ("continue",)),
+            _tariff_card("Optimal", "Most chosen", "€68.14", "/mo",
+                         ["Everything in Start", "Unlimited outpatient",
+                          "Private specialist access", "48-hour claim payout"],
+                         rec=True, pick_label="Select Optimal",
+                         on_click=(lambda: emit_actions(("select", "Optimal"), ("continue",)))
+                         if interactive else None,
                          elem_id="journey-tariff-Optimal")
-            _tariff_card("Opt. Plus", "Advisory",
-                         "Adds private hospital. Requires a short call.", online=False,
-                         on_click=lambda: emit_action("hover", "OptPlus"),
+            _tariff_card("Opt.Plus", "Extended", "€89.50", "/mo",
+                         ["Everything in Optimal", "Single-room hospital"],
+                         adv=True,
+                         on_click=(lambda: emit_action("hover", "OptPlus"))
+                         if interactive else None,
                          elem_id="journey-tariff-OptPlus")
-            _tariff_card("Premium", "Advisory",
-                         "Top-tier coverage. Requires a short call.", online=False,
-                         on_click=lambda: emit_action("hover", "Premium"),
+            _tariff_card("Premium", "Comprehensive", "€112.00", "/mo",
+                         ["Full private hospital", "Worldwide cover"],
+                         adv=True,
+                         on_click=(lambda: emit_action("hover", "Premium"))
+                         if interactive else None,
                          elem_id="journey-tariff-Premium")
 
-    def _render_s6_interactive():
-        _h1("A few health questions")
-        _subtitle("Click any 'No' answer and then Continue.")
-        for q in [
-            "Have you had any major surgery in the last 5 years?",
-            "Are you currently on prescription medication?",
-            "Do you have any chronic conditions?",
-            "Have you smoked in the last 12 months?",
-        ]:
-            with ui.row().classes("items-center gap-4 my-2"):
-                ui.label(q).classes("flex-1 text-sm")
-                ui.radio(["Yes", "No"], value="No").props("inline").classes("text-sm")
-        ui.button("Continue", on_click=lambda: emit_action("continue")).props(
-            'id="journey-continue"'
-        ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-6")
+    def _r_s6():
+        _intro("Health questions", "A few health questions",
+               "Honest answers keep your cover valid. This stays private.")
+        with ui.element("div").classes("hc-card").style("margin-top:24px;padding:6px 20px"):
+            for q in [
+                "Have you had any major surgery in the last 5 years?",
+                "Are you currently on prescription medication?",
+                "Do you have any chronic conditions?",
+                "Have you smoked in the last 12 months?",
+            ]:
+                with ui.row().classes("items-center w-full").style(
+                    "justify-content:space-between;padding:12px 0;"
+                    "border-bottom:1px solid var(--hc-cream-line)"
+                ):
+                    ui.label(q).classes("hc-sub").style("margin:0;max-width:none")
+                    ui.radio(["Yes", "No"], value="No").props(
+                        "inline" if interactive else "inline disable"
+                    )
 
-    def _render_s7_interactive():
+    def _r_s7():
         provisional = sess.provisional or 68.14
         final = round(provisional * (1 + sess.surcharge), 2)
         gap = round(final - provisional, 2)
-        _h1("Your personalised price")
-        _subtitle("Based on your health profile.")
-        with ui.element("div").classes(
-            "p-6 rounded-lg bg-gradient-to-br from-sky-50 to-white border border-sky-200"
-        ):
-            ui.label(_selected_tariff_name()).classes(
-                "text-sm uppercase tracking-wide text-sky-700 font-semibold"
-            )
-            ui.label(f"€{final:.2f} / month").classes(
-                "text-4xl font-bold text-gray-900 mt-1"
-            )
-            if gap > 0.01:
-                ui.label(
-                    f"€{gap:.2f} above the estimated €{provisional:.2f}, "
-                    "based on the health questions you answered."
-                ).classes("text-sm text-gray-600 mt-2 max-w-md")
-        with ui.row().classes("mt-6 gap-3 items-center"):
-            ui.button("Continue to checkout",
-                      on_click=lambda: emit_action("continue")).props(
-                'id="journey-continue"'
-            ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold")
-            ui.button("Cancel",
-                      on_click=lambda: emit_action("hover", "cancel")).props(
-                'id="journey-cancel-link" flat'
-            ).classes("text-gray-500 px-3 underline")
-            ui.label("(clicking Cancel registers a 'hovered cancel' signal "
-                     "— it doesn't actually cancel)").classes(
-                "text-xs text-gray-400 ml-2"
-            )
+        _intro("Your price", "Your personalised price",
+               "Based on your health profile.")
+        cap = f"per month for <b>{_selected_tariff_name()}</b>"
+        if gap > 0.01:
+            cap += (f" · €{gap:.2f} above the €{provisional:.2f} estimate "
+                    "from your health answers")
+        cap += ", cancel anytime."
+        ui.html(f'<div class="hc-perday" style="margin-top:24px">'
+                f'<span class="big">€{final:.2f}</span>'
+                f'<span class="cap">{cap}</span></div>')
+        with ui.row().classes("items-center").style("gap:14px;margin-top:20px"):
+            cancel = ui.element("button").classes("hc-back")
+            with cancel:
+                ui.label("Cancel")
+            if interactive:
+                cancel.props('id="journey-cancel-link"')
+                cancel.on("click", lambda: emit_action("hover", "cancel"))
+                ui.label("(Cancel registers a ‘hovered cancel’ signal — it doesn’t "
+                         "actually cancel)").classes("hc-sub").style(
+                    "margin:0;font-size:12px;color:var(--hc-ink-3)"
+                )
+            else:
+                cancel.props('id="journey-cancel-link" disabled')
 
-    def _render_s12_interactive():
+    def _r_s12():
         provisional = sess.provisional or 68.14
         final = round(provisional * (1 + sess.surcharge), 2)
-        _h1("Review and confirm")
-        _subtitle("Almost done.")
-        for k, v in [("Plan", _selected_tariff_name()), ("Monthly", f"€{final:.2f}"),
-                     ("Billing", "Monthly, paperless"), ("Coverage starts", "Next month")]:
-            with ui.row().classes("py-2 border-b border-gray-100"):
-                ui.label(k).classes("w-40 text-gray-600")
-                ui.label(v).classes("font-semibold text-gray-900")
-        ui.checkbox("I agree to the terms and the privacy notice").classes("mt-4")
-        ui.button("Confirm and purchase",
-                  on_click=lambda: emit_action("continue")).props(
-            'id="journey-continue"'
-        ).classes(f"{BRAND_PRIMARY} text-white px-6 py-2 font-semibold mt-4")
+        _intro("Almost done", "Review and confirm",
+               "Check the details below, then confirm.")
+        rows = [("Plan", _selected_tariff_name()), ("Monthly", f"€{final:.2f}"),
+                ("Billing", "Monthly, paperless"), ("Coverage starts", "Next month")]
+        rows_html = "".join(
+            '<div style="display:flex;justify-content:space-between;padding:13px 0;'
+            'border-bottom:1px solid var(--hc-cream-line)">'
+            f'<span style="color:var(--hc-ink-2);font-size:14px">{k}</span>'
+            f'<span style="font-weight:700;font-size:14px">{v}</span></div>'
+            for k, v in rows
+        )
+        ui.html(f'<div class="hc-card" style="max-width:520px;margin-top:24px;'
+                f'padding:4px 20px">{rows_html}</div>')
+        ui.checkbox("I agree to the terms and the privacy notice").props(
+            "" if interactive else "disable"
+        ).classes("mt-4").style("color:var(--hc-ink-2)")
 
     def _render_terminal():
         cur = int(sess.state)
+        name = sess.persona.title() if sess.persona in ("judith", "franz", "peter") else ""
         if cur == 90:
-            ui.icon("check_circle").classes("text-emerald-500 text-6xl")
-            _h1("You're covered.")
-            _subtitle("Welcome to HealthCover. We've emailed your policy.")
+            who = f", {name}" if name else ""
+            ui.html(f'<div class="hc-end ok"><div class="badge">✓</div>'
+                    f'<h2>You’re covered{who}.</h2>'
+                    '<p>Welcome to HealthCover. Your plan is active from next month — '
+                    'we’ve emailed your policy documents and a welcome guide.</p></div>')
         elif cur == 91:
-            ui.icon("close").classes("text-gray-400 text-6xl")
-            _h1("Session ended")
-            _subtitle("You can come back anytime — your progress is saved.")
+            ui.html('<div class="hc-end off"><div class="badge">–</div>'
+                    '<h2>Session ended</h2>'
+                    '<p>You can come back anytime — your progress is saved.</p></div>')
         elif cur == 92:
-            ui.icon("support_agent").classes("text-amber-500 text-6xl")
-            _h1("An advisor will be in touch")
-            _subtitle("We'll call you within the next business day "
-                      "to discuss the advisory tariffs.")
+            ui.html('<div class="hc-end adv"><div class="badge">☎</div>'
+                    '<h2>An advisor will be in touch</h2>'
+                    '<p>We’ll call you within the next business day to walk through '
+                    'the advisory tariffs.</p></div>')
         elif cur == 93:
-            ui.icon("phone_callback").classes("text-sky-500 text-6xl")
-            _h1("We'll call you back")
-            _subtitle("Expect a call within the next business day — "
-                      "no fuss, no obligations.")
+            ui.html('<div class="hc-end adv"><div class="badge">☎</div>'
+                    '<h2>We’ll call you back</h2>'
+                    '<p>Expect a call within the next business day — no fuss, '
+                    'no obligations.</p></div>')
 
-    # ---- live detection-rules panel ----------------------------------------
-    # Mirrors the conditions in coach/detection.py:_detect_threshold so the
-    # presenter can see exactly which signals are at / over their thresholds
-    # at any given moment. The panel re-paints on every user action AND on
-    # every watchdog tick, so dwell-based rules show their counter ticking up
-    # in real time.
+    RENDERERS = {
+        0: _r_s0, 1: _r_s1, 2: _r_s2, 3: _r_s3,
+        4: _r_s4, 6: _r_s6, 7: _r_s7, 12: _r_s12,
+    }
+
+    # ---- live detection-rules panel (presenter chrome) ---------------------
+    # Mirrors coach/detection.py:_detect_threshold so the presenter can see
+    # which signals are at/over threshold. Re-paints on every action AND every
+    # watchdog tick, so dwell-based rules tick up live.
     def _threshold_rule_specs():
-        """Return the four threshold rules with their (condition_label,
-        is_met, current_value_str) tuples. Reads sess.last_signal AND the
-        live wall-clock dwell so the panel matches what the watchdog sees."""
         d = sess.cfg["detection"]
         sig = sess._compute_signals()
-        # what the watchdog would see right now (dwell incl. wall-clock)
         elapsed = sess.wall_clock_dwell() if sess.interactive else 0
         eff_dwell = sig.dwell_current_s + elapsed
         return [
@@ -719,20 +717,20 @@ def render(
 
     def refresh_rules_panel():
         rules_panel.clear()
-        method = sess.cfg["detection"].get("method", "threshold")
+        method_ = sess.cfg["detection"].get("method", "threshold")
         with rules_panel:
             with ui.row().classes("items-center gap-2 mb-1"):
                 ui.label("Detection rules (live)").classes(
                     "text-sm font-semibold text-gray-700"
                 )
-                ui.label(f"method: {method}").classes(
+                ui.label(f"method: {method_}").classes(
                     "text-xs font-mono bg-gray-100 px-2 py-0.5 rounded text-gray-600"
                 )
                 if interactive:
                     ui.label("dwell counts wall-clock time").classes(
                         "text-xs italic text-gray-400 ml-auto"
                     )
-            if method != "threshold":
+            if method_ != "threshold":
                 ui.label(
                     "GBM detector: rules not inspectable; this panel only "
                     "lists thresholds. Switch detector to 'threshold' to see them."
@@ -763,18 +761,6 @@ def render(
                                 f"{'text-emerald-700' if met else 'text-gray-700'}"
                             )
 
-    AUTO_RENDERERS = {
-        0: _render_start_auto, 1: _render_s1_auto, 2: _render_s2_auto,
-        3: _render_s3_auto, 4: _render_s4_auto, 6: _render_s6_auto,
-        7: _render_s7_auto, 12: _render_s12_auto,
-    }
-    INTERACTIVE_RENDERERS = {
-        0: _render_start_interactive, 1: _render_s1_interactive,
-        2: _render_s2_interactive, 3: _render_s3_interactive,
-        4: _render_s4_interactive, 6: _render_s6_interactive,
-        7: _render_s7_interactive, 12: _render_s12_interactive,
-    }
-
     # ---- driver: auto-play timer or watchdog -------------------------------
     autoplay_timer = {"t": None}
     watchdog_timer = {"t": None}
@@ -787,40 +773,76 @@ def render(
 
     def paint_progress(cur: int):
         pos = _step_position(cur)
-        for i, dot in enumerate(progress_dots):
-            if i < pos:
-                dot.classes(replace=f"h-2 flex-1 rounded-full {BRAND_PRIMARY}")
+        on_funnel = pos > 0 and cur not in TERMINALS
+        for i, seg in enumerate(progress_segs):
+            seg.set_visibility(on_funnel)
+            if not on_funnel:
+                continue
+            if i < pos - 1:
+                seg.classes(replace="seg done")
+            elif i == pos - 1:
+                seg.classes(replace="seg now")
             else:
-                dot.classes(replace="h-2 flex-1 rounded-full bg-gray-200")
-        if cur in TERMINALS:
-            progress_label.set_text(PAGE_TITLES[cur])
-        elif pos:
+                seg.classes(replace="seg")
+        if on_funnel:
             progress_label.set_text(f"Step {pos} of {len(FUNNEL_STEPS)}")
+        elif cur in TERMINALS:
+            progress_label.set_text(PAGE_TITLES.get(cur, "Done"))
         else:
-            progress_label.set_text("Welcome")
+            progress_label.set_text("Let’s get started")
 
     def paint_page(cur: int):
         page_container.clear()
+        if cur in TERMINALS:
+            page_container.style("justify-content:center;align-items:center;padding-bottom:0")
+        elif cur == 0:
+            page_container.style("justify-content:center;align-items:flex-start;padding-bottom:26px")
+        else:
+            page_container.style("justify-content:flex-start;align-items:stretch;padding-bottom:0")
         with page_container:
             if cur in TERMINALS:
                 _render_terminal()
                 return
-            renderers = INTERACTIVE_RENDERERS if interactive else AUTO_RENDERERS
-            renderer = renderers.get(cur)
-            # interactive Back button: emits a `back` Action so back_nav_count
-            # increments AND the state machine moves backward in the funnel.
-            # Shown on S1..S12 (no-op on S1 because it has no PREV, but the
-            # signal still records - useful for triggering repeated_back_nav).
-            if interactive and cur in (1, 2, 3, 4, 6, 7, 12):
-                ui.button("← Back", on_click=lambda: emit_action("back")).props(
-                    'id="journey-back" flat dense'
-                ).classes("text-sky-700 self-start mb-2")
+            renderer = RENDERERS.get(cur)
             if renderer:
                 renderer()
+
+    def paint_footer(cur: int):
+        footer_container.clear()
+        show = cur in FUNNEL_STEPS
+        footer_container.set_visibility(show)
+        if not show:
+            return
+        with footer_container:
+            back = ui.element("button").classes("hc-back")
+            with back:
+                ui.label("← Back")
+            if interactive:
+                back.props('id="journey-back"')
+                back.on("click", lambda: emit_action("back"))
+            else:
+                back.props("disabled")
+
+            cont = ui.element("button").classes("hc-cont")
+            with cont:
+                ui.label("Confirm →" if cur == 12 else "Continue →")
+            if interactive:
+                cont.props('id="journey-continue"')
+                if cur == 1:
+                    cont.on("click", lambda: emit_actions(("select", "doctor"), ("continue",)))
+                elif cur == 2:
+                    cont.on("click", lambda: emit_actions(("select", "myself"), ("continue",)))
+                elif cur == 4:
+                    cont.on("click", lambda: emit_actions(("select", "Optimal"), ("continue",)))
+                else:
+                    cont.on("click", lambda: emit_action("continue"))
+            else:
+                cont.props('id="journey-continue" disabled')
 
     def render_for_step(cur: int):
         paint_progress(cur)
         paint_page(cur)
+        paint_footer(cur)
         refresh_rules_panel()
 
     def stop_autoplay():
@@ -854,13 +876,11 @@ def render(
             render_for_step(int(sess.state))
 
     async def watchdog_tick():
-        """Interactive-mode passive coach: if the human just sits on a page,
-        synthesize dwell from wall-clock time and ask the coach. If a popup
-        fires, show it once per state (gated by `shown_intervention_step`).
-        Also re-paints the rules panel so dwell counters tick up live.
-
-        Wrapped in `run.io_bound` so a slow LLM call doesn't block the event
-        loop and tank the WebSocket connection."""
+        """Interactive-mode passive coach: if the human sits on a page,
+        synthesize dwell from wall-clock time and ask the coach. Fires once per
+        state (gated by shown_intervention_step). Re-paints the rules panel so
+        dwell counters tick up live. Wrapped in run.io_bound so a slow LLM call
+        doesn't block the event loop."""
         if sess.is_done():
             stop_watchdog()
             return
@@ -886,21 +906,21 @@ def render(
             stop_autoplay()
 
     async def manual_step():
-        """In auto mode: advance one tick (pauses auto-play). In interactive
-        mode this button isn't shown (it'd be redundant - you click the actual
-        page elements)."""
+        """In auto mode: advance one tick (pauses auto-play)."""
         if autoplay_switch.value:
             autoplay_switch.value = False
         stop_autoplay()
         await auto_tick()
 
-    # ---- footer controls ---------------------------------------------------
-    def _scenario_url(p: str, ep: int) -> str:
-        return (f"/journey?seed={seed}&episode={ep}"
-                f"&persona={p}&method={method}&gbm_threshold={gbm_threshold}"
-                f"&mode={mode}")
+    # ========================================================================
+    # PRESENTER CHROME — below the cream surface; plain dev tooling (NOT part
+    # of the customer brand). Keeps the rules panel + the URL-contract switches.
+    # ========================================================================
+    rules_panel = ui.column().props('id="journey-rules"').classes(
+        "max-w-5xl mx-auto px-6 w-full mt-6 gap-2"
+    )
 
-    with ui.row().classes("max-w-5xl mx-auto mt-6 px-6 gap-3 items-center "
+    with ui.row().classes("max-w-5xl mx-auto mt-4 px-6 gap-3 items-center "
                           "border-t border-gray-200 pt-4 w-full"):
         if not interactive:
             ui.button("Step", on_click=manual_step).props(
@@ -911,8 +931,8 @@ def render(
                 'id="journey-autoplay-toggle"'
             )
         else:
-            # placeholder so subsequent code referring to autoplay_switch.value
-            # doesn't blow up in interactive mode (it never starts auto-play)
+            # placeholder so code referring to autoplay_switch.value doesn't
+            # blow up in interactive mode (it never starts auto-play)
             autoplay_switch = ui.switch("Auto-play", value=False).props(
                 'id="journey-autoplay-toggle" disable'
             ).classes("hidden")

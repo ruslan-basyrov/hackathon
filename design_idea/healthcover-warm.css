@@ -1,0 +1,218 @@
+/* ============================================================
+   HealthCover — "Warm" theme
+   UNIQA-style deep blue + warm cream + amber accent.
+   Design system for the /journey route (BUILD_SPEC Phase 3.5).
+
+   Use in NiceGUI:
+     from nicegui import ui
+     ui.add_css(Path('services/ui/static/healthcover-warm.css').read_text())
+   or serve it as a static file and link it once at app start.
+
+   Markup convention: every screen is a `.hc-scr` surface. Apply the
+   component classes below to your ui.html()/ui.element() nodes. The
+   FROZEN element ids from BUILD_SPEC §3.5 (journey-page, journey-popup,
+   journey-popup-type, journey-popup-text, journey-popup-close,
+   journey-step-label, journey-narration) go on the matching nodes —
+   they are independent of these styling classes.
+   ============================================================ */
+
+:root{
+  /* brand */
+  --hc-blue:#0a51d0;        /* primary action */
+  --hc-blue-700:#0844b0;    /* hover / pressed */
+  --hc-blue-900:#062a6e;    /* deep brand (logo plus, dark text accents) */
+  --hc-amber:#e0962f;       /* warm accent — recommended tier, progress */
+  --hc-amber-700:#c47f1d;
+  --hc-amber-soft:#f6e6cd;
+
+  /* surfaces */
+  --hc-cream:#fbf7f0;       /* page background */
+  --hc-cream-line:#ece3d4;  /* borders on cream */
+  --hc-surface:#ffffff;     /* cards, modals */
+  --hc-tint-50:#eef3fd;     /* pale blue fill (checks, perday block) */
+  --hc-tint-100:#dde7fb;
+
+  /* ink */
+  --hc-ink:#16203a;
+  --hc-ink-2:#46506a;
+  --hc-ink-3:#7e879b;
+
+  /* persona accents (switcher dots) */
+  --hc-judith:#6b4ee0;      /* violet */
+  --hc-franz:#0a51d0;       /* blue */
+  --hc-peter:#e0962f;       /* amber */
+
+  /* radii */
+  --hc-r-card:20px;
+  --hc-r-modal:24px;
+  --hc-r-pill:999px;
+  --hc-r-sm:10px;
+
+  /* shadows */
+  --hc-sh-card:0 12px 30px -22px rgba(120,90,30,.40);
+  --hc-sh-rec:0 18px 40px -18px rgba(224,150,47,.50);
+  --hc-sh-modal:0 40px 80px -24px rgba(6,42,110,.50);
+
+  /* type */
+  --hc-font-ui:'Hanken Grotesk',system-ui,sans-serif;
+  --hc-font-serif:'Source Serif 4',Georgia,serif;  /* optional editorial headings (welcome/end pages) */
+  --hc-font-mono:'IBM Plex Mono',monospace;        /* eyebrow / kicker labels */
+}
+
+*{box-sizing:border-box}
+.hc-scr *{margin:0;padding:0}
+
+/* screen surface — size to your page container (e.g. 1160×800 demo frame, or 100%) */
+.hc-scr{
+  position:relative;width:100%;height:100%;overflow:hidden;
+  font-family:var(--hc-font-ui);color:var(--hc-ink);
+  background:var(--hc-cream);
+  display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;
+}
+
+/* striped image placeholder — swap for real product photography */
+.hc-img{
+  background-color:var(--hc-tint-50);
+  background-image:repeating-linear-gradient(45deg,transparent 0 9px,rgba(10,81,208,.07) 9px 10px);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--hc-ink-3);font:500 11px/1.3 var(--hc-font-mono);letter-spacing:.02em;text-align:center;
+}
+
+/* ---------- top bar ---------- */
+.hc-top{display:flex;align-items:center;gap:20px;padding:0 32px;height:64px;flex:0 0 auto;background:var(--hc-cream);border-bottom:1px solid var(--hc-cream-line)}
+.hc-brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:-.01em}
+.hc-brand b span{font-weight:500;opacity:.85}
+.hc-top-right{margin-left:auto;display:flex;align-items:center;gap:18px}
+.hc-help{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:600;color:var(--hc-ink-2)}
+.hc-help .dot{width:7px;height:7px;border-radius:50%;background:var(--hc-blue);box-shadow:0 0 0 3px var(--hc-tint-100)}
+
+/* persona switcher (Judith / Franz / Peter) */
+.hc-personas{display:flex;align-items:center;gap:4px;padding:4px;border-radius:var(--hc-r-pill);background:var(--hc-surface);border:1px solid var(--hc-cream-line)}
+.hc-pl{display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:var(--hc-r-pill);font-size:12.5px;font-weight:700;color:var(--hc-ink-2);cursor:pointer;white-space:nowrap;background:none;border:none}
+.hc-pl .pd{width:7px;height:7px;border-radius:50%}
+.hc-pl.on{background:var(--hc-tint-50);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.pd.judith{background:var(--hc-judith)} .pd.franz{background:var(--hc-franz)} .pd.peter{background:var(--hc-peter)}
+
+/* ---------- progress ---------- */
+.hc-prog{display:flex;align-items:center;gap:10px;padding:14px 32px;flex:0 0 auto}
+.hc-prog .seg{height:4px;border-radius:3px;flex:1;background:var(--hc-cream-line)}
+.hc-prog .seg.done{background:var(--hc-amber)}
+.hc-prog .seg.now{background:var(--hc-amber);opacity:.5}
+.hc-prog .lbl{font-size:12px;font-weight:700;color:var(--hc-ink-3);white-space:nowrap;font-variant-numeric:tabular-nums}
+
+/* ---------- main ---------- */
+.hc-main{flex:1 1 auto;padding:26px 40px 0;overflow:hidden;display:flex;flex-direction:column;background:var(--hc-cream)}
+.hc-eyebrow{font:700 12px/1 var(--hc-font-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--hc-amber);margin-bottom:12px}
+.hc-h1{font-size:31px;line-height:1.12;font-weight:800;letter-spacing:-.02em;margin-bottom:8px;text-wrap:balance}
+.hc-sub{font-size:15px;color:var(--hc-ink-2);max-width:560px;line-height:1.5}
+
+/* ---------- tariff cards (S4) ---------- */
+.hc-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:24px}
+.hc-card{border:1px solid var(--hc-cream-line);border-radius:var(--hc-r-card);background:var(--hc-surface);padding:18px 16px 16px;display:flex;flex-direction:column;position:relative;box-shadow:var(--hc-sh-card)}
+.hc-card .nm{font-size:15px;font-weight:800;letter-spacing:-.01em}
+.hc-card .tier{font-size:11.5px;color:var(--hc-ink-3);font-weight:600;margin-top:2px}
+.hc-price{margin:14px 0 12px;display:flex;align-items:baseline;gap:3px}
+.hc-price .amt{font-size:26px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.hc-price .per{font-size:12.5px;color:var(--hc-ink-3);font-weight:600}
+.hc-feats{list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.hc-feats li{font-size:12.5px;line-height:1.3;color:var(--hc-ink-2);display:flex;gap:8px;align-items:flex-start}
+.hc-feats li::before{content:"";width:14px;height:14px;flex:0 0 14px;margin-top:1px;border-radius:50%;background:var(--hc-amber-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M2 5.2l2 2 4-4.4' fill='none' stroke='%230a51d0' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/10px no-repeat}
+.hc-pick{margin-top:auto;height:38px;border:1px solid var(--hc-cream-line);background:var(--hc-surface);color:var(--hc-blue-700);border-radius:var(--hc-r-pill);font:700 13px var(--hc-font-ui);cursor:pointer}
+.hc-card.is-rec{border-color:var(--hc-amber);border-width:2px;box-shadow:var(--hc-sh-rec)}
+.hc-card.is-rec .hc-pick{background:var(--hc-amber);color:#3a2a08;border-color:var(--hc-amber)}
+.hc-ribbon{position:absolute;top:-10px;left:16px;background:var(--hc-amber);color:#fff;font:700 10px/1 var(--hc-font-ui);letter-spacing:.08em;text-transform:uppercase;padding:5px 9px;border-radius:6px}
+.hc-card.is-adv{background:var(--hc-cream)}
+.hc-lock{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;color:var(--hc-amber-700);background:var(--hc-amber-soft);padding:3px 7px;border-radius:5px;margin-top:6px;width:max-content}
+
+/* ---------- footer ---------- */
+.hc-foot{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:18px 40px;border-top:1px solid var(--hc-cream-line);margin-top:20px}
+.hc-back{font-size:14px;font-weight:700;color:var(--hc-ink-3);background:none;border:none;cursor:pointer}
+.hc-cont{height:44px;padding:0 26px;border:none;border-radius:var(--hc-r-pill);background:var(--hc-blue);color:#fff;font:800 14px var(--hc-font-ui);display:flex;align-items:center;gap:8px;cursor:pointer}
+.hc-cont:hover{background:var(--hc-blue-700)}
+
+/* ---------- option cards (S1 coverage / S2 for-whom) ---------- */
+.hc-opts{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.hc-opt{border:1px solid var(--hc-cream-line);border-radius:var(--hc-r-card);overflow:hidden;display:flex;flex-direction:column;background:var(--hc-surface);box-shadow:var(--hc-sh-card)}
+.hc-opt .pic{height:120px}
+.hc-opt .body{padding:16px}
+.hc-opt .ot{font-size:16px;font-weight:800;letter-spacing:-.01em}
+.hc-opt .od{font-size:13px;color:var(--hc-ink-2);margin-top:6px;line-height:1.45}
+.hc-opt.sel{border-color:var(--hc-blue);border-width:2px}
+.hc-opt .ck{margin:14px 16px 16px;height:40px;border-radius:var(--hc-r-pill);display:flex;align-items:center;justify-content:center;font:700 13px var(--hc-font-ui);border:1px solid var(--hc-cream-line);color:var(--hc-ink-2);cursor:pointer}
+.hc-opt.sel .ck{background:var(--hc-blue);color:#fff;border-color:var(--hc-blue)}
+
+/* ============================================================
+   THE COACH NUDGE — popup (the "Hero moment")
+   Mount as a NiceGUI ui.dialog OR an absolutely-positioned overlay.
+   FROZEN ids: #journey-popup (root), #journey-popup-type,
+   #journey-popup-text, #journey-popup-close.
+   ============================================================ */
+.hc-scrim{position:absolute;inset:0;background:rgba(6,42,110,.34);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;z-index:20}
+.hc-modal{width:460px;max-width:88%;background:var(--hc-surface);border-radius:var(--hc-r-modal);overflow:hidden;box-shadow:var(--hc-sh-modal)}
+.hc-nudge-head{display:flex;align-items:center;gap:10px;padding:16px 22px;background:var(--hc-surface);color:var(--hc-ink);border-bottom:1px solid #f0e7d8}
+.hc-nudge-head .spark{width:26px;height:26px;border-radius:8px;background:var(--hc-amber-soft);color:var(--hc-amber-700);display:flex;align-items:center;justify-content:center}
+.hc-nudge-kicker{font:700 11px/1.1 var(--hc-font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--hc-amber)}
+.hc-nudge-from{font-size:13.5px;font-weight:700}
+.hc-nudge-persona{margin-left:auto;font-size:11px;font-weight:700;background:var(--hc-tint-50);color:var(--hc-ink-2);padding:4px 9px;border-radius:var(--hc-r-pill);display:flex;align-items:center;gap:6px}
+.hc-nudge-persona .pd{width:6px;height:6px;border-radius:50%}
+.hc-nudge-body{padding:22px}
+.hc-nudge-h{font-size:20px;font-weight:800;letter-spacing:-.01em;line-height:1.2;margin-bottom:8px}
+.hc-nudge-p{font-size:14px;color:var(--hc-ink-2);line-height:1.5}
+/* €/day reframe block (Judith) */
+.hc-perday{display:flex;align-items:center;gap:14px;margin:18px 0;padding:16px;border-radius:12px;background:var(--hc-surface);border:1px solid #f0e7d8}
+.hc-perday .big{font-size:34px;font-weight:800;letter-spacing:-.02em;color:var(--hc-amber);font-variant-numeric:tabular-nums;white-space:nowrap}
+.hc-perday .cap{font-size:12.5px;color:var(--hc-ink-2);line-height:1.4}
+.hc-perday .cap b{color:var(--hc-ink)}
+/* market comparison bars (Judith) */
+.hc-cmp{margin:16px 0 6px;display:flex;flex-direction:column;gap:9px}
+.hc-cmp .row{display:grid;grid-template-columns:96px 1fr auto;align-items:center;gap:10px}
+.hc-cmp .rl{font-size:12px;font-weight:700;color:var(--hc-ink-2)}
+.hc-cmp .track{height:9px;border-radius:5px;background:var(--hc-tint-100);overflow:hidden}
+.hc-cmp .fill{height:100%;border-radius:5px}
+.hc-cmp .rv{font-size:12.5px;font-weight:800;font-variant-numeric:tabular-nums}
+.hc-cmp .row.you .fill{background:var(--hc-blue)} .hc-cmp .row.you .rv{color:var(--hc-blue)}
+.hc-cmp .row.mkt .fill{background:var(--hc-ink-3)} .hc-cmp .row.mkt .rv{color:var(--hc-ink-3)}
+/* CTAs */
+.hc-nudge-cta{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+.hc-nudge-cta .primary{height:46px;border:none;border-radius:var(--hc-r-pill);background:var(--hc-blue);color:#fff;font:800 14px var(--hc-font-ui);cursor:pointer}
+.hc-nudge-cta .primary:hover{background:var(--hc-blue-700)}
+.hc-nudge-cta .ghost{height:42px;border:1px solid var(--hc-cream-line);border-radius:var(--hc-r-pill);background:var(--hc-surface);color:var(--hc-ink);font:700 13.5px var(--hc-font-ui);cursor:pointer}
+
+/* ============================================================
+   TERMINAL END-PAGES (Converted / Abandoned / Routed / Service)
+   ============================================================ */
+.hc-end{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;gap:14px;background:var(--hc-cream)}
+.hc-end .badge{width:64px;height:64px;border-radius:var(--hc-r-pill);display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}
+.hc-end.ok .badge{background:var(--hc-blue)}
+.hc-end.adv .badge{background:var(--hc-amber)}
+.hc-end.off .badge{background:var(--hc-ink-3)}
+.hc-end h2{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.hc-end p{font-size:15px;color:var(--hc-ink-2);max-width:420px;line-height:1.5}
+
+/* ============================================================
+   COACH CHAT — the nudge popup is conversational (journey_view.py)
+   The first assistant bubble IS the intervention (keeps #journey-popup-text).
+   Reply input + Send only appear in LLM mode (cfg.realize.method == "llm");
+   in template mode show just the first bubble + action buttons.
+   Extra FROZEN ids: #journey-chat-log, #journey-chat-input,
+   #journey-chat-send, #journey-popup-continue (close X = #journey-popup-close).
+   ============================================================ */
+.hc-modal{max-height:90vh;display:flex;flex-direction:column}
+.hc-close{margin-left:auto;width:30px;height:30px;border-radius:50%;border:none;background:rgba(0,0,0,.06);color:var(--hc-ink-2);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.hc-nudge-type{font:600 10.5px/1 var(--hc-font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--hc-ink-3);padding:10px 22px 0}
+.hc-chat{flex:1 1 auto;display:flex;flex-direction:column;gap:10px;margin:10px 0 0;padding:4px 22px 0;max-height:300px;overflow-y:auto}
+.hc-msg{max-width:88%;font-size:13.5px;line-height:1.46;padding:10px 13px;border-radius:15px}
+.hc-msg.bot{align-self:flex-start;background:var(--hc-tint-50);color:var(--hc-ink);border-bottom-left-radius:5px}
+.hc-msg.user{align-self:flex-end;background:var(--hc-blue);color:#fff;border-bottom-right-radius:5px}
+.hc-msg .rich{margin-top:12px}
+.hc-think{display:flex;align-items:center;gap:8px;margin:8px 22px 0;color:var(--hc-ink-3);font-size:12.5px;font-style:italic}
+.hc-spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--hc-tint-100);border-top-color:var(--hc-blue);animation:hcSpin .7s linear infinite}
+@keyframes hcSpin{to{transform:rotate(360deg)}}
+.hc-reply{display:flex;gap:8px;align-items:center;margin:12px 22px 0;flex:0 0 auto}
+.hc-reply input{flex:1;height:42px;min-width:0;border:1px solid var(--hc-cream-line);border-radius:var(--hc-r-pill);padding:0 16px;font:500 13.5px var(--hc-font-ui);color:var(--hc-ink);outline:none;background:var(--hc-surface)}
+.hc-reply input:focus{border-color:var(--hc-blue);box-shadow:0 0 0 3px var(--hc-tint-50)}
+.hc-reply .send{height:42px;padding:0 18px;border:none;border-radius:var(--hc-r-pill);background:var(--hc-blue);color:#fff;font:800 13px var(--hc-font-ui);cursor:pointer;flex:0 0 auto}
+.hc-reply .send:disabled{opacity:.45;cursor:default}
+.hc-actions{display:flex;gap:9px;margin:14px 22px 18px;flex:0 0 auto}
+.hc-actions .primary{flex:1;height:44px;border:none;border-radius:var(--hc-r-pill);background:var(--hc-blue);color:#fff;font:800 13.5px var(--hc-font-ui);cursor:pointer}
+.hc-actions .ghost{height:44px;padding:0 16px;border:1px solid var(--hc-cream-line);border-radius:var(--hc-r-pill);background:var(--hc-surface);color:var(--hc-ink);font:700 12.5px var(--hc-font-ui);cursor:pointer;white-space:nowrap}

@@ -1,82 +1,229 @@
-# Zero One Hack_01
+# Conversion Coach — UNIQA Insurance AI
 
-**36 hours. Real infrastructure. European AI sovereignty.**
+An **AI-guided Conversion Coach** for UNIQA's online health-insurance calculator.
+It detects, in real time, when a user is about to abandon the funnel and intervenes
+with a persona-appropriate nudge — then *proves* the effect by running synthetic
+personas through a seeded journey simulator, with and without the Coach, on
+identical seeds.
 
-Welcome to the central repository for Zero One Hack_01, hosted by [Lumos Consulting](https://lumos-consulting.at) at [AI Factory Austria](https://aifactory.at) in Vienna, with compute provided by CINECA on the Leonardo GPU Cluster.
-
----
-
-## Quick links
-
-- 🌐 **Docs**: [docs.zero-one.lumos-consulting.at](https://docs.zero-one.lumos-consulting.at/)
-- 💬 **Discord**: https://discord.gg/e6rrVbcD5
-- 📍 **Venue**: AI Factory Austria (AI:AT), Vienna
+> **Track:** Insurance AI (UNIQA) — AI-Guided Conversion Flow.
+> Built to the staged contract in [BUILD_SPEC.md](BUILD_SPEC.md). Full write-up in
+> [REPORT.md](REPORT.md); validated logics in [extras/hypotheses.md](extras/hypotheses.md).
 
 ---
 
-## The three tracks
+## The one idea
 
-| Track                | Partner  | What you'll build                                                                                                               |
-| -------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| 🧾 **Insurance AI**   | UNIQA    | An AI-guided conversion flow that replaces a static form-based insurance calculator. Persona-based simulations on Leonardo.     |
-| ⚙️ **Industrial AI**  | Infineon | Train and benchmark sequence models on semiconductor process flows. Does your model learn real process logic, or just memorize? |
-| 📈 **Forecasting AI** | Sybilion | Build a decision agent on top of a probabilistic forecasting API. Live mid-run plot twist on Sunday.                            |
+**The decision logic lives in inspectable code; the LLM only produces behaviour
+(persona bots) and words (intervention wording) — never decisions.** This is
+deliberately *not* an LLM-wrapper: the state machine, the detection layer, and the
+per-persona policy are all readable code you can audit. The model is reached behind
+a single swap boundary (`INFERENCE_BASE_URL` + `MODEL_NAME`) and is never on the
+critical path for a decision.
 
-Each track's full briefing, data, and starter materials live in [`/tracks/`](./tracks/). 
-
----
-
-## What's provided
-
-- **Compute**: Leonardo GPU Cluster (A100s). 
-- **Workspace**: Power, fast WiFi, monitors on request, breakout rooms for team calls.
-- **Mentors**: Domain experts from each partner company, plus ML/infra mentors from Lumos and HPE.
-- **API credits and tokens**: Track-specific, documented in each track's README.
-
-
----
-## How submissions work
-
-1. **Fill out the Tally submission form** by Sunday 10:00 — link will be shared in `#announcements`
-2. The form takes four fields: team name, repository URL, slides (PDF), and demo video (file or link, max 2 minutes)
-3. The Tally form timestamp is your official submission time
-4. After 10:00 the form closes. No late submissions.
-
-Full submission details, requirements, and the pre-submission checklist live in [`/submission/SUBMISSION.md`](./submission/SUBMISSION.md).
+```
+Signals  →  coach()  →  Action  →  state_machine.step()
+   ▲          │ detection.detect()   (threshold | GBM)
+   │          │ policy.lookup()      (per-persona table)
+   └──────────┘ realize.realize()    (template | LLM, graceful fallback)
+```
 
 ---
 
-## Judging
+## What's in the box
 
-Each track has its own rubric in [`/judging/rubrics.md`](./judging/rubrics.md). All tracks share these baseline expectations:
+The repo is two layers over one shared substrate (`state_machine.py`,
+`signals.py`, `coach/`):
 
-- **Working artifact** — not a slideware demo, something that actually runs
-- **Reproducibility** — your repo should let someone else re-run your work
-- **Honest evaluation** — show what worked, show what didn't, show what you measured
-- **Visible reasoning** — explain *why* you made the technical choices you did
+| Layer | Driver | Decision logic | Wording | Entry point |
+|---|---|---|---|---|
+| **Deterministic harness** (validated artifact) | `agent_stub.py` (scripted; the only place drop-off randomness lives) | `coach/` threshold **or** GBM | templates, or LLM with graceful fallback | [`runner.py`](runner.py) |
+| **LLM persona-bot simulation** (experimental) | `simulation/llm_bot.py` (Judith/Franz/Peter as LLM bots that read & react to the nudge) | `simulation/intervention_model.py` (rule / LLM / GBM) | `simulation/engine.py` |
+
+The harness is what produces the reproducible numbers (it needs no GPU and no API
+key). The LLM layer is where intervention *efficacy* becomes emergent rather than
+parameterised — see [REPORT.md](REPORT.md).
+
+### Key files
+
+```
+state_machine.py    in-scope funnel (S0→S1→S2→S3→S4→S6→S7→S12); no S5 (out of scope)
+signals.py          Signals dataclass + deterministic extract(state, history)
+agent_stub.py       scripted persona behaviour; per-episode confident/struggling sub-profiles
+coach/
+  __init__.py       coach(signals, persona, cfg) -> Intervention | None   (detect→policy→realize)
+  detection.py      WHEN: threshold rules (Phase 2) | xgboost GBM (Phase 3)
+  policy.py         WHICH: explicit per-persona × step intervention table
+  realize.py        HOW (wording): templates | LLM, with graceful fallback
+  llm_realize.py    the only Phase-4 caller of the inference endpoint
+  features.py       Signals → fixed-order vector for the GBM
+runner.py           episode loop, paired control-vs-coach compare(), conversion accounting
+config.yaml         per-persona p_dropoff, thresholds, surcharge, effectiveness, model knobs
+training/
+  data_gen.py       (Signals → abandoned?) pairs from the SAME simulator
+  train_gbm.py      local xgboost training + W&B + feature importances (the GBM's exhibit)
+  train_lora.py     Leonardo-only LoRA SFT for persona bots
+services/ui/        NiceGUI demo: / (debug) and /journey (on-stage, branded "HealthCover")
+simulation/         LLM persona-bot engine + funnel wrapper + intervention models
+tests/              one acceptance test per phase (1 baseline, 2 uplift, 3 ablation, 4 wording)
+```
 
 ---
 
-## Code of conduct & house rules
+## Setup
 
-- Be kind. Be useful. Be honest about your work.
-- AI Factory Austria is a working facility — respect equipment, doors, quiet hours.
-- Mentors are here to unblock you, not to write your code. Use them well.
-- The Leonardo cluster is shared infrastructure. No cryptomining, no training on copyrighted data, no abuse of compute. Violations = disqualification.
-- See [`CODE_OF_CONDUCT.md`](./CODE_OF_CONDUCT.md) for the full version.
+Python ≥ 3.10. Either use `uv` (recommended — exact pins from `uv.lock`):
+
+```bash
+uv sync                       # core harness
+uv sync --all-extras          # + GBM, UI, LoRA, dev
+```
+
+…or a plain venv with `requirements.txt`:
+
+```bash
+python -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+```
+
+Nothing above needs a GPU or an API key. The LLM-backed paths are opt-in (see
+[Inference](#optional-real-llm-wording-and-bots)).
 
 ---
 
-## Get help
+## How to run it
 
-| Channel                                    | Use for                             |
-| ------------------------------------------ | ----------------------------------- |
-| `#announcements`                           | Schedule changes, important updates |
-| `#industrial`,`#insurance`, `#forecasting` | Track-specific questions            |
-| `#infra`                                   | Leonardo, GPU quota, WiFi, hardware |
-| `#general`                                 | Everything else                     |
-| In-person Lumos desk (lobby)               | Anything urgent                     |
+All commands assume the venv interpreter (`.venv/bin/python`, or just `python`
+inside `uv run`).
+
+### 1. Baseline + per-persona uplift (no GPU, no API key)
+
+```bash
+python runner.py                 # default n=10000 from config.yaml
+python runner.py --n 50000       # larger sample
+```
+
+Prints the Phase-1 global baseline (~5.7% online conversion) and the Phase-2
+per-persona control-vs-coach comparison on **identical seeds**, with
+`fired / wasted / saved` accounting. A sample of full step traces is written to
+`traces.jsonl` (demo material).
+
+### 2. Acceptance tests (the gates)
+
+```bash
+pytest tests/                    # phase 1–4
+```
+
+- **Phase 1** — baseline conversion ∈ [5.3%, 5.9%], zero advisor routing.
+- **Phase 2** — per-persona uplift > 0 on identical seeds; wasted-rate reported; Franz wasted-rate < 0.40.
+- **Phase 3** — trains a temp GBM, prints the GBM-vs-threshold ablation table (honest comparison, GBM need not win).
+- **Phase 4** — LLM wording per intervention type with the client **mocked**; proves graceful degradation (endpoint down → templates → decisions byte-for-byte unchanged). No server required.
+
+### 3. Train the GBM detector
+
+```bash
+python -m training.train_gbm --no-wandb         # writes models/gbm.json
+```
+
+Prints overall + per-persona precision/recall/AUC and **feature importances**
+(the GBM's traceable-rules exhibit). Drop `--no-wandb` and run `wandb login` to log
+the run. To use the GBM at runtime, set `detection.method: gbm` in `config.yaml`.
+
+### 4. The visual demo (NiceGUI)
+
+```bash
+python -m services.ui.app        # serves on http://localhost:8080
+```
+
+- `/` — debug viewer: the in-scope funnel, live `Signals`, and a dialog whenever the Coach fires.
+- `/journey` — the on-stage "HealthCover" signup; auto-plays a persona through the funnel and overlays the nudge as a product feature. URL contract: `?seed=N&episode=N&persona=judith|franz|peter&method=threshold|gbm|llm&mode=auto|interactive|live`.
+
+Headless gate + headed rehearsal (needs the `ui` extra and `playwright install chromium`):
+
+```bash
+pytest services/ui/tests/test_ui.py services/ui/tests/test_journey.py
+pytest services/ui/tests/test_demo.py --headed --slowmo=400 --video=on   # writes demo_videos/
+```
+
+Fixed `(seed, episode)` demo scenarios live in `services/ui/tests/scenarios.py`
+(Judith S4 dwell, Franz S7 gap+cancel, Peter early form re-edits).
+
+### Optional: real LLM wording and bots
+
+Both LLM paths are opt-in and degrade gracefully when no endpoint is reachable
+(the harness falls back to templates; decisions never change). Point them at any
+OpenAI-compatible server:
+
+```bash
+cp .env.example .env             # set MODEL_ID / MODEL_NAME (+ HF_TOKEN if gated)
+docker compose --profile inference up -d inference   # local vLLM (FP8), host port 8003
+```
+
+The two model-swap knobs are `inference_base_url` + `model_name` in `config.yaml`
+(or env). See [services/inference/README.md](services/inference/README.md) for vLLM /
+Ollama / remote options and the **Blackwell sm_120** attention-backend trap.
+
+To get LLM **wording** in the harness, set `realize.method: llm` in `config.yaml`.
+The LLM client (`utils/llm_client.py`) also reads `FEATHERLESS_API_KEY` or
+`OPENAI_API_KEY` from the environment for a remote endpoint; with no key it runs in
+a mock mode.
+
+> **Known issue:** the LLM persona-bot CLI `main.py` currently fails on import
+> (`resolve_model` is imported from `utils.llm_client` but not defined there, and
+> its result is unused). Drive the LLM simulation through
+> `simulation.engine.SimulationEngine` (as `services/ui/session.py` does in
+> `mode=live`) until that import is removed. See REPORT "A note on honesty".
+
+### Persona-bot fine-tune (Leonardo only)
+
+```bash
+pip install -e .[lora]                                   # GPU env, do NOT install locally
+python -m training.train_lora --base Qwen/Qwen2.5-7B-Instruct   # W&B offline; sync from a login node
+```
+
+`training/leonardo.sbatch` / `leonardo_simulation.sbatch` are the SLURM wrappers.
 
 ---
 
-*Looking forward to seeing what you build.* 🚀
+## Scope (what the Coach does and doesn't touch)
+
+In scope: the **private-doctor**, **"myself"**, **online-purchasable** path
+(Start €38.74 / Optimal €68.14). **Conversion = online purchase completion.**
+Out of scope and cleanly routed to an advisor (no coaching): the hospital path,
+the "other persons" branch, and the Opt.Plus / Premium tariffs. The funnel keeps
+**S5 deliberately absent** (the hospital add-on step), so states jump S4 → S6; the
+24% intermediate drop is attributed to S6 to preserve the ~5.6% baseline (see
+[REPORT.md](REPORT.md) and `config.yaml`).
+
+Data lives in [tracks/insurance-uniqa/](tracks/insurance-uniqa/) (personas, funnel
+doc, product reference, `personas.json` with segments `segment_1/2/3`).
+
+---
+
+## Results at a glance
+
+| | baseline | with Coach | uplift |
+|---|---|---|---|
+| Global (online conversion) | ~5.7% | — | — |
+| Judith (S1, Rising Hybrid) | 15.4% | 39.8% | +24.4 pp |
+| Franz (S2, Online Affine) | 13.0% | 28.7% | +15.8 pp |
+| Peter (S3, Service Affine) | 39.2% | 91.9% | +52.7 pp |
+
+GBM detection lifts recall from **0.25** (thresholds) to **0.99** at comparable
+overall precision (~0.80 → ~0.78). **Important:** in the scripted harness, uplift is
+*parameter-driven* — it validates the measurement plumbing, not coaching efficacy.
+Read [REPORT.md](REPORT.md) for the full numbers, caveats, and per-persona
+conversion definitions.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
+
+---
+
+<sub>**Note on placement:** these submission files were drafted into `sub/`. For the
+actual submission they belong at the repo root — `README.md`, `REPORT.md`,
+`requirements.txt` at the top level and `hypotheses.md` at `extras/hypotheses.md`.
+The relative links above assume that final (repo-root) placement.</sub>

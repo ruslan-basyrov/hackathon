@@ -82,7 +82,7 @@ class Session:
             self.engine = SimulationEngine(
                 model_name="deepseek-ai/DeepSeek-V4-Flash",
                 intervention_mode=engine_method,
-                coach_mode='realize',
+                coach_mode='chat',
             )
             
             # Map the UI persona names to the segment names expected by personas.json

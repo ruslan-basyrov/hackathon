@@ -45,12 +45,12 @@ class LLMCoachBot:
         return raw_response.strip().strip('"')
 
     def _build_user_prompt(self, funnel_step, turn_data, trigger_reason, persona_hint, signals, chat_history):
-        action = turn_data.get("action", {})
+        action = turn_data.get("action")
         prompt = (
             f"Context:\n"
             f"- User persona hint: {persona_hint}\n"
             f"- Funnel step: {funnel_step}\n"
-            f"- Last action: {action.get('type')} (target: {action.get('target')}, dwell: {action.get('dwell_s')}s)\n"
+            f"- Last action: {action.type} (target: {action.target}, dwell: {action.dwell_s}s)\n"
             f"- Triggering condition: {trigger_reason}\n"
             f"- Signals: {json.dumps(asdict(signals))}\n"
         )

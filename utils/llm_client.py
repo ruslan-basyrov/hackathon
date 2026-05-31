@@ -1,7 +1,6 @@
 import os
 from openai import OpenAI
 
-
 def resolve_endpoint():
     """Returns (api_key, base_url) using env vars. Featherless first, then OpenAI.
     Exposed so other modules (e.g. simulation.engine building a coach.realize cfg)
@@ -31,26 +30,16 @@ class LLMClient:
         if not self.mock_mode:
             self.client = OpenAI(api_key=api_key, base_url=base_url)
 
-    def chat_completion(self, messages, json_mode=True):
+    def chat_completion(self, messages):
         """Sends a request to the LLM and returns the response content."""
         if self.mock_mode:
             # Fallback for testing if no API key is provided
-            print("WARNING: LLMClient running in MOCK mode. Returning hardcoded JSON. "
-                  "Please set FEATHERLESS_API_KEY environment variable.")
-            if json_mode:
-                return '{"action": "PROCEED", "dwell_time_seconds": 15, "reasoning": "Mock reasoning"}'
-            return "This is a mock response."
+            print("WARNING: LLMClient running in MOCK mode. Returning hardcoded JSON. Please set FEATHERLESS_API_KEY environment variable.")
+            return '{"action": "PROCEED", "dwell_time_seconds": 15, "reasoning": "Mock reasoning"}'
 
-        response_format = {"type": "json_object"} if json_mode else None
-        
-        # When response_format is None, the kwarg shouldn't be passed at all to older OpenAI client versions,
-        # but modern ones handle None fine. To be safe, we conditionally pass it.
-        kwargs = {
-            "model": self.model,
-            "messages": messages,
-        }
-        if response_format:
-            kwargs["response_format"] = response_format
-
-        response = self.client.chat.completions.create(**kwargs)
+        response = self.client.chat.completions.create(
+            model=self.model,
+            messages=messages,
+            response_format={"type": "json_object"} # Force JSON output
+        )
         return response.choices[0].message.content

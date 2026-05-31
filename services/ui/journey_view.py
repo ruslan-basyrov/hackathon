@@ -1,6 +1,6 @@
 """Customer-facing journey at `/journey` (BUILD_SPEC §Phase 3.5).
 
-A stylized "HealthCover" insurance signup. Two driver modes share the same
+A stylized "HealthCover" insurance signup. Three driver modes share the same
 visual layout and the same `Session`:
 
   * **auto mode** (default, `?mode=auto`) - `StubAgent` drives via auto-play;
@@ -11,6 +11,10 @@ visual layout and the same `Session`:
     interactive element is clickable and builds a real `Action`; wall-clock
     dwell feeds the signals; a watchdog timer consults the coach every second
     so dwell-based interventions fire while you sit on a page.
+
+  * **live mode** (`?mode=live`) - `LLMBot` drives via auto-play in the
+    `SimulationEngine`; similar to auto mode but uses the actual LLM bot
+    and intervention logic from the engine.
 
 Stable element IDs (test contract):
   journey-page, journey-step-label, journey-progress,
@@ -48,16 +52,17 @@ def render(
     seed: int = 0,
     episode: int = 0,
     persona: str = "judith",
-    method: str = "threshold",
+    method: str = "llm",
     gbm_threshold: float = 0.85,
     narration: str = "",
     autoplay_ms: int = 900,
     mode: str = "auto",
 ):
     interactive = (mode == "interactive")
+    live = (mode == "live")
     sess = Session(
         seed=seed, episode=episode, persona=persona,
-        method=method, gbm_threshold=gbm_threshold, interactive=interactive,
+        method=method, gbm_threshold=gbm_threshold, mode=mode,
     )
 
     # ---- top branding bar --------------------------------------------------
@@ -69,6 +74,10 @@ def render(
             if interactive:
                 ui.label("manual mode — your clicks are the user").classes(
                     "text-xs bg-sky-700 px-2 py-1 rounded font-mono"
+                )
+            elif live:
+                ui.label("live simulation — LLM is driving").classes(
+                    "text-xs bg-amber-600 px-2 py-1 rounded font-mono text-white"
                 )
             ui.label("Need help? 0800 123 456").classes("text-sm ml-3")
 
@@ -199,19 +208,41 @@ def render(
         Future turns extend `chat_state["messages"]` and call chat_followup.
         """
         from coach.llm_realize import build_messages
-        history = build_messages(intervention.type, sig, sess.persona)
-        # build_messages returns [system, user] — len == 2 — and the user
-        # message there is the prompt scaffold, not something the human typed.
-        # The first VISIBLE message is the assistant nudge we're about to
-        # append, so the rendered chat begins at len(history).
-        chat_state["visible_start"] = len(history)
-        history.append({"role": "assistant", "content": intervention.text})
-        chat_state["messages"] = history
+        if isinstance(sig, dict):
+            from signals import Signals
+            # Create a full Signals object with default values, then update with dict values
+            _sig = Signals(
+                step=sig.get('step', 0),
+                max_steps_completed=sig.get('max_steps_completed', 0),
+                dwell_current_s=sig.get('dwell_current_s', 0.0),
+                dwell_total_s=sig.get('dwell_total_s', 0.0),
+                time_since_last_action_s=sig.get('time_since_last_action_s', 0.0),
+                back_nav_count=sig.get('back_nav_count', 0),
+                back_from_step=sig.get('back_from_step', None),
+                field_change_count=sig.get('field_change_count', 0),
+                tariff_hover_count=sig.get('tariff_hover_count', 0),
+                advisory_tariff_clicked=sig.get('advisory_tariff_clicked', False),
+                tariff_selected=sig.get('tariff_selected', None),
+                external_tab_opens=sig.get('external_tab_opens', 0),
+                price_gap_eur=sig.get('price_gap_eur', 0.0),
+                hover_cancel_count=sig.get('hover_cancel_count', 0)
+            )
+            sig = _sig
+
+        if live and hasattr(sess.last_intervention, 'chat_history') and sess.last_intervention.chat_history:
+            chat_state["messages"] = sess.last_intervention.chat_history
+            chat_state["visible_start"] = 0
+        else:
+            history = build_messages(intervention.type, sig, sess.persona)
+            chat_state["visible_start"] = len(history)
+            history.append({"role": "assistant", "content": intervention.text})
+            chat_state["messages"] = history
+
         chat_input.value = ""
         _set_busy(False)
         # only allow chat if LLM mode is on; in template mode there's no
         # backend that could answer a follow-up, so we hide the input.
-        is_llm = (sess.cfg.get("realize", {}) or {}).get("method") == "llm"
+        is_llm = (sess.cfg.get("realize", {}) or {}).get("method") == "llm" or live
         if is_llm:
             chat_input.classes(remove="hidden")
             chat_send.classes(remove="hidden")
@@ -653,7 +684,7 @@ def render(
         d = sess.cfg["detection"]
         sig = sess._compute_signals()
         # what the watchdog would see right now (dwell incl. wall-clock)
-        elapsed = sess.wall_clock_dwell()
+        elapsed = sess.wall_clock_dwell() if sess.interactive else 0
         eff_dwell = sig.dwell_current_s + elapsed
         return [
             ("s4_dwell", "Judith at the price table", [
@@ -894,7 +925,7 @@ def render(
             on_change=lambda e: ui.navigate.to(_scenario_url(e.value, episode)),
         ).props('id="journey-persona-select"').classes("w-40")
         ui.select(
-            options=["threshold", "gbm"], value=method,
+            options=["threshold", "gbm", "llm"], value=method,
             on_change=lambda e: ui.navigate.to(
                 f"/journey?seed={seed}&episode={episode}"
                 f"&persona={persona}&method={e.value}&gbm_threshold={gbm_threshold}&mode={mode}"
@@ -910,29 +941,51 @@ def render(
     with ui.row().classes("max-w-5xl mx-auto px-6 gap-2 items-center "
                           "text-xs text-gray-500 mt-2 mb-6 flex-wrap"):
         ui.label("Quick scenarios:").classes("font-semibold")
-        ui.link("Judith S4", "/journey?seed=0&episode=0&persona=judith&method=threshold"
+        ui.link("Judith S4", "/journey?seed=0&episode=0&persona=judith&method=llm"
                 + (f"&mode={mode}" if interactive else "")).props(
             'id="journey-quick-judith"'
         ).classes("text-sky-700 underline")
-        ui.link("Franz S7", "/journey?seed=0&episode=16&persona=franz&method=threshold"
+        ui.link("Franz S7", "/journey?seed=0&episode=16&persona=franz&method=llm"
                 + (f"&mode={mode}" if interactive else "")).props(
             'id="journey-quick-franz"'
         ).classes("text-sky-700 underline")
-        ui.link("Peter early", "/journey?seed=0&episode=0&persona=peter&method=threshold"
+        ui.link("Peter early", "/journey?seed=0&episode=0&persona=peter&method=llm"
                 + (f"&mode={mode}" if interactive else "")).props(
             'id="journey-quick-peter"'
         ).classes("text-sky-700 underline")
         ui.element("div").classes("flex-grow")
-        target_mode = "auto" if interactive else "interactive"
-        toggle_label = "↷ Switch to auto" if interactive else "✋ Drive it yourself"
-        ui.link(toggle_label,
+
+        if interactive:
+            toggle_auto = "↷ Switch to auto"
+            target_auto = "auto"
+            toggle_live = "▶ Switch to live (LLM)"
+            target_live = "live"
+        elif live:
+            toggle_auto = "↷ Switch to auto"
+            target_auto = "auto"
+            toggle_live = "✋ Drive it yourself"
+            target_live = "interactive"
+        else:
+            toggle_auto = "✋ Drive it yourself"
+            target_auto = "interactive"
+            toggle_live = "▶ Switch to live (LLM)"
+            target_live = "live"
+
+        ui.link(toggle_auto,
                 f"/journey?seed={seed}&episode={episode}&persona={persona}"
-                f"&method={method}&gbm_threshold={gbm_threshold}&mode={target_mode}").props(
+                f"&method={method}&gbm_threshold={gbm_threshold}&mode={target_auto}").props(
             'id="journey-mode-toggle"'
         ).classes("text-sky-700 underline font-semibold")
+
+        ui.link(toggle_live,
+                f"/journey?seed={seed}&episode={episode}&persona={persona}"
+                f"&method={method}&gbm_threshold={gbm_threshold}&mode={target_live}").props(
+            'id="journey-live-toggle"'
+        ).classes("text-sky-700 underline font-semibold ml-4")
+
         ui.label(
             f"seed={seed}  ep={episode}  detector={method}  mode={mode}"
-        ).classes("font-mono")
+        ).classes("font-mono ml-4")
 
     # initial paint
     render_for_step(int(sess.state))

@@ -140,7 +140,7 @@ cp .env.example .env   # then edit .env with YOUR tokens
 need them — `HF_TOKEN` (gated base models) and `WANDB_API_KEY` (experiment
 tracking; or use `wandb login`).
 
-:::danger[Never commit real secrets]
+:::danger Never commit real secrets
 `.env` is git-ignored and must stay that way. **Do not put real tokens in
 `.env.example`** — it is committed, and the project's own hard constraints
 forbid secrets in git or history. Use placeholder values there

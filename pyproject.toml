@@ -10,8 +10,11 @@ requires-python = ">=3.10"
 # so the coach container stays small and CPU-only (see requirements.txt note
 # that torch/transformers belong to the Leonardo LoRA env, not here).
 dependencies = [
+    "nicegui>=3.12.1",
+    "numpy>=2.2.6",
     "openai>=2.38.0",
     "pyyaml>=6.0",
+    "xgboost>=3.2.0",
 ]
 
 [project.optional-dependencies]

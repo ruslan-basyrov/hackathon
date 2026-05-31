@@ -138,12 +138,14 @@ def get_client(cfg: dict):
     )
 
 
-def llm_realize(itype: str, signals, persona: Optional[str], cfg: dict) -> str:
+def llm_realize(itype: str, signals, persona: Optional[str], cfg: dict, chat_history: list = None) -> str:
     """Single LLM call. Raises on any failure (network, timeout, empty
     response). The dispatcher in `coach/realize.py` decides whether to fall
     back to the template — keeping the error policy in one place."""
     client = get_client(cfg)
     messages = build_messages(itype, signals, persona)
+    if chat_history:
+        messages.extend(chat_history)
     realize_cfg = cfg.get("realize", {}) or {}
 
     resp = client.chat.completions.create(
